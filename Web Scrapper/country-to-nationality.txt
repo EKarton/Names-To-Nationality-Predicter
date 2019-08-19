@@ -1,6 +1,6 @@
 Code,Country,ISO,Nationality
 AD,Andorra,53,Andorian
-AE,"United Arab Emirates",126,Emirian
+AE,United Arab Emirates,126,Emirian
 AF,Afghanistan,133,Afghani
 AI,Anguilla,55,Anguillan
 AM,Armenia,58,Armenian
@@ -30,8 +30,8 @@ CL,Chile,71,Chilean
 CM,Cambodia,5,Cambodian
 CM,Cameroon,70,Cameroonian
 CO,Columbia,46,Columbian
-CR,"Czech Republic",50,Czech
-CR,"Costa Rica",73,"Costa Rican"
+CR,Czech Republic,50,Czech
+CR,Costa Rica,73,Costa Rican
 CU,Cuba,75,Cuban
 CY,Cyprus,76,Cypriot
 DE,Germany,10,German
@@ -44,13 +44,13 @@ ET,Ethiopia,80,Ethiopian
 FI,Finland,82,Finnish
 FJ,Fiji,81,Fijian
 FR,France,9,French
-GB,"United Kingdom",39,British
+GB,United Kingdom,39,British
 GE,Georgia,83,Georgian
 GH,Ghana,84,Ghanaian
 GN,Guinea,86,Guinean
 GR,Greece,11,Greek
 GY,Guyana,87,Guyanese
-HK,"Hong Kong",13,Chinese
+HK,Hong Kong,13,Chinese
 HR,Croatia,74,Croatian
 HU,Hungary,14,Hungarian
 ID,Indonesia,16,Indonesian
@@ -70,7 +70,7 @@ KW,Kuwait,95,Kuwaiti
 KZ,Kazakhstan,134,Kazakhstani
 KZ,Kazakhstan,93,Kazakhstani
 LB,Lebanon,96,Lebanese
-LK,"Sri Lanka",33,"Sri Lankan"
+LK,Sri Lanka,33,Sri Lankan
 LT,Lithuania,97,Lithuanian
 LU,Luxembourg,98,Luxembourger
 MA,Morocco,104,Moroccan
@@ -87,7 +87,7 @@ NG,Nigeria,108,Nigerian
 NL,Netherland,12,Dutch
 NO,Norway,24,Norwegian
 NP,Nepal,107,Nepalese
-NZ,"New Zealand",23,"New Zealander"
+NZ,New Zealand,23,New Zealander
 OM,Oman,109,Omani
 PA,Panama,110,Panamanian
 PE,Peru,112,Peruvian
@@ -99,7 +99,7 @@ PY,Paraguay,111,Paraguayan
 QA,Qatar,115,Qatari
 RO,Romania,48,Romanian
 RU,Russia,29,Russian
-SA,"Saudi Arabia",116,"Saudi Arabian"
+SA,Saudi Arabia,116,Saudi Arabian
 SC,Seychelles,119,Seychellois
 SE,Sweden,34,Swedish
 SG,Singapore,30,Singaporean
@@ -114,12 +114,12 @@ TW,Taiwan,36,Taiwanese
 TZ,Tanzania,122,Tanzanian
 UA,Ukraine,125,Ukrainian
 UG,Uganda,124,Ugandan
-US,"United States of America",40,American
+US,United States of America,40,American
 UY,Uruguay,127,Uruguayan
 UZ,Uzbekistan,128,Uzbekistani
 VE,Venezuela,49,Venezuelan
 VN,Vietnam,1,Vietnamese
 YE,Yemen,130,Yemeni
-ZA,"South Africa",31,"South African"
+ZA,South Africa,31,South African
 ZM,Zambia,131,Zambian
 ZW,Zimbabwe,132,Zimbabwean
