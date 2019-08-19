@@ -68,9 +68,9 @@ After completing the installation steps above, follow the steps below to get you
 3. Once the script above is complete, run the ```worker.py``` script by running the command:
 	```python3 worker.py```
 
-	Note that multple workers can be run at the same time to make web scraping much faster. Just run more ```worker.py``` processes concurrently on the same machine or on different machines(*).
+* Note that multple workers can be run at the same time to make web scraping much faster. Just run more ```worker.py``` processes concurrently on the same machine or on different machines(*).
 
-	Note that in order for the execution of different machines to work, the Redis and Postgresql servers need to be in a remote location that could be accessible by the  machines.
+* Note that in order for the execution of different machines to work, the Redis and Postgresql servers need to be in a remote location that could be accessible by the  machines.
 
 
 ### Postgresql tips:
@@ -138,4 +138,14 @@ After completing the installation steps above, follow the steps below to get you
 	```redis-commander```
 
 	On your browser, go to ```localhost:8081```
+
+### To see current jobs in Redis:
+You can see the current jobs in Redis visually by using ```redis-commander```:
+1. Note that ```redis-commander``` is a NPM package, so to get it, run the command:
+	```npm install -g redis-commander```
+
+2. To run the NPM package, run the command:
+	```./redis-commander```
+
+3. Finally, to see all jobs go to the browser and navigate to ```localhost:8081```.
 
