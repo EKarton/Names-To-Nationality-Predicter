@@ -118,10 +118,10 @@ class RecordsParser:
 
 		except Exception as error:
 			print("ERROR AT", time.ctime())
-			print(error)
+			browser.quit()
+			raise error
 
 		finally:
-			self.records_database.shutdown()
 			browser.quit()	
 
 def main():

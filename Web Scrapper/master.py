@@ -4,7 +4,7 @@ from redis_queue import RedisQueue
 import json
 
 '''
-	The purpose of this script is to initialize the postgresql database with our model.
+	The purpose of this script is to initialize the postgresql database with our data model.
 '''
 
 def initialize_records_db():

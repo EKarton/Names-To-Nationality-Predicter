@@ -1,4 +1,79 @@
-### Configuring Postgresql:
+## Installation:
+Note that for the installation process to go through smoothly, ensure that you have:
+1. Python 3
+2. Ubuntu machine
+
+After ensuring the prerequisites are met above, follow the instructions below in order:
+1. Install and configure Postgresql (skip this if you already have Postgresql):
+	a. First, download a copy of the Postgresql Server on your machine, by typing the command:
+		```sudo apt-get install ```
+
+	b. Next, create a new user named ```webscraper``` by running the command:
+		```wasd```
+
+2. Install and configure the Redis Job Queue (skip this if you already have Redis):
+	a. First, download a copy of redis on your machine, by typing the command:
+		```installation```
+
+	b. Next, keep note of where the redis server and the redis-cli lies, by typing the command:
+		```which redis-server```
+		and
+		```which redis-cli```
+
+	c. Then, create a new service file in ```/etc/systemd/system/redis.service``` with the contents:
+		```
+			[Unit]
+			Description=Redis In-Memory Data Store
+			After=network.target
+
+			[Service]
+			User=redis
+			Group=redis
+			ExecStart=REDIS_SERVER_PATH /etc/redis/redis.conf --supervised systemd
+			ExecStop=REDIS_CLI_PATH shutdown
+			Restart=always
+			Type=notify
+
+			[Install]
+			WantedBy=multi-user.target
+		```
+
+		where REDIS_SERVER_PATH and REDIS_CLI_PATH are the values you got from step 2b.
+
+	d. In addition, create a redis user by typing the command:
+		```sudo adduser --system --group --no-create-home redis```
+
+	e. Moreover, create the ```/var/lib/redis``` directory by running the command:
+		```sudo mkdir /var/lib/redis```
+
+	f. Now, give the redis user and group ownership over this directory:
+		```sudo chown redis:redis /var/lib/redis```
+
+		and make it accessible only to the redis user:
+		```sudo chmod 770 /var/lib/redis```
+
+
+	d. In addition, reload the systemctl daemon by typing the command:
+		```sudo systemctl daemon-reload```
+
+	e. Finally, start the Redis server by running the command:
+		```sudo systemctl start redis```
+
+## Running the app:
+After completing the installation steps above, follow the steps below to get your app running:
+1. First, ensure that Redis and Postgresql servers are online
+2. Next, run the ```master.py``` script by running the command:
+	```python3 master.py```
+
+3. Once the script above is complete, run the ```worker.py``` script by running the command:
+	```python3 worker.py```
+
+	Note that multple workers can be run at the same time to make web scraping much faster. Just run more ```worker.py``` processes concurrently on the same machine or on different machines(*).
+
+	Note that in order for the execution of different machines to work, the Redis and Postgresql servers need to be in a remote location that could be accessible by the  machines.
+
+
+### Postgresql tips:
 - To install Postgresql Server on Ubuntu:
 	https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-18-04
 
@@ -19,7 +94,7 @@
 	```sudo apt-get install libpq-dev```
 	```pip3 install psycopg2```
 
-### Configuring the Redis job queue:
+### Redis job queue tips:
 - To install Redis on Ubuntu:
 	https://www.digitalocean.com/community/tutorials/how-to-install-and-secure-redis-on-ubuntu-18-04
 
