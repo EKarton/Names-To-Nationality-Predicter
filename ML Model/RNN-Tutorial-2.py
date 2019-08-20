@@ -78,10 +78,6 @@ def main():
 	raw_countries, raw_records = get_dataset()
 	countries = np.asarray(raw_countries)
 	records = np.asarray(raw_records)
-	
-	# What we are going to do now is create a RNN with these inputs:
-	# 128 for the input node, then 128 + 124 for the hidden layer, and 124 for the output layer
-	# Note that the 124 for the hidden layer will come from the previous RNN.
 
 	'''
 	The psuedocode for the RNN:
@@ -135,17 +131,15 @@ def main():
 	output_dimensions = 124
 
 	# This is a 27 x 200 matrix
-	layer_1_weights = 2 * np.random.random((input_dimensions, hidden_dimensions)) - 1 #np.random.rand(input_dimensions, hidden_dimensions)
+	# Layer 1 represents the input layer
+	layer_1_to_2_weights = 2 * np.random.random((input_dimensions, hidden_dimensions)) - 1 #np.random.rand(input_dimensions, hidden_dimensions)
 
 	# This is a 200 x 124 matrix
-	layer_2_weights = 2 * np.random.random((hidden_dimensions, output_dimensions)) - 1 #np.random.rand(hidden_dimensions, output_dimensions)
+	# Layer 2 represents the hidden layer
+	layer_2_to_3_weights = 2 * np.random.random((hidden_dimensions, output_dimensions)) - 1 #np.random.rand(hidden_dimensions, output_dimensions)
 
 	# This is a 200 x 200 matrix
 	hidden_state_weights = 2 * np.random.random((hidden_dimensions, hidden_dimensions)) - 1 # np.random.rand(hidden_dimensions, hidden_dimensions)
-
-	# print('synapse_0', synapse_0)
-	# print('synapse_l', synapse_1)
-	# print('synapse_h', synapse_h)
 
 	for record in records:
 		name = record[0]
@@ -154,23 +148,23 @@ def main():
 		y = np.array([expected_value]).T 
 
 		# We first initialize the hidden state to 0
-		last_layer_1_value = np.zeros(hidden_dimensions)
-		last_layer_2_value = None
+		last_layer_2_values = np.zeros(hidden_dimensions)
+		last_layer_3_values = None
 
 		for letter_array in name:
 			X = np.array([letter_array]) 
 
 			# Perform forward propagation
-			layer_1_values = sigmoid(np.dot(X, layer_1_weights) + np.dot(last_layer_1_value, hidden_state_weights))
-			layer_2_values = sigmoid(np.dot(layer_1_values, layer_2_weights))
+			layer_2_values = sigmoid(np.dot(X, layer_1_to_2_weights) + np.dot(last_layer_2_values, hidden_state_weights))
+			layer_3_values = sigmoid(np.dot(layer_2_values, layer_2_to_3_weights))
 
 			# Update the last layer 1 and layer 2 values
-			last_layer_1_value = layer_1_values
-			last_layer_2_value = layer_2_values
+			last_layer_2_values = layer_2_values
+			last_layer_3_values = layer_3_values
 
 			# Compute the error
 
-		print('last_layer_2_value:', last_layer_2_value)
+		print('last_layer_3_values:', last_layer_3_values)
 		input('Press enter to continue')
 main()
 
