@@ -65,31 +65,7 @@ def get_dataset():
 
 	return (countries_dataset, records_dataset)
 
-##########################################################################
-############################ Running the RNN #############################
-##########################################################################
-
-def sigmoid(x):
-	return 1 / (1 + np.exp(-x))
-
-def derivative_sigmoid(x):
-	return sigmoid(x) * (1 - sigmoid(x))
-
-def derivative_sigmoid_given_sigmoid_val(sigmoid_value):
-	return sigmoid_value * (1 - sigmoid_value)
-
-def get_binary_cross_entropy(hypothesis, expected_result):
-	a = -expected_result
-	b = np.log(hypothesis + 1e-15)
-	c = (1 - expected_result)
-	d = np.log(1 - hypothesis + 1e-15)
-
-	cost = np.multiply(a, b) - np.multiply(c, d)
-	# cost = np.xlogy(-expected_result, hypothesis) - np.xlogy(1 - expected_result, 1 - hypothesis)
-
-	return np.sum(cost)
-
-def main():
+def get_parsed_dataset():
 	raw_countries, raw_records = get_dataset()
 	countries = np.asarray(raw_countries)
 	records = np.asarray(raw_records)
@@ -112,6 +88,9 @@ def main():
 		We are also going to make each name in lowercase
 		We are also going to convert each letter into a 1 x 27 matrix, where [1, 0, ..., 0] represents 'a'
 	'''
+	names = []
+	labels = []
+
 	new_records = []
 	for record in records:
 		name = record[0].lower()
@@ -133,9 +112,48 @@ def main():
 
 			name_array.append(letter_array)
 
-		new_records.append((np.array(name_array), expected_val))
+		new_records.append((name_array, expected_val))
+		
 
 	records = np.array(new_records)
+
+	return records
+
+##########################################################################
+############################ Running the RNN #############################
+##########################################################################
+
+def sigmoid(x):
+	return 1 / (1 + np.exp(-x))
+
+def derivative_sigmoid(x):
+	return sigmoid(x) * (1 - sigmoid(x))
+
+def derivative_sigmoid_given_sigmoid_val(sigmoid_value):
+	return sigmoid_value * (1 - sigmoid_value)
+
+def get_binary_cross_entropy(hypothesis, expected_result):
+	a = -expected_result
+	b = np.log(hypothesis + 1e-15)
+	c = (1 - expected_result)
+	d = np.log(1 - hypothesis + 1e-15)
+
+	cost = np.multiply(a, b) - np.multiply(c, d)
+
+	return np.sum(cost)
+
+def main():
+	records = get_parsed_dataset()
+
+	# Select the records that have a country to 'Andorra'
+	records = np.array(list(filter(lambda x: x[1][0] == 1, records)))
+
+	# Shuffle the dataset
+	np.random.shuffle(records)
+
+	# Use 70% for the training set and 30% for the validation set
+	num_training_data = int(len(records) * 0.7)
+	training_data, test_data = records[:num_training_data,:], records[num_training_data:,:]
 
 	alpha = 0.1
 	input_dimensions = 27
@@ -143,15 +161,13 @@ def main():
 	output_dimensions = 124
 
 	# This is a 27 x 200 matrix
-	# Layer 1 represents the input layer
-	layer_1_weights = 2 * np.random.random((input_dimensions, hidden_dimensions)) - 1 #np.random.rand(input_dimensions, hidden_dimensions)
+	layer_1_weights = 2 * np.random.random((input_dimensions, hidden_dimensions)) - 1
 
 	# This is a 200 x 124 matrix
-	# Layer 2 represents the hidden layer
-	layer_2_weights = 2 * np.random.random((hidden_dimensions, output_dimensions)) - 1 #np.random.rand(hidden_dimensions, output_dimensions)
+	layer_2_weights = 2 * np.random.random((hidden_dimensions, output_dimensions)) - 1
 
 	# This is a 200 x 200 matrix
-	hidden_state_weights = 2 * np.random.random((hidden_dimensions, hidden_dimensions)) - 1 # np.random.rand(hidden_dimensions, hidden_dimensions)
+	hidden_state_weights = 2 * np.random.random((hidden_dimensions, hidden_dimensions)) - 1
 
 	# This is the bias for the first layer
 	bias_1 = 1
@@ -159,12 +175,13 @@ def main():
 	# This is the bias for the second layer
 	bias_2 = 1
 
-	for _ in range(100):
+	# The number of epoches
+	num_epoche = 100
+
+	for _ in range(num_epoche):
 
 		# Train on the dataset
-		for i in range(len(records[0:499])):
-			print('Training', i, 'vs', len(records))
-			record = records[i]
+		for record in training_data:
 			name = record[0]
 			num_chars = len(name)
 			y = np.array([record[1]])
@@ -206,11 +223,6 @@ def main():
 				letter_pos_to_loss[i] = loss
 				overall_error += loss
 
-			# print('letter_pos_to_hidden_state:', letter_pos_to_hidden_state.shape)
-			# print('letter_pos_to_layer_2_values:', letter_pos_to_layer_2_values.shape)
-			# print('letter_pos_to_loss:', letter_pos_to_loss)
-			# print('letter_pos_to_hypothesis:', letter_pos_to_hypothesis.shape)
-
 			# Perform back propagation through time
 			delta_h = np.zeros((hidden_dimensions, hidden_dimensions))
 			delta_1 = np.zeros((input_dimensions, hidden_dimensions))
@@ -224,34 +236,18 @@ def main():
 				hypothesis = letter_pos_to_hypothesis[i]
 				
 				sigma_3 = (hypothesis - y).T
-				# print('sigma_3.shape', sigma_3.shape)
-
-				# print('np.dot(layer_2_weights, sigma_3).shape:', np.dot(layer_2_weights, sigma_3).shape)
-				# print('derivative_sigmoid_given_sigmoid_val(layer_2_values).T.shape:', derivative_sigmoid_given_sigmoid_val(layer_2_values).T.shape)
 				sigma_2 = np.multiply(np.dot(layer_2_weights, sigma_3), derivative_sigmoid_given_sigmoid_val(layer_2_values).T)
-				# print('sigma_2.shape', sigma_2.shape)
-
-				# print('layer_2_values.shape:', layer_2_values.shape)
 
 				delta_2 += np.dot(sigma_3, layer_2_values).T
-				# print('delta_2.shape:', delta_2.shape)
-
-				# print('hidden_state.shape:', hidden_state.shape)
-
 				delta_h += np.dot(sigma_2, hidden_state)
-				# print('delta_h.shape:', delta_h.shape)
-
-				# print('X.shape:', X.shape)
 				delta_1 += np.dot(sigma_2, X).T
-				# print('delta_1.shape:', delta_1.shape)
 
 			layer_1_weights -= alpha * delta_1
 			layer_2_weights -= alpha * delta_2
 			hidden_state_weights -= alpha * delta_h
 
 		# Perform one hypothesis test on a random dataset
-		random_record_index = random.randint(0, 499)
-		random_record = records[random_record_index]
+		random_record = test_data[random.randint(0, len(test_data) - 1)]
 
 		name = random_record[0]
 		num_chars = len(name)
@@ -268,8 +264,6 @@ def main():
 
 		# The hidden state for the first letter position is all 0s.
 		letter_pos_to_hidden_state[0] = np.zeros((1, 200))
-
-		letter_pos_to_loss = np.zeros(num_chars)
 
 		overall_error = 0
 
@@ -291,13 +285,11 @@ def main():
 			np.append(letter_pos_to_hidden_state, layer_2_values)
 
 			loss = get_binary_cross_entropy(hypothesis, y)
-			letter_pos_to_loss[i] = loss
 			overall_error += loss
 
 		print('hypothesis[-1]:', hypothesis[-1])
 		print('y:', y)
 		print('overall_error:', overall_error)
-		input('Press enter to continue')
 main()
 
 
