@@ -1,4 +1,5 @@
 import copy, numpy as np
+import random
 
 ##########################################################################
 ############################ Getting the Data ############################
@@ -74,6 +75,20 @@ def sigmoid(x):
 def derivative_sigmoid(x):
 	return sigmoid(x) * (1 - sigmoid(x))
 
+def derivative_sigmoid_given_sigmoid_val(sigmoid_value):
+	return sigmoid_value * (1 - sigmoid_value)
+
+def get_binary_cross_entropy(hypothesis, expected_result):
+	a = -expected_result
+	b = np.log(hypothesis + 1e-15)
+	c = (1 - expected_result)
+	d = np.log(1 - hypothesis + 1e-15)
+
+	cost = np.multiply(a, b) - np.multiply(c, d)
+	# cost = np.xlogy(-expected_result, hypothesis) - np.xlogy(1 - expected_result, 1 - hypothesis)
+
+	return np.sum(cost)
+
 def main():
 	raw_countries, raw_records = get_dataset()
 	countries = np.asarray(raw_countries)
@@ -122,9 +137,6 @@ def main():
 
 	records = np.array(new_records)
 
-	print('countries:', countries)
-	print('records:', records)
-
 	alpha = 0.1
 	input_dimensions = 27
 	hidden_dimensions = 200
@@ -132,39 +144,159 @@ def main():
 
 	# This is a 27 x 200 matrix
 	# Layer 1 represents the input layer
-	layer_1_to_2_weights = 2 * np.random.random((input_dimensions, hidden_dimensions)) - 1 #np.random.rand(input_dimensions, hidden_dimensions)
+	layer_1_weights = 2 * np.random.random((input_dimensions, hidden_dimensions)) - 1 #np.random.rand(input_dimensions, hidden_dimensions)
 
 	# This is a 200 x 124 matrix
 	# Layer 2 represents the hidden layer
-	layer_2_to_3_weights = 2 * np.random.random((hidden_dimensions, output_dimensions)) - 1 #np.random.rand(hidden_dimensions, output_dimensions)
+	layer_2_weights = 2 * np.random.random((hidden_dimensions, output_dimensions)) - 1 #np.random.rand(hidden_dimensions, output_dimensions)
 
 	# This is a 200 x 200 matrix
 	hidden_state_weights = 2 * np.random.random((hidden_dimensions, hidden_dimensions)) - 1 # np.random.rand(hidden_dimensions, hidden_dimensions)
 
-	for record in records:
-		name = record[0]
-		expected_value = record[1]
+	# This is the bias for the first layer
+	bias_1 = 1
 
-		y = np.array([expected_value]).T 
+	# This is the bias for the second layer
+	bias_2 = 1
 
-		# We first initialize the hidden state to 0
-		last_layer_2_values = np.zeros(hidden_dimensions)
-		last_layer_3_values = None
+	for _ in range(100):
 
-		for letter_array in name:
-			X = np.array([letter_array]) 
+		# Train on the dataset
+		for i in range(len(records[0:499])):
+			print('Training', i, 'vs', len(records))
+			record = records[i]
+			name = record[0]
+			num_chars = len(name)
+			y = np.array([record[1]])
+			
+			# Stores the hidden state for each letter position.
+			letter_pos_to_hidden_state = np.zeros((num_chars + 1, 1, 200))
+
+			# Stores the layer 2 values for each letter position
+			letter_pos_to_layer_2_values = np.zeros((num_chars, 1, 200))
+
+			# Stores the hypothesis for each letter position
+			letter_pos_to_hypothesis = np.zeros((num_chars, 1, 124))
+
+			# The hidden state for the first letter position is all 0s.
+			letter_pos_to_hidden_state[0] = np.zeros((1, 200))
+
+			letter_pos_to_loss = np.zeros(num_chars)
+
+			overall_error = 0
 
 			# Perform forward propagation
-			layer_2_values = sigmoid(np.dot(X, layer_1_to_2_weights) + np.dot(last_layer_2_values, hidden_state_weights))
-			layer_3_values = sigmoid(np.dot(layer_2_values, layer_2_to_3_weights))
+			for i in range(num_chars):
+				
+				# The inputs
+				letter_array = name[i]
+				X = np.array([letter_array]) 
+				hidden_state = letter_pos_to_hidden_state[i - 1]
 
-			# Update the last layer 1 and layer 2 values
-			last_layer_2_values = layer_2_values
-			last_layer_3_values = layer_3_values
+				# Perform forward propagation
+				layer_2_values = sigmoid(np.dot(X, layer_1_weights) + np.dot(hidden_state, hidden_state_weights) + bias_1)
+				hypothesis = sigmoid(np.dot(layer_2_values, layer_2_weights) + bias_2)
 
-			# Compute the error
+				# Update the dictionaries
+				letter_pos_to_layer_2_values[i] = layer_2_values
+				letter_pos_to_hypothesis[i] = hypothesis
+				np.append(letter_pos_to_hidden_state, layer_2_values)
 
-		print('last_layer_3_values:', last_layer_3_values)
+				loss = get_binary_cross_entropy(hypothesis, y)
+				letter_pos_to_loss[i] = loss
+				overall_error += loss
+
+			# print('letter_pos_to_hidden_state:', letter_pos_to_hidden_state.shape)
+			# print('letter_pos_to_layer_2_values:', letter_pos_to_layer_2_values.shape)
+			# print('letter_pos_to_loss:', letter_pos_to_loss)
+			# print('letter_pos_to_hypothesis:', letter_pos_to_hypothesis.shape)
+
+			# Perform back propagation through time
+			delta_h = np.zeros((hidden_dimensions, hidden_dimensions))
+			delta_1 = np.zeros((input_dimensions, hidden_dimensions))
+			delta_2 = np.zeros((hidden_dimensions, output_dimensions))
+
+			for i in range(len(name) - 1, -1, -1):
+				letter_array = name[i]
+				X = np.array([letter_array])
+				hidden_state = letter_pos_to_hidden_state[i]
+				layer_2_values = letter_pos_to_layer_2_values[i]
+				hypothesis = letter_pos_to_hypothesis[i]
+				
+				sigma_3 = (hypothesis - y).T
+				# print('sigma_3.shape', sigma_3.shape)
+
+				# print('np.dot(layer_2_weights, sigma_3).shape:', np.dot(layer_2_weights, sigma_3).shape)
+				# print('derivative_sigmoid_given_sigmoid_val(layer_2_values).T.shape:', derivative_sigmoid_given_sigmoid_val(layer_2_values).T.shape)
+				sigma_2 = np.multiply(np.dot(layer_2_weights, sigma_3), derivative_sigmoid_given_sigmoid_val(layer_2_values).T)
+				# print('sigma_2.shape', sigma_2.shape)
+
+				# print('layer_2_values.shape:', layer_2_values.shape)
+
+				delta_2 += np.dot(sigma_3, layer_2_values).T
+				# print('delta_2.shape:', delta_2.shape)
+
+				# print('hidden_state.shape:', hidden_state.shape)
+
+				delta_h += np.dot(sigma_2, hidden_state)
+				# print('delta_h.shape:', delta_h.shape)
+
+				# print('X.shape:', X.shape)
+				delta_1 += np.dot(sigma_2, X).T
+				# print('delta_1.shape:', delta_1.shape)
+
+			layer_1_weights -= alpha * delta_1
+			layer_2_weights -= alpha * delta_2
+			hidden_state_weights -= alpha * delta_h
+
+		# Perform one hypothesis test on a random dataset
+		random_record_index = random.randint(0, 499)
+		random_record = records[random_record_index]
+
+		name = random_record[0]
+		num_chars = len(name)
+		y = np.array([random_record[1]])
+		
+		# Stores the hidden state for each letter position.
+		letter_pos_to_hidden_state = np.zeros((num_chars + 1, 1, 200))
+
+		# Stores the layer 2 values for each letter position
+		letter_pos_to_layer_2_values = np.zeros((num_chars, 1, 200))
+
+		# Stores the hypothesis for each letter position
+		letter_pos_to_hypothesis = np.zeros((num_chars, 1, 124))
+
+		# The hidden state for the first letter position is all 0s.
+		letter_pos_to_hidden_state[0] = np.zeros((1, 200))
+
+		letter_pos_to_loss = np.zeros(num_chars)
+
+		overall_error = 0
+
+		# Perform forward propagation
+		for i in range(num_chars):
+			
+			# The inputs
+			letter_array = name[i]
+			X = np.array([letter_array]) 
+			hidden_state = letter_pos_to_hidden_state[i - 1]
+
+			# Perform forward propagation
+			layer_2_values = sigmoid(np.dot(X, layer_1_weights) + np.dot(hidden_state, hidden_state_weights) + bias_1)
+			hypothesis = sigmoid(np.dot(layer_2_values, layer_2_weights) + bias_2)
+
+			# Update the dictionaries
+			letter_pos_to_layer_2_values[i] = layer_2_values
+			letter_pos_to_hypothesis[i] = hypothesis
+			np.append(letter_pos_to_hidden_state, layer_2_values)
+
+			loss = get_binary_cross_entropy(hypothesis, y)
+			letter_pos_to_loss[i] = loss
+			overall_error += loss
+
+		print('hypothesis[-1]:', hypothesis[-1])
+		print('y:', y)
+		print('overall_error:', overall_error)
 		input('Press enter to continue')
 main()
 
