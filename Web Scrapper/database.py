@@ -44,7 +44,7 @@ class CountriesDB(Database):
 
 	def create_table_if_not_exist(self):
 		sql = """CREATE TABLE IF NOT EXISTS countries(
-					country_id INTEGER PRIMARY KEY,
+					country_id SERIAL PRIMARY KEY,
 					country VARCHAR(250) NOT NULL,
 					nationality VARCHAR(250) NOT NULL
 				);"""
@@ -105,9 +105,9 @@ class RecordsDB(Database):
 
 	def create_table_if_not_exist(self):
 		sql = """CREATE TABLE IF NOT EXISTS records(
-				 	record_id INTEGER PRIMARY KEY,
+				 	record_id SERIAL PRIMARY KEY,
 					name VARCHAR(250) NOT NULL,
-					country_of_birth_id INTEGER REFERENCES records(country_id)
+					country_of_birth_id INTEGER REFERENCES countries(country_id)
 				);"""
 
 		cursor = self.connection.cursor()

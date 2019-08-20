@@ -116,6 +116,8 @@ class RecordsParser:
 				results_page.goto_next_page()
 				print('Progress:', str((num_records_obtained / max_records) * 100) + '% (Collected', num_records_obtained, 'out of', str(max_records) + ')')
 
+			print("Completed getting records for country", country_name)
+
 		except Exception as error:
 			print("ERROR AT", time.ctime())
 			browser.quit()
