@@ -1,6 +1,7 @@
 import copy, numpy as np
 import random
 
+
 ##########################################################################
 ############################ Getting the Data ############################
 ##########################################################################
@@ -52,6 +53,8 @@ def get_dataset():
 		countries_dataset.append(country_id_to_country_name[country_id])
 		i += 1
 
+	print(countries_dataset)
+
 	records = get_records()
 
 	records_dataset = []
@@ -61,7 +64,7 @@ def get_dataset():
 		country_of_birth_id = record[1]
 		reduced_country_of_birth_id = country_id_to_reduced_id[country_of_birth_id]
 
-		records_dataset.append((name, reduced_country_of_birth_id))
+		records_dataset.append((name, reduced_country_of_birth_id))	
 
 	return (countries_dataset, records_dataset)
 
@@ -162,7 +165,7 @@ def main():
 
 	alpha = 0.1
 	input_dimensions = 27
-	hidden_dimensions = 300
+	hidden_dimensions = 497
 	output_dimensions = 124
 	epsilon_init = 0.12
 
