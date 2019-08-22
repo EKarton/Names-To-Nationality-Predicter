@@ -4,7 +4,7 @@ import random
 class NamesToNationalityClassifier:
     
     def __init__(self, examples, labels, possible_labels):
-        self.alpha = 0.0001
+        self.alpha = 0.1
         self.input_dimensions = 27
         self.hidden_dimensions = 497
         self.output_dimensions = 124
@@ -92,7 +92,7 @@ class NamesToNationalityClassifier:
                     letter_pos_to_hypothesis[j] = hypothesis
                     letter_pos_to_hidden_state[j] = layer_2_values
 
-                    loss = self.__get_binary_cross_entropy__(hypothesis, label)
+                    loss = self.__get_cross_entropy__(hypothesis, label)
                     letter_pos_to_loss[j] = loss
                     example_loss += loss
 
@@ -150,19 +150,8 @@ class NamesToNationalityClassifier:
 
             num_chars = len(example)
 
-            # Stores the hidden state for each letter position.
-            letter_pos_to_hidden_state = np.zeros((num_chars + 1, self.hidden_dimensions))
-
-            # Stores the layer 2 values for each letter position
-            letter_pos_to_layer_2_values = np.zeros((num_chars, self.hidden_dimensions))
-
-            # Stores the hypothesis for each letter position
-            letter_pos_to_hypothesis = np.zeros((num_chars, self.output_dimensions))
-
-            # The hidden state for the first letter position is all 0s.
-            letter_pos_to_hidden_state[0] = np.zeros(self.hidden_dimensions)
-
-            letter_pos_to_loss = np.zeros(num_chars)
+            hypothesis = None
+            hidden_state = np.zeros(self.hidden_dimensions)
 
             example_loss = 0
 
@@ -172,7 +161,6 @@ class NamesToNationalityClassifier:
                 # The inputs
                 X = example[j]
                 X_with_bias = np.r_[[self.layer_1_bias], X] # <- We add a bias to the input. It is now a 28 element array
-                hidden_state = letter_pos_to_hidden_state[j - 1]
 
                 layer_2_values = self.__sigmoid__(np.dot(self.layer_1_weights, X_with_bias) + np.dot(self.hidden_state_weights, hidden_state))
 
@@ -181,13 +169,9 @@ class NamesToNationalityClassifier:
 
                 hypothesis = self.__sigmoid__(np.dot(self.layer_2_weights, layer_2_values_with_bias))
 
-                # Update the dictionaries
-                letter_pos_to_layer_2_values[j] = layer_2_values
-                letter_pos_to_hypothesis[j] = hypothesis
-                letter_pos_to_hidden_state[j] = layer_2_values
+                hidden_state = layer_2_values
 
-                loss = self.__get_binary_cross_entropy__(hypothesis, label)
-                letter_pos_to_loss[j] = loss
+                loss = self.__get_cross_entropy__(hypothesis, label)
                 example_loss += loss
 
             total_cost += example_loss
@@ -203,13 +187,11 @@ class NamesToNationalityClassifier:
     def __derivative_sigmoid_given_sigmoid_val__(self, sigmoid_value):
 	    return sigmoid_value * (1 - sigmoid_value)
 
-    def __get_binary_cross_entropy__(self, hypothesis, expected_result):
+    def __get_cross_entropy__(self, hypothesis, expected_result):
         a = -expected_result
         b = np.log(hypothesis + 1e-15)
-        c = (1 - expected_result)
-        d = np.log(1 - hypothesis + 1e-15)
 
-        cost = np.multiply(a, b) - np.multiply(c, d)
+        cost = np.multiply(a, b) #- np.multiply(c, d)
 
         return np.sum(cost)
 
