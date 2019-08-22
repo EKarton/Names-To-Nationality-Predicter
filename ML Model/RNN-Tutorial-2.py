@@ -88,8 +88,6 @@ def get_parsed_dataset():
 		We are also going to make each name in lowercase
 		We are also going to convert each letter into a 1 x 27 matrix, where [1, 0, ..., 0] represents 'a'
 	'''
-	names = []
-	labels = []
 
 	new_records = []
 	for record in records:
@@ -132,6 +130,14 @@ def derivative_sigmoid(x):
 def derivative_sigmoid_given_sigmoid_val(sigmoid_value):
 	return sigmoid_value * (1 - sigmoid_value)
 
+def softmax(x):
+	exp = np.exp(x - np.max(x))
+	return exp / np.sum(exp)
+
+def derivative_softmax_given_softmax_val(softmax_value):
+	s = softmax_value.reshape(-1, 1)
+	return np.diagflat(s) - np.dot(s, s.T)
+
 def get_binary_cross_entropy(hypothesis, expected_result):
 	a = -expected_result
 	b = np.log(hypothesis + 1e-15)
@@ -145,10 +151,9 @@ def get_binary_cross_entropy(hypothesis, expected_result):
 def main():
 	records = get_parsed_dataset()
 
-	# Select the records that have a country to 'Andorra'
-	records = np.array(list(filter(lambda x: x[1][0] == 1, records)))
+	# Select the records that have a country to 'China', 'UK', or 'Russia'
+	records = np.array(list(filter(lambda x: x[1][45] == 1 or x[1][99] == 1, records)))	
 
-	# Shuffle the dataset
 	np.random.shuffle(records)
 
 	# Use 70% for the training set and 30% for the validation set
@@ -157,17 +162,18 @@ def main():
 
 	alpha = 0.1
 	input_dimensions = 27
-	hidden_dimensions = 200
+	hidden_dimensions = 300
 	output_dimensions = 124
+	epsilon_init = 0.12
 
 	# This is a 27 x 200 matrix
-	layer_1_weights = 2 * np.random.random((input_dimensions, hidden_dimensions)) - 1
+	layer_1_weights = 2 * np.random.random((input_dimensions, hidden_dimensions)) * (2 * epsilon_init) - epsilon_init
 
 	# This is a 200 x 124 matrix
-	layer_2_weights = 2 * np.random.random((hidden_dimensions, output_dimensions)) - 1
+	layer_2_weights = np.random.random((hidden_dimensions, output_dimensions)) * (2 * epsilon_init) - epsilon_init
 
 	# This is a 200 x 200 matrix
-	hidden_state_weights = 2 * np.random.random((hidden_dimensions, hidden_dimensions)) - 1
+	hidden_state_weights = 2 * np.random.random((hidden_dimensions, hidden_dimensions)) * (2 * epsilon_init) - epsilon_init
 
 	# This is the bias for the first layer
 	bias_1 = 1
@@ -176,7 +182,7 @@ def main():
 	bias_2 = 1
 
 	# The number of epoches
-	num_epoche = 100
+	num_epoche = 300
 
 	for _ in range(num_epoche):
 
@@ -187,16 +193,16 @@ def main():
 			y = np.array([record[1]])
 			
 			# Stores the hidden state for each letter position.
-			letter_pos_to_hidden_state = np.zeros((num_chars + 1, 1, 200))
+			letter_pos_to_hidden_state = np.zeros((num_chars + 1, 1, hidden_dimensions))
 
 			# Stores the layer 2 values for each letter position
-			letter_pos_to_layer_2_values = np.zeros((num_chars, 1, 200))
+			letter_pos_to_layer_2_values = np.zeros((num_chars, 1, hidden_dimensions))
 
 			# Stores the hypothesis for each letter position
-			letter_pos_to_hypothesis = np.zeros((num_chars, 1, 124))
+			letter_pos_to_hypothesis = np.zeros((num_chars, 1, output_dimensions))
 
 			# The hidden state for the first letter position is all 0s.
-			letter_pos_to_hidden_state[0] = np.zeros((1, 200))
+			letter_pos_to_hidden_state[0] = np.zeros((1, hidden_dimensions))
 
 			letter_pos_to_loss = np.zeros(num_chars)
 
@@ -212,7 +218,7 @@ def main():
 
 				# Perform forward propagation
 				layer_2_values = sigmoid(np.dot(X, layer_1_weights) + np.dot(hidden_state, hidden_state_weights) + bias_1)
-				hypothesis = sigmoid(np.dot(layer_2_values, layer_2_weights) + bias_2)
+				hypothesis = softmax(np.dot(layer_2_values, layer_2_weights) + bias_2)
 
 				# Update the dictionaries
 				letter_pos_to_layer_2_values[i] = layer_2_values
@@ -254,16 +260,16 @@ def main():
 		y = np.array([random_record[1]])
 		
 		# Stores the hidden state for each letter position.
-		letter_pos_to_hidden_state = np.zeros((num_chars + 1, 1, 200))
+		letter_pos_to_hidden_state = np.zeros((num_chars + 1, 1, hidden_dimensions))
 
 		# Stores the layer 2 values for each letter position
-		letter_pos_to_layer_2_values = np.zeros((num_chars, 1, 200))
+		letter_pos_to_layer_2_values = np.zeros((num_chars, 1, hidden_dimensions))
 
 		# Stores the hypothesis for each letter position
-		letter_pos_to_hypothesis = np.zeros((num_chars, 1, 124))
+		letter_pos_to_hypothesis = np.zeros((num_chars, 1, output_dimensions))
 
 		# The hidden state for the first letter position is all 0s.
-		letter_pos_to_hidden_state[0] = np.zeros((1, 200))
+		letter_pos_to_hidden_state[0] = np.zeros((1, hidden_dimensions))
 
 		overall_error = 0
 
@@ -277,7 +283,7 @@ def main():
 
 			# Perform forward propagation
 			layer_2_values = sigmoid(np.dot(X, layer_1_weights) + np.dot(hidden_state, hidden_state_weights) + bias_1)
-			hypothesis = sigmoid(np.dot(layer_2_values, layer_2_weights) + bias_2)
+			hypothesis = softmax(np.dot(layer_2_values, layer_2_weights) + bias_2)
 
 			# Update the dictionaries
 			letter_pos_to_layer_2_values[i] = layer_2_values
