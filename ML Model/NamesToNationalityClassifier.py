@@ -6,7 +6,7 @@ class NamesToNationalityClassifier:
     def __init__(self, examples, labels, possible_labels):
         self.alpha = 0.1
         self.input_dimensions = 27
-        self.hidden_dimensions = 497
+        self.hidden_dimensions = 500
         self.output_dimensions = 124
         self.epsilon_init = 0.12
         self.training_to_validation_ratio = 0.7 # This means 70% of the dataset will be used for training, and 30% is for validation
@@ -18,7 +18,7 @@ class NamesToNationalityClassifier:
         self.layer_1_bias = 1
         self.layer_2_bias = 1
 
-        self.num_epoche = 1000
+        self.num_epoche = 20
 
         # We now want to map label to index, and index to label
         self.label_to_index = {}
@@ -130,6 +130,8 @@ class NamesToNationalityClassifier:
                 self.layer_1_weights -= self.alpha * delta_1
                 self.hidden_state_weights -= self.alpha * delta_h
 
+                print('Progress:', (i / len(self.serialized_training_examples)))
+
             validation_data_error = self.__validate__()
 
             print('epoche:', epoche, '| avg validation error:', validation_data_error)
@@ -179,7 +181,49 @@ class NamesToNationalityClassifier:
         return total_cost / len(self.serialized_testing_labels)
 
     def predict(self, name):
-        return 0
+        # Serialize the name to a num_char x 27 matrix
+        example = self.__serialize__example__(name)
+
+        num_chars = len(example)
+
+        hypothesis = None
+        hidden_state = np.zeros(self.hidden_dimensions)
+
+        # Perform forward propagation
+        for j in range(num_chars):
+
+            # The inputs
+            X = example[j]
+            X_with_bias = np.r_[[self.layer_1_bias], X] # <- We add a bias to the input. It is now a 28 element array
+
+            layer_2_values = self.__sigmoid__(np.dot(self.layer_1_weights, X_with_bias) + np.dot(self.hidden_state_weights, hidden_state))
+
+            # Adding the bias
+            layer_2_values_with_bias = np.r_[[self.layer_2_bias], layer_2_values] 
+
+            hypothesis = self.__sigmoid__(np.dot(self.layer_2_weights, layer_2_values_with_bias))
+
+            hidden_state = layer_2_values
+
+        formatted_hypothesis = []
+        for k in range(self.output_dimensions):
+            formatted_hypothesis.append((hypothesis[k], self.index_to_label[k]))
+
+        formatted_hypothesis.sort()
+
+        return formatted_hypothesis
+
+    def save_model(self, filename):
+        np.savez_compressed(filename, 
+            layer_1_weights=self.layer_1_weights, 
+            layer_2_weights=self.layer_2_weights, 
+            hidden_state_weights=self.hidden_state_weights)
+
+    def load_model_from_file(self, filename):
+        data = np.load(filename)
+        self.layer_1_weights = data['layer_1_weights']
+        self.layer_2_weights = data['layer_2_weights']
+        self.hidden_state_weights = data['hidden_state_weights']
 
     def __sigmoid__(self, x):
 	    return 1 / (1 + np.exp(-x))
@@ -207,7 +251,7 @@ class NamesToNationalityClassifier:
         serialized_labels = []
 
         for example in examples:
-            serialized_example = self.__serialize__example__(example.lower())
+            serialized_example = self.__serialize__example__(example)
             serialized_examples.append(serialized_example)
         print('serialized examples')
 
@@ -246,8 +290,9 @@ class NamesToNationalityClassifier:
         ]
     '''
     def __serialize__example__(self, example):
+        example_lowercase = example.lower()
         name_array = []
-        for letter in example:
+        for letter in example_lowercase:
             ascii_code = ord(letter)
             letter_array = np.zeros(27, )
 
