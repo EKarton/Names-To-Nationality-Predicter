@@ -51,6 +51,6 @@ def populate_job_queue():
 # populate_job_queue()
 
 queue = RedisQueue('jobs')
-job = {'country_id': 5977, 'num_records': 500}
+job = {'country_id': 5998, 'num_records': 4454}
 job_in_json = json.dumps(job)
 queue.enqueue(job_in_json)

@@ -1,5 +1,6 @@
 import copy, numpy as np
 import random 
+from sklearn.utils import shuffle
 
 class NamesToNationalityClassifier:
     
@@ -7,7 +8,7 @@ class NamesToNationalityClassifier:
         self.alpha = 0.1
         self.input_dimensions = 27
         self.hidden_dimensions = 500
-        self.output_dimensions = 124
+        self.output_dimensions = len(possible_labels) #124
         self.epsilon_init = 0.12
         self.training_to_validation_ratio = 0.7 # This means 70% of the dataset will be used for training, and 30% is for validation
 
@@ -45,6 +46,10 @@ class NamesToNationalityClassifier:
 
         for epoche in range(self.num_epoche):
             total_cost = 0
+
+            # Reshuffle the data
+            self.serialized_training_examples, self.serialized_training_labels = shuffle(
+                self.serialized_training_examples, self.serialized_training_labels)
 
             for i in range(len(self.serialized_training_examples)):
 
@@ -122,7 +127,7 @@ class NamesToNationalityClassifier:
 
                     # We are not updating the weights of the bias value, so we are setting the changes for the bias weights to 0
                     # We are going to update the weights of the bias value later
-                    delta_2 += np.c_[np.zeros(124), np.dot(np.array([sigma_3]).T, np.array([layer_2_values]))]
+                    delta_2 += np.c_[np.zeros(self.output_dimensions), np.dot(np.array([sigma_3]).T, np.array([layer_2_values]))]
                     delta_h += np.dot(sigma_2, np.array([hidden_state]).T)
                     delta_1 += np.c_[np.zeros(self.hidden_dimensions), np.dot(np.array([sigma_2]).T, np.array([X]))]
 
@@ -130,17 +135,17 @@ class NamesToNationalityClassifier:
                 self.layer_1_weights -= self.alpha * delta_1
                 self.hidden_state_weights -= self.alpha * delta_h
 
-                print('Progress:', (i / len(self.serialized_training_examples)))
-
-            validation_data_error = self.__validate__()
-
-            print('epoche:', epoche, '| avg validation error:', validation_data_error)
+                # print('Progress:', (i / len(self.serialized_training_examples)))
+            avg_error, accuracy = self.__validate__()
+            print('epoche:', epoche, '| avg error:', avg_error, ' | accuracy:', accuracy)
 
     '''
         It computes how well the model runs based on the validation data
     '''
     def __validate__(self):
         total_cost = 0
+        num_correct = 0
+        num_examples_ran = 0
 
         for i in range(len(self.serialized_testing_examples)):
 
@@ -155,7 +160,7 @@ class NamesToNationalityClassifier:
             hypothesis = None
             hidden_state = np.zeros(self.hidden_dimensions)
 
-            example_loss = 0
+            total_char_loss = 0
 
             # Perform forward propagation
             for j in range(num_chars):
@@ -174,11 +179,24 @@ class NamesToNationalityClassifier:
                 hidden_state = layer_2_values
 
                 loss = self.__get_cross_entropy__(hypothesis, label)
-                example_loss += loss
+                total_char_loss += loss
 
-            total_cost += example_loss
+            # See what was predicted
+            if hypothesis is not None:
+                label_with_one_index = np.where(label == 1)
+                hypothesis_with_max_val_index = np.where(hypothesis == np.amax(hypothesis))
 
-        return total_cost / len(self.serialized_testing_labels)
+                if label_with_one_index == hypothesis_with_max_val_index:
+                    num_correct += 1
+
+                total_cost += total_char_loss
+
+                num_examples_ran += 1
+
+        avg_cost = total_cost / num_examples_ran
+        accuracy = num_correct / num_examples_ran
+
+        return avg_cost, accuracy
 
     def predict(self, name):
         # Serialize the name to a num_char x 27 matrix
@@ -226,16 +244,20 @@ class NamesToNationalityClassifier:
         self.hidden_state_weights = data['hidden_state_weights']
 
     def __sigmoid__(self, x):
-	    return 1 / (1 + np.exp(-x))
+        return 1 / (1 + np.exp(-x))
 
     def __derivative_sigmoid_given_sigmoid_val__(self, sigmoid_value):
 	    return sigmoid_value * (1 - sigmoid_value)
+
+    def __softmax__(self, x):
+        e_x = np.exp(x - np.max(x))
+        return e_x / e_x.sum(axis=0)
 
     def __get_cross_entropy__(self, hypothesis, expected_result):
         a = -expected_result
         b = np.log(hypothesis + 1e-15)
 
-        cost = np.multiply(a, b) #- np.multiply(c, d)
+        cost = np.multiply(a, b)
 
         return np.sum(cost)
 
@@ -250,16 +272,18 @@ class NamesToNationalityClassifier:
         serialized_examples = []
         serialized_labels = []
 
-        for example in examples:
+        for i in range(len(examples)):
+            example = examples[i]
+            label = labels[i]
             serialized_example = self.__serialize__example__(example)
-            serialized_examples.append(serialized_example)
-        print('serialized examples')
-
-        for label in labels:
             serialized_label = self.__serialize_label__(label)
-            serialized_labels.append(serialized_label)
 
-        print('serialized labels')
+            if serialized_example is not None and serialized_label is not None:
+                serialized_examples.append(serialized_example)
+                serialized_labels.append(serialized_label)
+
+        print('serialized', len(serialized_examples), 'examples')
+        print('serialized', len(serialized_labels), 'labels')
 
         return np.array(serialized_examples), np.array(serialized_labels)
                 
@@ -276,7 +300,7 @@ class NamesToNationalityClassifier:
     '''
     def __serialize_label__(self, label):
         index = self.label_to_index[label]
-        expected_val = np.zeros(124)
+        expected_val = np.zeros(self.output_dimensions)
         expected_val[index] = 1
         
         return expected_val
@@ -290,11 +314,60 @@ class NamesToNationalityClassifier:
         ]
     '''
     def __serialize__example__(self, example):
-        example_lowercase = example.lower()
+        unfiltered_example = example
+
+        # Make letters all lowercase
+        # Ex: Mrs. John Smith -> mrs. john smith
+        example = example.lower()
+
+        # Remove non-space and non-letter characters
+        # Ex: mrs. john smith -> mrs john smith
+        filtered_example = ''
+        for c in example:
+            if 'a' <= c <= 'z' or c == ' ':
+                filtered_example += c
+        example = filtered_example
+
+        # Remove duplicated spaces
+        # Ex: john  smith -> john smith
+        example = example.split()
+        new_example = ''
+        for c in example:
+            new_example += c + ' '
+        example = new_example[0:-1]
+
+        # Remove names with single letters
+        # Ex: john n smith -> john smith
+        example = example.split()
+        new_example = ''
+        for c in example:
+            if len(c) > 1:
+                new_example += c + ' '
+        example = new_example[0:-1]
+
+        # Remove personal titles
+        # Ex: mr john smith -> john smith
+        personal_titles = set(['dr', 'esq', 'hon', 'jr', 'mr', 'mrs', 'ms', 'messrs', 'mmes', 'msgr', 'prof', 'rev', 'rt', 'sr', 'st'])
+        example = example.split()
+        new_example = ''
+        for c in example:
+            if c not in personal_titles:
+                new_example += c + ' '
+        example = new_example[0:-1]
+
+        # Take only the surname
+        # Ex: john smith -> smith
+        if len(example) == 0:
+            return None
+
+        example = example.split()[-1]
+
+        print('Example:', unfiltered_example, '->', example)
+
         name_array = []
-        for letter in example_lowercase:
+        for letter in example:
             ascii_code = ord(letter)
-            letter_array = np.zeros(27, )
+            letter_array = np.zeros(self.input_dimensions, )
 
             if 97 <= ascii_code <= 122:
                 letter_array[ascii_code - 97] = 1
@@ -304,6 +377,3 @@ class NamesToNationalityClassifier:
             name_array.append(letter_array)
 
         return np.array(name_array)
-        
-
-
