@@ -1,14 +1,16 @@
 import copy, numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 import random 
 from sklearn.utils import shuffle
 
 class NamesToNationalityClassifier:
     
     def __init__(self, examples, labels, possible_labels):
-        self.alpha = 0.1
+        self.alpha = 0.0001
         self.input_dimensions = 27
         self.hidden_dimensions = 500
-        self.output_dimensions = len(possible_labels) #124
+        self.output_dimensions = len(possible_labels)
         self.epsilon_init = 0.12
         self.training_to_validation_ratio = 0.7 # This means 70% of the dataset will be used for training, and 30% is for validation
 
@@ -19,7 +21,7 @@ class NamesToNationalityClassifier:
         self.layer_1_bias = 1
         self.layer_2_bias = 1
 
-        self.num_epoche = 20
+        self.num_epoche = 20000
 
         # We now want to map label to index, and index to label
         self.label_to_index = {}
@@ -38,14 +40,14 @@ class NamesToNationalityClassifier:
         self.serialized_testing_examples = serialized_examples[num_training_data:]
         self.serialized_testing_labels = serialized_labels[num_training_data:]
 
-
     '''
         Trains the model based on the training data
     '''
     def train(self):
 
         for epoche in range(self.num_epoche):
-            total_cost = 0
+            train_avg_error = 0
+            train_accuracy = 0
 
             # Reshuffle the data
             self.serialized_training_examples, self.serialized_training_labels = shuffle(
@@ -61,47 +63,16 @@ class NamesToNationalityClassifier:
 
                 num_chars = len(example)
 
-                # Stores the hidden state for each letter position.
-                letter_pos_to_hidden_state = np.zeros((num_chars + 1, self.hidden_dimensions))
-
-                # Stores the layer 2 values for each letter position
-                letter_pos_to_layer_2_values = np.zeros((num_chars, self.hidden_dimensions))
-
-                # Stores the hypothesis for each letter position
-                letter_pos_to_hypothesis = np.zeros((num_chars, self.output_dimensions))
-
-                # The hidden state for the first letter position is all 0s.
-                letter_pos_to_hidden_state[0] = np.zeros(self.hidden_dimensions)
-
-                letter_pos_to_loss = np.zeros(num_chars)
-
-                example_loss = 0
-
                 # Perform forward propagation
-                for j in range(num_chars):
+                forward_propagation_results = self.__forward_propagation__(example, label)
+                letter_pos_to_hidden_state = forward_propagation_results['letter_pos_to_hidden_state']
+                letter_pos_to_layer_2_values = forward_propagation_results['letter_pos_to_layer_2_values']
+                letter_pos_to_hypothesis = forward_propagation_results['letter_pos_to_hypothesis']
+                letter_pos_to_loss = forward_propagation_results['letter_pos_to_loss']
 
-                    # The inputs
-                    X = example[j]
-                    X_with_bias = np.r_[[self.layer_1_bias], X] # <- We add a bias to the input. It is now a 28 element array
-                    hidden_state = letter_pos_to_hidden_state[j - 1]
-
-                    layer_2_values = self.__sigmoid__(np.dot(self.layer_1_weights, X_with_bias) + np.dot(self.hidden_state_weights, hidden_state))
-
-                    # Adding the bias
-                    layer_2_values_with_bias = np.r_[[self.layer_2_bias], layer_2_values] 
-
-                    hypothesis = self.__sigmoid__(np.dot(self.layer_2_weights, layer_2_values_with_bias))
-
-                    # Update the dictionaries
-                    letter_pos_to_layer_2_values[j] = layer_2_values
-                    letter_pos_to_hypothesis[j] = hypothesis
-                    letter_pos_to_hidden_state[j] = layer_2_values
-
-                    loss = self.__get_cross_entropy__(hypothesis, label)
-                    letter_pos_to_loss[j] = loss
-                    example_loss += loss
-
-                total_cost += example_loss
+                # Calculate the train avg error and the train accuracy
+                train_avg_error += np.sum(letter_pos_to_loss)
+                train_accuracy += 1 if self.__is_hypothesis_correct__(letter_pos_to_hypothesis[-1], label) else 0
 
                 # Perform back propagation through time
                 delta_1 = np.zeros((self.hidden_dimensions, self.input_dimensions + 1))
@@ -120,7 +91,7 @@ class NamesToNationalityClassifier:
                     hypothesis = letter_pos_to_hypothesis[j]
 
                     sigma_3 = (hypothesis - label)
-                    sigma_2 = np.multiply(np.dot(self.layer_2_weights.T, sigma_3), self.__derivative_sigmoid_given_sigmoid_val__(layer_2_values_with_bias))
+                    sigma_2 = np.multiply(np.dot(self.layer_2_weights.T, sigma_3), self.__derivative_tanh_given_tanh_val__(layer_2_values_with_bias))
 
                     # We are removing the bias value
                     sigma_2 = sigma_2[1:]
@@ -135,9 +106,34 @@ class NamesToNationalityClassifier:
                 self.layer_1_weights -= self.alpha * delta_1
                 self.hidden_state_weights -= self.alpha * delta_h
 
-                # print('Progress:', (i / len(self.serialized_training_examples)))
-            avg_error, accuracy = self.__validate__()
-            print('epoche:', epoche, '| avg error:', avg_error, ' | accuracy:', accuracy)
+            train_avg_error /= len(self.serialized_training_examples)
+            train_accuracy /= len(self.serialized_training_examples)
+            test_avg_error, test_accuracy = self.__validate__()
+
+            # Plot the test_avg_error vs epoche
+            plt.subplot(2, 2, 1)
+            plt.scatter(epoche, test_avg_error)
+            plt.title('Test Avg. Error vs Epoche')
+
+            # Plot the test_accuracy vs epoche
+            plt.subplot(2, 2, 2)
+            plt.scatter(epoche, test_accuracy)
+            plt.title('Test Accuracy vs Epoche')
+
+            # Plot the train_avg_error vs epoche
+            plt.subplot(2, 2, 3)
+            plt.scatter(epoche, train_avg_error)
+            plt.title('Train Avg. Error vs Epoche')
+
+            # Plot the train_accuracy vs epoche
+            plt.subplot(2, 2, 4)
+            plt.scatter(epoche, train_accuracy)
+            plt.title('Train Accuracy vs Epoche')
+
+            # We need to pause so that it will show the graph in realtime
+            plt.pause(0.05)
+
+            print('epoche:', epoche, '| test avg error:', test_avg_error, '| test accuracy:', test_accuracy, '|train avg error:', train_avg_error, '|train accuracy:', train_accuracy)
 
     '''
         It computes how well the model runs based on the validation data
@@ -155,41 +151,21 @@ class NamesToNationalityClassifier:
             # It is a 1D 124 element array
             label = self.serialized_testing_labels[i] 
 
-            num_chars = len(example)
+            forward_propagation_results = self.__forward_propagation__(example, label)
+            letter_pos_to_loss = forward_propagation_results['letter_pos_to_loss']
+            letter_pos_to_hypothesis = forward_propagation_results['letter_pos_to_hypothesis']
 
-            hypothesis = None
-            hidden_state = np.zeros(self.hidden_dimensions)
+            if len(letter_pos_to_hypothesis) > 0:
+                final_hypothesis = letter_pos_to_hypothesis[-1]
 
-            total_char_loss = 0
-
-            # Perform forward propagation
-            for j in range(num_chars):
-
-                # The inputs
-                X = example[j]
-                X_with_bias = np.r_[[self.layer_1_bias], X] # <- We add a bias to the input. It is now a 28 element array
-
-                layer_2_values = self.__sigmoid__(np.dot(self.layer_1_weights, X_with_bias) + np.dot(self.hidden_state_weights, hidden_state))
-
-                # Adding the bias
-                layer_2_values_with_bias = np.r_[[self.layer_2_bias], layer_2_values] 
-
-                hypothesis = self.__sigmoid__(np.dot(self.layer_2_weights, layer_2_values_with_bias))
-
-                hidden_state = layer_2_values
-
-                loss = self.__get_cross_entropy__(hypothesis, label)
-                total_char_loss += loss
-
-            # See what was predicted
-            if hypothesis is not None:
+                # Seeing whether the hypothesis is correct
                 label_with_one_index = np.where(label == 1)
-                hypothesis_with_max_val_index = np.where(hypothesis == np.amax(hypothesis))
+                hypothesis_with_max_val_index = np.where(final_hypothesis == np.amax(final_hypothesis))
 
                 if label_with_one_index == hypothesis_with_max_val_index:
                     num_correct += 1
 
-                total_cost += total_char_loss
+                total_cost += np.sum(letter_pos_to_loss)
 
                 num_examples_ran += 1
 
@@ -198,38 +174,93 @@ class NamesToNationalityClassifier:
 
         return avg_cost, accuracy
 
-    def predict(self, name):
-        # Serialize the name to a num_char x 27 matrix
-        example = self.__serialize__example__(name)
+    def __is_hypothesis_correct__(self, hypothesis, label):
+        label_with_one_index = np.where(label == 1)
+        hypothesis_with_max_val_index = np.where(hypothesis == np.amax(hypothesis))
 
-        num_chars = len(example)
+        if label_with_one_index == hypothesis_with_max_val_index:
+            return True
+        return False
 
-        hypothesis = None
-        hidden_state = np.zeros(self.hidden_dimensions)
+    '''
+        This function will perform a forward propagation with the serialized version of the example
+        and the serialized version of the label.
 
-        # Perform forward propagation
+        The serialized_example needs to be a 2D matrix with size num_char x self.input_dimensions.
+        The serialized_label needs to be a 1D array with size self.output_dimentions.
+
+        So this function will return:
+        - the loss at each timestep (called 'letter_pos_to_loss')
+        - the hidden states at each timestep (called 'letter_pos_to_hidden_state')
+        - the layer 2 values at each timestep (called 'letter_pos_to_layer_2_values')
+        - the hypothesis at each timestep (called 'letter_pos_to_hypothesis')
+        - 
+    '''
+    def __forward_propagation__(self, serialized_example, serialized_label):
+        num_chars = len(serialized_example)
+
+        # Stores the hidden state for each letter position.
+        letter_pos_to_hidden_state = np.zeros((num_chars + 1, self.hidden_dimensions))
+
+        # Stores the layer 2 values for each letter position
+        letter_pos_to_layer_2_values = np.zeros((num_chars, self.hidden_dimensions))
+
+        # Stores the hypothesis for each letter position
+        letter_pos_to_hypothesis = np.zeros((num_chars, self.output_dimensions))
+
+        # The hidden state for the first letter position is all 0s.
+        letter_pos_to_hidden_state[0] = np.zeros(self.hidden_dimensions)
+
+        # The loss for each letter position
+        letter_pos_to_loss = np.zeros((num_chars, ))
+
         for j in range(num_chars):
-
             # The inputs
-            X = example[j]
+            X = serialized_example[j]
             X_with_bias = np.r_[[self.layer_1_bias], X] # <- We add a bias to the input. It is now a 28 element array
+            hidden_state = letter_pos_to_hidden_state[j - 1]
 
-            layer_2_values = self.__sigmoid__(np.dot(self.layer_1_weights, X_with_bias) + np.dot(self.hidden_state_weights, hidden_state))
+            layer_2_values = self.__tanh__(np.dot(self.layer_1_weights, X_with_bias) + np.dot(self.hidden_state_weights, hidden_state))
 
             # Adding the bias
             layer_2_values_with_bias = np.r_[[self.layer_2_bias], layer_2_values] 
 
-            hypothesis = self.__sigmoid__(np.dot(self.layer_2_weights, layer_2_values_with_bias))
+            hypothesis = self.__softmax__(np.dot(self.layer_2_weights, layer_2_values_with_bias))
 
-            hidden_state = layer_2_values
+            # Update the dictionaries
+            letter_pos_to_layer_2_values[j] = layer_2_values
+            letter_pos_to_hypothesis[j] = hypothesis
+            letter_pos_to_hidden_state[j] = layer_2_values
 
-        formatted_hypothesis = []
-        for k in range(self.output_dimensions):
-            formatted_hypothesis.append((hypothesis[k], self.index_to_label[k]))
+            letter_pos_to_loss[j] = self.__get_cross_entropy__(hypothesis, serialized_label)
+        
+        return {
+            'letter_pos_to_loss': letter_pos_to_loss,
+            'letter_pos_to_hidden_state': letter_pos_to_hidden_state,
+            'letter_pos_to_layer_2_values': letter_pos_to_layer_2_values,
+            'letter_pos_to_hypothesis': letter_pos_to_hypothesis
+        }
 
-        formatted_hypothesis.sort()
+    def predict(self, name):
+        # Serialize the name to a num_char x 27 matrix
+        example = self.__serialize__example__(name)
+        # num_chars = len(example)
+        label = np.zeros((self.output_dimensions, ))
 
-        return formatted_hypothesis
+        forward_propagation_results = self.__forward_propagation__(example, label)
+        letter_pos_to_hypothesis = forward_propagation_results['letter_pos_to_hypothesis']
+
+        if len(letter_pos_to_hypothesis) > 0:
+            hypothesis = letter_pos_to_hypothesis[-1]
+            formatted_hypothesis = []
+            for k in range(self.output_dimensions):
+                formatted_hypothesis.append((hypothesis[k], self.index_to_label[k]))
+
+            formatted_hypothesis.sort()
+
+            return formatted_hypothesis
+        else:
+            raise Exception('Hypothesis cannot be obtained')
 
     def save_model(self, filename):
         np.savez_compressed(filename, 
@@ -249,17 +280,18 @@ class NamesToNationalityClassifier:
     def __derivative_sigmoid_given_sigmoid_val__(self, sigmoid_value):
 	    return sigmoid_value * (1 - sigmoid_value)
 
+    def __tanh__(self, x):
+        return np.tanh(x)
+
+    def __derivative_tanh_given_tanh_val__(self, tanh_value):
+        return 1.0 - (tanh_value ** 2)
+
     def __softmax__(self, x):
         e_x = np.exp(x - np.max(x))
-        return e_x / e_x.sum(axis=0)
+        return e_x / np.sum(e_x, axis=0)
 
-    def __get_cross_entropy__(self, hypothesis, expected_result):
-        a = -expected_result
-        b = np.log(hypothesis + 1e-15)
-
-        cost = np.multiply(a, b)
-
-        return np.sum(cost)
+    def __get_cross_entropy__(self, hypothesis, expected_result, epsilon=1e-12):
+        return -np.sum(np.multiply(expected_result, np.log(hypothesis + epsilon)))
 
     '''
         Puts the examples into an array of chars, with each char being a 28 bit array, 

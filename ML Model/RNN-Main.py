@@ -50,6 +50,8 @@ def get_dataset():
     records = [( record[0], country_id_to_country[record[1]][0] ) for record in get_records()]
     records = list(filter(lambda x: x[1] == 'China' or x[1] == 'United Kingdom', records))
     np.random.shuffle(records)
+	
+    records = records[0:500]
 
     examples = [ record[0] for record in records ]
     labels = [ record[1] for record in records ]
@@ -63,10 +65,10 @@ def main():
 
     # Train the model
     classifier.train()
-    # classifier.save_model('data')
+    classifier.save_model('data')
 
     # Make predictions
     # classifier.load_model_from_file('data.npz')
-    # print(classifier.predict('George'))
+    # print(classifier.predict('karen wong'))
 
 main()
