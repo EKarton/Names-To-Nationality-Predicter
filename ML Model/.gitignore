@@ -1,0 +1,6 @@
+Ignoring virtualenv files
+bin/
+include/
+__pycache__/
+share/
+lib/
