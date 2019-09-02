@@ -1,4 +1,5 @@
-import copy, numpy as np
+import copy
+import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import random 
@@ -64,9 +65,7 @@ class NamesToNationalityClassifier:
                 label = self.serialized_training_labels[i] 
 
                 # Perform forward propagation
-                forward_propagation_results = self.__forward_propagation__(example, label)
-                letter_pos_to_hidden_state = forward_propagation_results['letter_pos_to_hidden_state']
-                letter_pos_to_layer_2_values = forward_propagation_results['letter_pos_to_layer_2_values']
+                forward_propagation_results = self.__perform_forward_propagation__(example, label)
                 letter_pos_to_hypothesis = forward_propagation_results['letter_pos_to_hypothesis']
                 letter_pos_to_loss = forward_propagation_results['letter_pos_to_loss']
 
@@ -74,49 +73,54 @@ class NamesToNationalityClassifier:
                 train_avg_error += np.sum(letter_pos_to_loss)
                 train_accuracy += 1 if self.__is_hypothesis_correct__(letter_pos_to_hypothesis[-1], label) else 0
 
-                # The gradients that will be computed from the for loop
-                layer_1_weights_gradient = np.zeros((self.hidden_dimensions, self.input_dimensions + 1))
-                layer_2_weights_gradient = np.zeros((self.output_dimensions, self.hidden_dimensions + 1))
-                hidden_weights_gradient = np.zeros((self.hidden_dimensions, self.hidden_dimensions))
+                # Perform back propagation
+                self.__perform_back_propagation__(example, label, forward_propagation_results)
 
-                num_chars = len(example)
 
-                for j in range(num_chars - 1, -1, -1):
-                    X = example[j]
-                    X_with_bias = np.r_[[self.layer_1_bias], X]
+
+                # # The gradients that will be computed from the for loop
+                # layer_1_weights_gradient = np.zeros((self.hidden_dimensions, self.input_dimensions + 1))
+                # layer_2_weights_gradient = np.zeros((self.output_dimensions, self.hidden_dimensions + 1))
+                # hidden_weights_gradient = np.zeros((self.hidden_dimensions, self.hidden_dimensions))
+
+                # num_chars = len(example)
+
+                # for j in range(num_chars - 1, -1, -1):
+                #     X = example[j]
+                #     X_with_bias = np.r_[[self.layer_1_bias], X]
                     
-                    # This is a 1D array with "self.hidden_dimensions" elements
-                    hidden_state = letter_pos_to_hidden_state[j]                    
+                #     # This is a 1D array with "self.hidden_dimensions" elements
+                #     hidden_state = letter_pos_to_hidden_state[j]                    
 
-                    # This is a 1D array with "self.hidden_dimensions" elements
-                    layer_2_values = letter_pos_to_layer_2_values[j]
+                #     # This is a 1D array with "self.hidden_dimensions" elements
+                #     layer_2_values = letter_pos_to_layer_2_values[j]
 
-                    # Adding the bias
-                    # This is a 1D array with "self.hidden_dimensions + 1" elements
-                    layer_2_values_with_bias = np.r_[[self.layer_2_bias], layer_2_values]
+                #     # Adding the bias
+                #     # This is a 1D array with "self.hidden_dimensions + 1" elements
+                #     layer_2_values_with_bias = np.r_[[self.layer_2_bias], layer_2_values]
 
-                    # This is a 1D array with "self.output_dimensions" elements                    
-                    hypothesis = letter_pos_to_hypothesis[j]
+                #     # This is a 1D array with "self.output_dimensions" elements                    
+                #     hypothesis = letter_pos_to_hypothesis[j]
 
-                    # This is a 1D array with "self.output_dimentions" elements
-                    delta_3 = hypothesis - label
+                #     # This is a 1D array with "self.output_dimentions" elements
+                #     delta_3 = hypothesis - label
 
-                    # This is a 1D array with "self.hidden_dimensions + 1" elements
-                    delta_2 = np.multiply(np.dot(self.layer_2_weights.T, delta_3), ActivationFunctions.__derivative_tanh_given_tanh_val__(layer_2_values_with_bias))
+                #     # This is a 1D array with "self.hidden_dimensions + 1" elements
+                #     delta_2 = np.multiply(np.dot(self.layer_2_weights.T, delta_3), ActivationFunctions.tanh_derivative_given_tanh_val(layer_2_values_with_bias))
 
-                    # We are removing the bias value
-                    # So now it is a "self.hidden_dimensions" elements
-                    delta_2 = delta_2[1:]
+                #     # We are removing the bias value
+                #     # So now it is a "self.hidden_dimensions" elements
+                #     delta_2 = delta_2[1:]
 
-                    # We are not updating the weights of the bias value, so we are setting the changes for the bias weights to 0
-                    # We are going to update the weights of the bias value later
-                    layer_2_weights_gradient += np.dot(np.array([delta_3]).T, np.array([layer_2_values_with_bias]))
-                    layer_1_weights_gradient += np.dot(np.array([delta_2]).T, np.array([X_with_bias]))
-                    hidden_weights_gradient += np.dot(np.array([delta_2]).T, np.array([hidden_state]))
+                #     # We are not updating the weights of the bias value, so we are setting the changes for the bias weights to 0
+                #     # We are going to update the weights of the bias value later
+                #     layer_2_weights_gradient += np.dot(np.array([delta_3]).T, np.array([layer_2_values_with_bias]))
+                #     layer_1_weights_gradient += np.dot(np.array([delta_2]).T, np.array([X_with_bias]))
+                #     hidden_weights_gradient += np.dot(np.array([delta_2]).T, np.array([hidden_state]))
 
-                self.layer_2_weights -= self.alpha * layer_2_weights_gradient
-                self.layer_1_weights -= self.alpha * layer_1_weights_gradient
-                self.hidden_state_weights -= self.alpha * hidden_weights_gradient
+                # self.layer_2_weights -= self.alpha * layer_2_weights_gradient
+                # self.layer_1_weights -= self.alpha * layer_1_weights_gradient
+                # self.hidden_state_weights -= self.alpha * hidden_weights_gradient
 
             train_avg_error /= len(self.serialized_training_examples)
             train_accuracy /= len(self.serialized_training_examples)
@@ -163,7 +167,7 @@ class NamesToNationalityClassifier:
             # It is a 1D 124 element array
             label = self.serialized_testing_labels[i] 
 
-            forward_propagation_results = self.__forward_propagation__(example, label)
+            forward_propagation_results = self.__perform_forward_propagation__(example, label)
             letter_pos_to_loss = forward_propagation_results['letter_pos_to_loss']
             letter_pos_to_hypothesis = forward_propagation_results['letter_pos_to_hypothesis']
 
@@ -206,7 +210,7 @@ class NamesToNationalityClassifier:
         - the hypothesis at each timestep (called 'letter_pos_to_hypothesis')
         - 
     '''
-    def __forward_propagation__(self, serialized_example, serialized_label):
+    def __perform_forward_propagation__(self, serialized_example, serialized_label):
         num_chars = len(serialized_example)
 
         # Stores the hidden state for each letter position.
@@ -230,19 +234,19 @@ class NamesToNationalityClassifier:
             X_with_bias = np.r_[[self.layer_1_bias], X] # <- We add a bias to the input. It is now a 28 element array
             hidden_state = letter_pos_to_hidden_state[j - 1]
 
-            layer_2_values = ActivationFunctions.__tanh__(np.dot(self.layer_1_weights, X_with_bias) + np.dot(self.hidden_state_weights, hidden_state))
+            layer_2_values = ActivationFunctions.tanh(np.dot(self.layer_1_weights, X_with_bias) + np.dot(self.hidden_state_weights, hidden_state))
 
             # Adding the bias
             layer_2_values_with_bias = np.r_[[self.layer_2_bias], layer_2_values] 
 
-            hypothesis = ActivationFunctions.__softmax__(np.dot(self.layer_2_weights, layer_2_values_with_bias))
+            hypothesis = ActivationFunctions.softmax(np.dot(self.layer_2_weights, layer_2_values_with_bias))
 
             # Update the dictionaries
             letter_pos_to_layer_2_values[j] = layer_2_values
             letter_pos_to_hypothesis[j] = hypothesis
             letter_pos_to_hidden_state[j] = layer_2_values
 
-            letter_pos_to_loss[j] = LossFunctions.__get_cross_entropy__(hypothesis, serialized_label)
+            letter_pos_to_loss[j] = LossFunctions.cross_entropy(hypothesis, serialized_label)
         
         return {
             'letter_pos_to_loss': letter_pos_to_loss,
@@ -251,13 +255,68 @@ class NamesToNationalityClassifier:
             'letter_pos_to_hypothesis': letter_pos_to_hypothesis
         }
 
+    '''
+        Performs back propagation.
+        Note that it requires the results from self.__perform_forward_propagation__() on the same example
+        Note that the example needs to be a serialized example, and the label needs to be a serialized label
+    '''
+    def __perform_back_propagation__(self, serialized_example, serialized_label, forward_propagation_results):
+        letter_pos_to_hidden_state = forward_propagation_results['letter_pos_to_hidden_state']
+        letter_pos_to_layer_2_values = forward_propagation_results['letter_pos_to_layer_2_values']
+        letter_pos_to_hypothesis = forward_propagation_results['letter_pos_to_hypothesis']
+        letter_pos_to_loss = forward_propagation_results['letter_pos_to_loss']
+
+        # The gradients
+        layer_1_weights_gradient = np.zeros((self.hidden_dimensions, self.input_dimensions + 1))
+        layer_2_weights_gradient = np.zeros((self.output_dimensions, self.hidden_dimensions + 1))
+        hidden_weights_gradient = np.zeros((self.hidden_dimensions, self.hidden_dimensions))
+
+        num_chars = len(serialized_example)
+
+        for j in range(num_chars - 1, -1, -1):
+            X = serialized_example[j]
+            X_with_bias = np.r_[[self.layer_1_bias], X]
+            
+            # This is a 1D array with "self.hidden_dimensions" elements
+            hidden_state = letter_pos_to_hidden_state[j]                    
+
+            # This is a 1D array with "self.hidden_dimensions" elements
+            layer_2_values = letter_pos_to_layer_2_values[j]
+
+            # Adding the bias
+            # This is a 1D array with "self.hidden_dimensions + 1" elements
+            layer_2_values_with_bias = np.r_[[self.layer_2_bias], layer_2_values]
+
+            # This is a 1D array with "self.output_dimensions" elements                    
+            hypothesis = letter_pos_to_hypothesis[j]
+
+            # This is a 1D array with "self.output_dimentions" elements
+            delta_3 = hypothesis - serialized_label
+
+            # This is a 1D array with "self.hidden_dimensions + 1" elements
+            delta_2 = np.multiply(np.dot(self.layer_2_weights.T, delta_3), ActivationFunctions.tanh_derivative_given_tanh_val(layer_2_values_with_bias))
+
+            # We are removing the bias value
+            # So now it is a "self.hidden_dimensions" elements
+            delta_2 = delta_2[1:]
+
+            # We are not updating the weights of the bias value, so we are setting the changes for the bias weights to 0
+            # We are going to update the weights of the bias value later
+            layer_2_weights_gradient += np.dot(np.array([delta_3]).T, np.array([layer_2_values_with_bias]))
+            layer_1_weights_gradient += np.dot(np.array([delta_2]).T, np.array([X_with_bias]))
+            hidden_weights_gradient += np.dot(np.array([delta_2]).T, np.array([hidden_state]))
+
+        self.layer_2_weights -= self.alpha * layer_2_weights_gradient
+        self.layer_1_weights -= self.alpha * layer_1_weights_gradient
+        self.hidden_state_weights -= self.alpha * hidden_weights_gradient
+
     def predict(self, name):
         # Serialize the name to a num_char x 27 matrix
         example = self.__serialize__example__(name)
         # num_chars = len(example)
         label = np.zeros((self.output_dimensions, ))
 
-        forward_propagation_results = self.__forward_propagation__(example, label)
+        forward_propagation_results = self.__perform_forward_propagation__(example, label)
         letter_pos_to_hypothesis = forward_propagation_results['letter_pos_to_hypothesis']
 
         if len(letter_pos_to_hypothesis) > 0:
@@ -283,25 +342,6 @@ class NamesToNationalityClassifier:
         self.layer_1_weights = data['layer_1_weights']
         self.layer_2_weights = data['layer_2_weights']
         self.hidden_state_weights = data['hidden_state_weights']
-
-    # def __sigmoid__(self, x):
-    #     return 1 / (1 + np.exp(-x))
-
-    # def __derivative_sigmoid_given_sigmoid_val__(self, sigmoid_value):
-	#     return sigmoid_value * (1 - sigmoid_value)
-
-    # def __tanh__(self, x):
-    #     return np.tanh(x)
-
-    # def __derivative_tanh_given_tanh_val__(self, tanh_value):
-    #     return 1.0 - (tanh_value ** 2)
-
-    # def __softmax__(self, x):
-    #     e_x = np.exp(x - np.max(x))
-    #     return e_x / np.sum(e_x, axis=0)
-
-    # def __get_cross_entropy__(self, hypothesis, expected_result, epsilon=1e-12):
-    #     return -np.sum(np.multiply(expected_result, np.log(hypothesis + epsilon)))
 
     '''
         Puts the examples into an array of chars, with each char being a 28 bit array, 
