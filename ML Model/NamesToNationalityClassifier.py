@@ -21,7 +21,7 @@ class NamesToNationalityClassifier:
         self.layer_1_bias = 1
         self.layer_2_bias = 1
 
-        self.num_epoche = 20000
+        self.num_epoche = 100
 
         # We now want to map label to index, and index to label
         self.label_to_index = {}
