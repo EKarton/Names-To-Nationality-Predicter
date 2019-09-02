@@ -88,7 +88,7 @@ def get_dataset():
     countries = [ country_id_to_country[id][0] for id in country_id_to_country ]
 	
     records = [( record[0], country_id_to_country[record[1]][0] ) for record in get_records()]
-    records = list(filter(lambda x: x[1] == 'China' or x[1] == 'United Kingdom', records))
+    # records = list(filter(lambda x: x[1] == 'China' or x[1] == 'United Kingdom', records))
     np.random.shuffle(records)
 	
     # Splits the records into two lists
