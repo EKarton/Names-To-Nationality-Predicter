@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import random 
 from sklearn.utils import shuffle
+from ml_utils import ActivationFunctions, LossFunctions
 
 class NamesToNationalityClassifier:
     
@@ -101,7 +102,7 @@ class NamesToNationalityClassifier:
                     delta_3 = hypothesis - label
 
                     # This is a 1D array with "self.hidden_dimensions + 1" elements
-                    delta_2 = np.multiply(np.dot(self.layer_2_weights.T, delta_3), self.__derivative_tanh_given_tanh_val__(layer_2_values_with_bias))
+                    delta_2 = np.multiply(np.dot(self.layer_2_weights.T, delta_3), ActivationFunctions.__derivative_tanh_given_tanh_val__(layer_2_values_with_bias))
 
                     # We are removing the bias value
                     # So now it is a "self.hidden_dimensions" elements
@@ -229,19 +230,19 @@ class NamesToNationalityClassifier:
             X_with_bias = np.r_[[self.layer_1_bias], X] # <- We add a bias to the input. It is now a 28 element array
             hidden_state = letter_pos_to_hidden_state[j - 1]
 
-            layer_2_values = self.__tanh__(np.dot(self.layer_1_weights, X_with_bias) + np.dot(self.hidden_state_weights, hidden_state))
+            layer_2_values = ActivationFunctions.__tanh__(np.dot(self.layer_1_weights, X_with_bias) + np.dot(self.hidden_state_weights, hidden_state))
 
             # Adding the bias
             layer_2_values_with_bias = np.r_[[self.layer_2_bias], layer_2_values] 
 
-            hypothesis = self.__softmax__(np.dot(self.layer_2_weights, layer_2_values_with_bias))
+            hypothesis = ActivationFunctions.__softmax__(np.dot(self.layer_2_weights, layer_2_values_with_bias))
 
             # Update the dictionaries
             letter_pos_to_layer_2_values[j] = layer_2_values
             letter_pos_to_hypothesis[j] = hypothesis
             letter_pos_to_hidden_state[j] = layer_2_values
 
-            letter_pos_to_loss[j] = self.__get_cross_entropy__(hypothesis, serialized_label)
+            letter_pos_to_loss[j] = LossFunctions.__get_cross_entropy__(hypothesis, serialized_label)
         
         return {
             'letter_pos_to_loss': letter_pos_to_loss,
@@ -283,24 +284,24 @@ class NamesToNationalityClassifier:
         self.layer_2_weights = data['layer_2_weights']
         self.hidden_state_weights = data['hidden_state_weights']
 
-    def __sigmoid__(self, x):
-        return 1 / (1 + np.exp(-x))
+    # def __sigmoid__(self, x):
+    #     return 1 / (1 + np.exp(-x))
 
-    def __derivative_sigmoid_given_sigmoid_val__(self, sigmoid_value):
-	    return sigmoid_value * (1 - sigmoid_value)
+    # def __derivative_sigmoid_given_sigmoid_val__(self, sigmoid_value):
+	#     return sigmoid_value * (1 - sigmoid_value)
 
-    def __tanh__(self, x):
-        return np.tanh(x)
+    # def __tanh__(self, x):
+    #     return np.tanh(x)
 
-    def __derivative_tanh_given_tanh_val__(self, tanh_value):
-        return 1.0 - (tanh_value ** 2)
+    # def __derivative_tanh_given_tanh_val__(self, tanh_value):
+    #     return 1.0 - (tanh_value ** 2)
 
-    def __softmax__(self, x):
-        e_x = np.exp(x - np.max(x))
-        return e_x / np.sum(e_x, axis=0)
+    # def __softmax__(self, x):
+    #     e_x = np.exp(x - np.max(x))
+    #     return e_x / np.sum(e_x, axis=0)
 
-    def __get_cross_entropy__(self, hypothesis, expected_result, epsilon=1e-12):
-        return -np.sum(np.multiply(expected_result, np.log(hypothesis + epsilon)))
+    # def __get_cross_entropy__(self, hypothesis, expected_result, epsilon=1e-12):
+    #     return -np.sum(np.multiply(expected_result, np.log(hypothesis + epsilon)))
 
     '''
         Puts the examples into an array of chars, with each char being a 28 bit array, 

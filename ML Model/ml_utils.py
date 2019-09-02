@@ -1,9 +1,8 @@
 import numpy as np
 
 '''
-    This contains helpful functions that are used for ML computations
+    This contains useful activation functions
 '''
-
 class ActivationFunctions:
 
     @staticmethod
@@ -27,6 +26,10 @@ class ActivationFunctions:
         e_x = np.exp(x - np.max(x))
         return e_x / np.sum(e_x, axis=0)
 
+'''
+    This contains useful loss functions
+'''
+class LossFunctions:
     @staticmethod
     def __get_cross_entropy__(hypothesis, expected_result, epsilon=1e-12):
         return -np.sum(np.multiply(expected_result, np.log(hypothesis + epsilon)))
