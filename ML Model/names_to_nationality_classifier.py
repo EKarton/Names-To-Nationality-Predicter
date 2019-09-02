@@ -76,52 +76,6 @@ class NamesToNationalityClassifier:
                 # Perform back propagation
                 self.__perform_back_propagation__(example, label, forward_propagation_results)
 
-
-
-                # # The gradients that will be computed from the for loop
-                # layer_1_weights_gradient = np.zeros((self.hidden_dimensions, self.input_dimensions + 1))
-                # layer_2_weights_gradient = np.zeros((self.output_dimensions, self.hidden_dimensions + 1))
-                # hidden_weights_gradient = np.zeros((self.hidden_dimensions, self.hidden_dimensions))
-
-                # num_chars = len(example)
-
-                # for j in range(num_chars - 1, -1, -1):
-                #     X = example[j]
-                #     X_with_bias = np.r_[[self.layer_1_bias], X]
-                    
-                #     # This is a 1D array with "self.hidden_dimensions" elements
-                #     hidden_state = letter_pos_to_hidden_state[j]                    
-
-                #     # This is a 1D array with "self.hidden_dimensions" elements
-                #     layer_2_values = letter_pos_to_layer_2_values[j]
-
-                #     # Adding the bias
-                #     # This is a 1D array with "self.hidden_dimensions + 1" elements
-                #     layer_2_values_with_bias = np.r_[[self.layer_2_bias], layer_2_values]
-
-                #     # This is a 1D array with "self.output_dimensions" elements                    
-                #     hypothesis = letter_pos_to_hypothesis[j]
-
-                #     # This is a 1D array with "self.output_dimentions" elements
-                #     delta_3 = hypothesis - label
-
-                #     # This is a 1D array with "self.hidden_dimensions + 1" elements
-                #     delta_2 = np.multiply(np.dot(self.layer_2_weights.T, delta_3), ActivationFunctions.tanh_derivative_given_tanh_val(layer_2_values_with_bias))
-
-                #     # We are removing the bias value
-                #     # So now it is a "self.hidden_dimensions" elements
-                #     delta_2 = delta_2[1:]
-
-                #     # We are not updating the weights of the bias value, so we are setting the changes for the bias weights to 0
-                #     # We are going to update the weights of the bias value later
-                #     layer_2_weights_gradient += np.dot(np.array([delta_3]).T, np.array([layer_2_values_with_bias]))
-                #     layer_1_weights_gradient += np.dot(np.array([delta_2]).T, np.array([X_with_bias]))
-                #     hidden_weights_gradient += np.dot(np.array([delta_2]).T, np.array([hidden_state]))
-
-                # self.layer_2_weights -= self.alpha * layer_2_weights_gradient
-                # self.layer_1_weights -= self.alpha * layer_1_weights_gradient
-                # self.hidden_state_weights -= self.alpha * hidden_weights_gradient
-
             train_avg_error /= len(self.serialized_training_examples)
             train_accuracy /= len(self.serialized_training_examples)
             test_avg_error, test_accuracy = self.__validate__()
@@ -150,6 +104,19 @@ class NamesToNationalityClassifier:
             plt.pause(0.05)
 
             print('epoche:', epoche, '| test avg error:', test_avg_error, '| test accuracy:', test_accuracy, '|train avg error:', train_avg_error, '|train accuracy:', train_accuracy)
+
+    '''
+        Trains an example with a label.
+    '''
+    def train_example(self, example, label):
+        serialized_example = self.__serialize__example__(example)
+        serialized_label = self.__serialize_label__(label)
+
+        # Perform forward propagation
+        forward_propagation_results = self.__perform_forward_propagation__(serialized_example, serialized_label)
+
+        # Perform back propagation
+        self.__perform_back_propagation__(serialized_example, serialized_label, forward_propagation_results)
 
     '''
         It computes how well the model runs based on the validation data
