@@ -41,7 +41,8 @@ class NamesToNationalityClassifier:
         self.serialized_testing_labels = serialized_labels[num_training_data:]
 
     '''
-        Trains the model based on the training data
+        Trains the model based on the training data provided.
+        It will output a graph.
     '''
     def train(self):
 
