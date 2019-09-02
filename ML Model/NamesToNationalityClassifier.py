@@ -7,9 +7,9 @@ from sklearn.utils import shuffle
 class NamesToNationalityClassifier:
     
     def __init__(self, examples, labels, possible_labels):
-        self.alpha = 0.0001
+        self.alpha = 0.001
         self.input_dimensions = 27
-        self.hidden_dimensions = 500
+        self.hidden_dimensions = 496
         self.output_dimensions = len(possible_labels)
         self.epsilon_init = 0.12
         self.training_to_validation_ratio = 0.7 # This means 70% of the dataset will be used for training, and 30% is for validation
@@ -55,13 +55,11 @@ class NamesToNationalityClassifier:
 
             for i in range(len(self.serialized_training_examples)):
 
-                # It is a num_char x 27 matrix
+                # It is a "num_char" x "self.input_dimensions" matrix
                 example = self.serialized_training_examples[i]
 
-                # It is a 1D 124 element array
+                # It is a 1D array with "self.output_dimensions" elements
                 label = self.serialized_training_labels[i] 
-
-                num_chars = len(example)
 
                 # Perform forward propagation
                 forward_propagation_results = self.__forward_propagation__(example, label)
@@ -74,37 +72,49 @@ class NamesToNationalityClassifier:
                 train_avg_error += np.sum(letter_pos_to_loss)
                 train_accuracy += 1 if self.__is_hypothesis_correct__(letter_pos_to_hypothesis[-1], label) else 0
 
-                # Perform back propagation through time
-                delta_1 = np.zeros((self.hidden_dimensions, self.input_dimensions + 1))
-                delta_h = np.zeros((self.hidden_dimensions, self.hidden_dimensions))
-                delta_2 = np.zeros((self.output_dimensions, self.hidden_dimensions + 1))
+                # The gradients that will be computed from the for loop
+                layer_1_weights_gradient = np.zeros((self.hidden_dimensions, self.input_dimensions + 1))
+                layer_2_weights_gradient = np.zeros((self.output_dimensions, self.hidden_dimensions + 1))
+                hidden_weights_gradient = np.zeros((self.hidden_dimensions, self.hidden_dimensions))
+
+                num_chars = len(example)
 
                 for j in range(num_chars - 1, -1, -1):
                     X = example[j]
-                    hidden_state = letter_pos_to_hidden_state[j]
+                    X_with_bias = np.r_[[self.layer_1_bias], X]
                     
+                    # This is a 1D array with "self.hidden_dimensions" elements
+                    hidden_state = letter_pos_to_hidden_state[j]                    
+
+                    # This is a 1D array with "self.hidden_dimensions" elements
                     layer_2_values = letter_pos_to_layer_2_values[j]
 
                     # Adding the bias
+                    # This is a 1D array with "self.hidden_dimensions + 1" elements
                     layer_2_values_with_bias = np.r_[[self.layer_2_bias], layer_2_values]
-                    
+
+                    # This is a 1D array with "self.output_dimensions" elements                    
                     hypothesis = letter_pos_to_hypothesis[j]
 
-                    sigma_3 = (hypothesis - label)
-                    sigma_2 = np.multiply(np.dot(self.layer_2_weights.T, sigma_3), self.__derivative_tanh_given_tanh_val__(layer_2_values_with_bias))
+                    # This is a 1D array with "self.output_dimentions" elements
+                    delta_3 = hypothesis - label
+
+                    # This is a 1D array with "self.hidden_dimensions + 1" elements
+                    delta_2 = np.multiply(np.dot(self.layer_2_weights.T, delta_3), self.__derivative_tanh_given_tanh_val__(layer_2_values_with_bias))
 
                     # We are removing the bias value
-                    sigma_2 = sigma_2[1:]
+                    # So now it is a "self.hidden_dimensions" elements
+                    delta_2 = delta_2[1:]
 
                     # We are not updating the weights of the bias value, so we are setting the changes for the bias weights to 0
                     # We are going to update the weights of the bias value later
-                    delta_2 += np.c_[np.zeros(self.output_dimensions), np.dot(np.array([sigma_3]).T, np.array([layer_2_values]))]
-                    delta_h += np.dot(sigma_2, np.array([hidden_state]).T)
-                    delta_1 += np.c_[np.zeros(self.hidden_dimensions), np.dot(np.array([sigma_2]).T, np.array([X]))]
+                    layer_2_weights_gradient += np.dot(np.array([delta_3]).T, np.array([layer_2_values_with_bias]))
+                    layer_1_weights_gradient += np.dot(np.array([delta_2]).T, np.array([X_with_bias]))
+                    hidden_weights_gradient += np.dot(np.array([delta_2]).T, np.array([hidden_state]))
 
-                self.layer_2_weights -= self.alpha * delta_2
-                self.layer_1_weights -= self.alpha * delta_1
-                self.hidden_state_weights -= self.alpha * delta_h
+                self.layer_2_weights -= self.alpha * layer_2_weights_gradient
+                self.layer_1_weights -= self.alpha * layer_1_weights_gradient
+                self.hidden_state_weights -= self.alpha * hidden_weights_gradient
 
             train_avg_error /= len(self.serialized_training_examples)
             train_accuracy /= len(self.serialized_training_examples)
@@ -159,10 +169,7 @@ class NamesToNationalityClassifier:
                 final_hypothesis = letter_pos_to_hypothesis[-1]
 
                 # Seeing whether the hypothesis is correct
-                label_with_one_index = np.where(label == 1)
-                hypothesis_with_max_val_index = np.where(final_hypothesis == np.amax(final_hypothesis))
-
-                if label_with_one_index == hypothesis_with_max_val_index:
+                if self.__is_hypothesis_correct__(final_hypothesis, label):
                     num_correct += 1
 
                 total_cost += np.sum(letter_pos_to_loss)
@@ -175,11 +182,12 @@ class NamesToNationalityClassifier:
         return avg_cost, accuracy
 
     def __is_hypothesis_correct__(self, hypothesis, label):
-        label_with_one_index = np.where(label == 1)
-        hypothesis_with_max_val_index = np.where(hypothesis == np.amax(hypothesis))
+        label_with_one_index = np.where(label == 1)[0]
+        hypothesis_with_max_val_indexes = np.where(hypothesis == np.amax(hypothesis))[0]
 
-        if label_with_one_index == hypothesis_with_max_val_index:
-            return True
+        for index in hypothesis_with_max_val_indexes:
+            if index in label_with_one_index:
+                return True
         return False
 
     '''
