@@ -81,27 +81,27 @@ class NamesToNationalityClassifier:
             test_avg_error, test_accuracy = self.__validate__()
 
             # Plot the test_avg_error vs epoche
-            plt.subplot(2, 2, 1)
-            plt.scatter(epoche, test_avg_error)
-            plt.title('Test Avg. Error vs Epoche')
+            # plt.subplot(2, 2, 1)
+            # plt.scatter(epoche, test_avg_error)
+            # plt.title('Test Avg. Error vs Epoche')
 
-            # Plot the test_accuracy vs epoche
-            plt.subplot(2, 2, 2)
-            plt.scatter(epoche, test_accuracy)
-            plt.title('Test Accuracy vs Epoche')
+            # # Plot the test_accuracy vs epoche
+            # plt.subplot(2, 2, 2)
+            # plt.scatter(epoche, test_accuracy)
+            # plt.title('Test Accuracy vs Epoche')
 
-            # Plot the train_avg_error vs epoche
-            plt.subplot(2, 2, 3)
-            plt.scatter(epoche, train_avg_error)
-            plt.title('Train Avg. Error vs Epoche')
+            # # Plot the train_avg_error vs epoche
+            # plt.subplot(2, 2, 3)
+            # plt.scatter(epoche, train_avg_error)
+            # plt.title('Train Avg. Error vs Epoche')
 
-            # Plot the train_accuracy vs epoche
-            plt.subplot(2, 2, 4)
-            plt.scatter(epoche, train_accuracy)
-            plt.title('Train Accuracy vs Epoche')
+            # # Plot the train_accuracy vs epoche
+            # plt.subplot(2, 2, 4)
+            # plt.scatter(epoche, train_accuracy)
+            # plt.title('Train Accuracy vs Epoche')
 
-            # We need to pause so that it will show the graph in realtime
-            plt.pause(0.05)
+            # # We need to pause so that it will show the graph in realtime
+            # plt.pause(0.05)
 
             print('epoche:', epoche, '| test avg error:', test_avg_error, '| test accuracy:', test_accuracy, '|train avg error:', train_avg_error, '|train accuracy:', train_accuracy)
 
