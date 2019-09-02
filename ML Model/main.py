@@ -106,8 +106,12 @@ def main():
     classifier = NamesToNationalityClassifier(examples, labels, countries)
 
     # Train the model
-    classifier.train()
-    classifier.save_model('data')
+    try:
+        print('Training data')
+        classifier.train()
+    finally:
+        print('Saved model to data.npz')
+        classifier.save_model('data')
 
     # Make predictions
     # classifier.load_model_from_file('data.npz')
