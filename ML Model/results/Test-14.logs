@@ -11,3 +11,13 @@ epoche: 9 | test avg error: 31.439929245845683 | test accuracy: 0.03277777777777
 epoche: 10 | test avg error: 31.431371608159875 | test accuracy: 0.03222222222222222 |train avg error: 29.956616193109554 |train accuracy: 0.05036913550845439
 epoche: 11 | test avg error: 31.404689583979213 | test accuracy: 0.03777777777777778 |train avg error: 29.91042944092136 |train accuracy: 0.05036913550845439
 epoche: 12 | test avg error: 31.393298460085703 | test accuracy: 0.03833333333333333 |train avg error: 29.848389952160016 |train accuracy: 0.048344844010478685
+epoche: 13 | test avg error: 31.372965300799894 | test accuracy: 0.035555555555555556 |train avg error: 29.79946216526357 |train accuracy: 0.04679685639437962
+epoche: 14 | test avg error: 31.37678725361052 | test accuracy: 0.03861111111111111 |train avg error: 29.775108379461688 |train accuracy: 0.05465587044534413
+epoche: 15 | test avg error: 31.408987044778275 | test accuracy: 0.036944444444444446 |train avg error: 29.736966055034912 |train accuracy: 0.0529888068587759
+epoche: 16 | test avg error: 31.47900704933093 | test accuracy: 0.03361111111111111 |train avg error: 29.744711981379748 |train accuracy: 0.05417956656346749
+epoche: 17 | test avg error: 31.5114899018455 | test accuracy: 0.03861111111111111 |train avg error: 29.75588511938686 |train accuracy: 0.0556084782090974
+epoche: 18 | test avg error: 31.442540167440665 | test accuracy: 0.03805555555555556 |train avg error: 29.768025434168983 |train accuracy: 0.05548940223862824
+epoche: 19 | test avg error: 31.489612692766812 | test accuracy: 0.03722222222222222 |train avg error: 29.729305452503862 |train accuracy: 0.053703262681590855
+epoche: 20 | test avg error: 31.48643547437719 | test accuracy: 0.03166666666666667 |train avg error: 29.74668508669217 |train accuracy: 0.057394617766134796
+epoche: 21 | test avg error: 31.495022570677552 | test accuracy: 0.03638888888888889 |train avg error: 29.769173280454343 |train accuracy: 0.05025005953798523
+epoche: 22 | test avg error: 31.474736888366333 | test accuracy: 0.0325 |train avg error: 29.809507727823295 |train accuracy: 0.04894022386282448
