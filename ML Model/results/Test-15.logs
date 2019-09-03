@@ -3,3 +3,19 @@ serialized 11999 labels
 Training data
 epoche: 0 | test avg error: 32.45421945656192 | test accuracy: 0.008055555555555555 |train avg error: 32.98041606002815 |train accuracy: 0.011548993927848554
 epoche: 1 | test avg error: 32.17452065396005 | test accuracy: 0.011944444444444445 |train avg error: 32.26329368873547 |train accuracy: 0.013930229789260626
+epoche: 2 | test avg error: 32.03179549723065 | test accuracy: 0.015833333333333335 |train avg error: 31.902552627622217 |train accuracy: 0.017025836409096322
+epoche: 3 | test avg error: 31.810338609564376 | test accuracy: 0.0225 |train avg error: 31.633816842398673 |train accuracy: 0.018097392546731754
+epoche: 4 | test avg error: 31.797907368111964 | test accuracy: 0.016944444444444446 |train avg error: 31.400768391301867 |train accuracy: 0.020240504822002618
+epoche: 5 | test avg error: 31.6904707936626 | test accuracy: 0.01861111111111111 |train avg error: 31.258402550646526 |train accuracy: 0.02583640909632099
+epoche: 6 | test avg error: 31.61077576886683 | test accuracy: 0.021944444444444444 |train avg error: 31.092100032707545 |train accuracy: 0.02702702702702703
+epoche: 7 | test avg error: 31.570554165255437 | test accuracy: 0.02722222222222222 |train avg error: 30.950155256473437 |train accuracy: 0.02750327419930944
+epoche: 8 | test avg error: 31.603921211623245 | test accuracy: 0.025277777777777777 |train avg error: 30.857543330998464 |train accuracy: 0.03036075723300393
+epoche: 9 | test avg error: 31.52112789025951 | test accuracy: 0.021944444444444444 |train avg error: 30.740341593871346 |train accuracy: 0.03536135254196928
+epoche: 10 | test avg error: 31.5064854064582 | test accuracy: 0.02277777777777778 |train avg error: 30.637114279918865 |train accuracy: 0.030956066198356946
+epoche: 11 | test avg error: 31.46438388200287 | test accuracy: 0.024722222222222222 |train avg error: 30.563273527608228 |train accuracy: 0.03428979640433385
+epoche: 12 | test avg error: 31.4672076079149 | test accuracy: 0.02666666666666667 |train avg error: 30.484705613696182 |train accuracy: 0.039409453506369804
+epoche: 13 | test avg error: 31.446618177640417 | test accuracy: 0.026111111111111113 |train avg error: 30.386137673222184 |train accuracy: 0.037504464817240145
+epoche: 14 | test avg error: 31.38607030125951 | test accuracy: 0.03194444444444444 |train avg error: 30.316345218033366 |train accuracy: 0.03881414454101679
+epoche: 15 | test avg error: 31.391737772196464 | test accuracy: 0.0325 |train avg error: 30.24214930992567 |train accuracy: 0.04095725681628765
+epoche: 16 | test avg error: 31.37081420976836 | test accuracy: 0.028888888888888888 |train avg error: 30.188174632244415 |train accuracy: 0.04107631860935826
+epoche: 17 | test avg error: 31.399936362821112 | test accuracy: 0.03222222222222222 |train avg error: 30.12719365668047 |train accuracy: 0.04321943088462912

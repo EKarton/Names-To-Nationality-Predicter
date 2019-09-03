@@ -1,3 +1,19 @@
 serialized 11998 examples
 serialized 11998 labels
 Training data
+epoche: 0 | test avg error: 32.63116134618679 | test accuracy: 0.008611111111111111 |train avg error: 33.03863101357679 |train accuracy: 0.009645153608001906
+epoche: 1 | test avg error: 32.37342979865166 | test accuracy: 0.009444444444444445 |train avg error: 32.50093356178656 |train accuracy: 0.009168849726125267
+epoche: 2 | test avg error: 32.17516504038765 | test accuracy: 0.012222222222222223 |train avg error: 32.223910147869 |train accuracy: 0.011074065253631818
+epoche: 3 | test avg error: 32.04173511537214 | test accuracy: 0.013055555555555556 |train avg error: 32.01012439321342 |train accuracy: 0.013693736603953323
+epoche: 4 | test avg error: 31.87679500340887 | test accuracy: 0.01361111111111111 |train avg error: 31.836173465129416 |train accuracy: 0.016313407954274828
+epoche: 5 | test avg error: 31.789732826155667 | test accuracy: 0.011111111111111112 |train avg error: 31.698001065990336 |train accuracy: 0.016194331983805668
+epoche: 6 | test avg error: 31.67920690793084 | test accuracy: 0.015555555555555555 |train avg error: 31.58901985378976 |train accuracy: 0.01774231959990474
+epoche: 7 | test avg error: 31.614194800238888 | test accuracy: 0.016944444444444446 |train avg error: 31.474779533470958 |train accuracy: 0.020123839009287926
+epoche: 8 | test avg error: 31.553612748676613 | test accuracy: 0.01361111111111111 |train avg error: 31.390087452477314 |train accuracy: 0.022267206477732792
+epoche: 9 | test avg error: 31.538588678102197 | test accuracy: 0.018055555555555554 |train avg error: 31.31741135061262 |train accuracy: 0.023577042152893544
+epoche: 10 | test avg error: 31.46213081699552 | test accuracy: 0.01888888888888889 |train avg error: 31.25793772142536 |train accuracy: 0.025005953798523457
+epoche: 11 | test avg error: 31.428640231799353 | test accuracy: 0.017777777777777778 |train avg error: 31.199266706028613 |train accuracy: 0.025125029768992616
+epoche: 12 | test avg error: 31.4300277625621 | test accuracy: 0.016944444444444446 |train avg error: 31.143740259073358 |train accuracy: 0.026911169326030007
+epoche: 13 | test avg error: 31.397914173097007 | test accuracy: 0.02 |train avg error: 31.090270286204678 |train accuracy: 0.026911169326030007
+epoche: 14 | test avg error: 31.38798134002177 | test accuracy: 0.014722222222222222 |train avg error: 31.037461923211584 |train accuracy: 0.02786377708978328
+epoche: 15 | test avg error: 31.36515566163956 | test accuracy: 0.019166666666666665 |train avg error: 30.991229296967923 |train accuracy: 0.027506549178375805
