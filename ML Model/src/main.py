@@ -13,7 +13,7 @@ from names_to_nationality_classifier import NamesToNationalityClassifier
 def get_countries():
 	country_id_to_country_name = {}
 
-	with open('countries.csv') as countries_file_reader:
+	with open('data/countries.csv') as countries_file_reader:
 
 		line = countries_file_reader.readline()
 		while line:
@@ -40,7 +40,7 @@ def get_countries():
 '''
 def get_records():
 	records = []
-	with open('records.csv') as reader:
+	with open('data/records.csv') as reader:
 
 		line = reader.readline()
 		while line:
@@ -111,10 +111,10 @@ def main():
         classifier.train()
     finally:
         print('Saved model to data.npz')
-        classifier.save_model('data')
+        classifier.save_model('data/data')
 
     # Make predictions
-    # classifier.load_model_from_file('data.npz')
+    # classifier.load_model_from_file('data/data.npz')
     # print(classifier.predict('David Liu'))
 
 main()
