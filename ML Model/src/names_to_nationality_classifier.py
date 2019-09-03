@@ -101,7 +101,7 @@ class NamesToNationalityClassifier:
             # # We need to pause so that it will show the graph in realtime
             # plt.pause(0.05)
 
-            print('epoche:', epoche, '| test avg error:', test_avg_error, '| test accuracy:', test_accuracy, '|train avg error:', train_avg_error, '|train accuracy:', train_accuracy)
+            print(epoche, test_avg_error, test_accuracy, train_avg_error, train_accuracy, sep=',')
 
     '''
         Trains an example with a label.
