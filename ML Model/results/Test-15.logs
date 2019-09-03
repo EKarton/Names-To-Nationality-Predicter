@@ -1,0 +1,5 @@
+serialized 11999 examples
+serialized 11999 labels
+Training data
+epoche: 0 | test avg error: 32.45421945656192 | test accuracy: 0.008055555555555555 |train avg error: 32.98041606002815 |train accuracy: 0.011548993927848554
+epoche: 1 | test avg error: 32.17452065396005 | test accuracy: 0.011944444444444445 |train avg error: 32.26329368873547 |train accuracy: 0.013930229789260626
