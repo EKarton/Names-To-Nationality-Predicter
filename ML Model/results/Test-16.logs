@@ -17,3 +17,8 @@ epoche: 12 | test avg error: 31.4300277625621 | test accuracy: 0.016944444444444
 epoche: 13 | test avg error: 31.397914173097007 | test accuracy: 0.02 |train avg error: 31.090270286204678 |train accuracy: 0.026911169326030007
 epoche: 14 | test avg error: 31.38798134002177 | test accuracy: 0.014722222222222222 |train avg error: 31.037461923211584 |train accuracy: 0.02786377708978328
 epoche: 15 | test avg error: 31.36515566163956 | test accuracy: 0.019166666666666665 |train avg error: 30.991229296967923 |train accuracy: 0.027506549178375805
+epoche: 16 | test avg error: 31.314504384856637 | test accuracy: 0.019444444444444445 |train avg error: 30.95214587684604 |train accuracy: 0.02798285306025244
+epoche: 17 | test avg error: 31.405699780368693 | test accuracy: 0.0225 |train avg error: 30.911064875353343 |train accuracy: 0.02798285306025244
+epoche: 18 | test avg error: 31.33350934928313 | test accuracy: 0.02388888888888889 |train avg error: 30.87292668524986 |train accuracy: 0.0281019290307216
+epoche: 19 | test avg error: 31.256013725886096 | test accuracy: 0.027777777777777776 |train avg error: 30.822419742054198 |train accuracy: 0.029649916646820672
+epoche: 20 | test avg error: 31.28037988824265 | test accuracy: 0.026111111111111113 |train avg error: 30.789216912687703 |train accuracy: 0.033698499642772085
