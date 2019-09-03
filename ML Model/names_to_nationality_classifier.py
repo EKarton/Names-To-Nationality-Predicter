@@ -1,7 +1,5 @@
 import copy
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
 import random 
 from sklearn.utils import shuffle
 from ml_utils import ActivationFunctions, LossFunctions
@@ -9,9 +7,9 @@ from ml_utils import ActivationFunctions, LossFunctions
 class NamesToNationalityClassifier:
     
     def __init__(self, examples, labels, possible_labels):
-        self.alpha = 0.001
+        self.alpha = 0.0001
         self.input_dimensions = 27
-        self.hidden_dimensions = 496
+        self.hidden_dimensions = 700
         self.output_dimensions = len(possible_labels)
         self.epsilon_init = 0.12
         self.training_to_validation_ratio = 0.7 # This means 70% of the dataset will be used for training, and 30% is for validation
