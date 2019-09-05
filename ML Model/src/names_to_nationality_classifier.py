@@ -12,7 +12,7 @@ class NamesToNationalityClassifier:
         self.hidden_dimensions = 700
         self.output_dimensions = len(possible_labels)
         self.epsilon_init = 0.12
-        self.training_to_validation_ratio = 0.7 # This means 70% of the dataset will be used for training, and 30% is for validation
+        self.training_to_validation_ratio = 0.8 # This means 70% of the dataset will be used for training, and 30% is for validation
 
         self.layer_1_weights = np.random.random((self.hidden_dimensions, self.input_dimensions + 1)) * (2 * self.epsilon_init) - self.epsilon_init
         self.layer_2_weights = np.random.random((self.output_dimensions, self.hidden_dimensions + 1)) * (2 * self.epsilon_init) - self.epsilon_init
