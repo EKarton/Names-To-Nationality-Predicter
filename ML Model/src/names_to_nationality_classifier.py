@@ -7,9 +7,9 @@ from ml_utils import ActivationFunctions, LossFunctions
 class NamesToNationalityClassifier:
     
     def __init__(self, examples, labels, possible_labels):
-        self.alpha = 0.0001
+        self.alpha = 0.001
         self.input_dimensions = 27
-        self.hidden_dimensions = 700
+        self.hidden_dimensions = 459
         self.output_dimensions = len(possible_labels)
         self.epsilon_init = 0.12
         self.training_to_validation_ratio = 0.8 # This means 70% of the dataset will be used for training, and 30% is for validation
@@ -21,7 +21,7 @@ class NamesToNationalityClassifier:
         self.layer_1_bias = 1
         self.layer_2_bias = 1
 
-        self.num_epoche = 100
+        self.num_epoche = 10
 
         # We now want to map label to index, and index to label
         self.label_to_index = {}
@@ -292,7 +292,7 @@ class NamesToNationalityClassifier:
 
             formatted_hypothesis.sort()
 
-            return formatted_hypothesis
+            return formatted_hypothesis[-5:]
         else:
             raise Exception('Hypothesis cannot be obtained')
 

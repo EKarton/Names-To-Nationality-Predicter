@@ -88,7 +88,8 @@ def get_dataset():
     countries = [ country_id_to_country[id][0] for id in country_id_to_country ]
 	
     records = [( record[0], country_id_to_country[record[1]][0] ) for record in get_records()]
-    # records = list(filter(lambda x: x[1] == 'China' or x[1] == 'United Kingdom', records))
+    records = list(filter(lambda x: x[1] == 'China' or x[1] == 'United Kingdom', records))
+    countries = ["China", "United Kingdom"]
     np.random.shuffle(records)
 	
     # Splits the records into two lists
@@ -106,15 +107,15 @@ def main():
     classifier = NamesToNationalityClassifier(examples, labels, countries)
 
     # Train the model
-    try:
-        print('Training data')
-        classifier.train()
-    finally:
-        print('Saved model to data.npz')
-        classifier.save_model('data/data')
+    # try:
+    #     print('Training data')
+    #     classifier.train()
+    # finally:
+    #     print('Saved model to data.npz')
+    #     classifier.save_model('data/data')
 
     # Make predictions
-    # classifier.load_model_from_file('data/data.npz')
-    # print(classifier.predict('David Liu'))
+    classifier.load_model_from_file('data/data.npz')
+    print(classifier.predict('Christiano Romano'))
 
 main()
