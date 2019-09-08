@@ -407,7 +407,11 @@ class NamesToNationalityClassifier:
         if len(example) == 0:
             return None
 
-        example = example.split()[-1]
+        tokenized_example = example.split()
+        if len(tokenized_example) <= 1:
+            return None
+
+        example = tokenized_example[-1]
 
         print('Example:', unfiltered_example, '->', example)
 
