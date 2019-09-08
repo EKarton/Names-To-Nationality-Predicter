@@ -88,8 +88,8 @@ def get_dataset():
     countries = [ country_id_to_country[id][0] for id in country_id_to_country ]
 	
     records = [( record[0], country_id_to_country[record[1]][0] ) for record in get_records()]
-    records = list(filter(lambda x: x[1] == 'China' or x[1] == 'United Kingdom', records))
-    countries = ["China", "United Kingdom"]
+    # records = list(filter(lambda x: x[1] == 'China' or x[1] == 'United Kingdom', records))
+    # countries = ["China", "United Kingdom"]
     np.random.shuffle(records)
 	
     # Splits the records into two lists
@@ -116,6 +116,6 @@ def main():
 
     # Make predictions
     classifier.load_model_from_file('data/data.npz')
-    print(classifier.predict('Christiano Romano'))
+    print(classifier.predict('Raymond Zhang'))
 
 main()
