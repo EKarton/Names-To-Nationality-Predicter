@@ -108,7 +108,7 @@ After completing the installation steps above, follow the steps below to get you
 * Note that in order for the execution of different machines to work, the Redis and Postgresql servers need to be in a remote location that could be accessible by the  machines.
 
 
-#### Postgresql tips:
+Postgresql tips:
 - To install Postgresql Server on Ubuntu:
 	https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-18-04
 
@@ -129,7 +129,7 @@ After completing the installation steps above, follow the steps below to get you
 	```sudo apt-get install libpq-dev```
 	```pip3 install psycopg2```
 
-#### Redis job queue tips:
+Redis job queue tips:
 - To install Redis on Ubuntu:
 	https://www.digitalocean.com/community/tutorials/how-to-install-and-secure-redis-on-ubuntu-18-04
 
@@ -174,8 +174,8 @@ After completing the installation steps above, follow the steps below to get you
 
 	On your browser, go to ```localhost:8081```
 
-#### To see current jobs in Redis:
-You can see the current jobs in Redis visually by using ```redis-commander```:
+To see current jobs in Redis:
+- You can see the current jobs in Redis visually by using ```redis-commander```:
 1. Note that ```redis-commander``` is a NPM package, so to get it, run the command:
 	```npm install -g redis-commander```
 
