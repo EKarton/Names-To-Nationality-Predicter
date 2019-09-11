@@ -177,8 +177,10 @@ class RecordsParser:
 
             max_page_number = results_page.get_max_page_number()
             num_records_obtained = 0
-            max_records = min(max_page_number * 50, max_records)
+            cur_num_records_in_db = self.records_database.get_num_records(country_id)
+            max_records = min(max_page_number * 50, max_records - cur_num_records_in_db)
 
+            print("Already have", cur_num_records_in_db, "records born on", country, " in the database")
             print("Getting", max_records, "records born on", country)
 
             while results_page.get_current_page_number() < max_page_number and num_records_obtained < max_records:
