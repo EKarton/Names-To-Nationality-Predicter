@@ -147,7 +147,6 @@ class ResultsPageWithRequests:
         # Put all the URL parameters into a hashmap
         url_params = {}
         url_params['birth'] = self.__birth__
-        url_params['death'] = self.__birth__
         url_params['birth_x'] = self.__birth_x__
         url_params['count'] = self.__count__
         url_params['pg'] = self.__pg__
