@@ -46,6 +46,12 @@ def populate_job_queue():
 			job_in_json = json.dumps(job)
 			queue.enqueue(job_in_json)
 
+def add_job_to_queue(country_id, num_records):
+	queue = RedisQueue('jobs')
+	job = {'country_id': country_id, 'num_records': num_records}
+	job_in_json = json.dumps(job)
+	queue.enqueue(job_in_json)
+
 # initialize_records_db()
 # save_countries_to_db()
 populate_job_queue()
