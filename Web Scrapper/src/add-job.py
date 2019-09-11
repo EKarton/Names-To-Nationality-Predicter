@@ -20,7 +20,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     country_ids = args.country_id
-    num_records = args.num_records
+    num_records = args.num_records[0]
 
     for country_id in country_ids:
         add_job_to_queue(country_id, num_records)
