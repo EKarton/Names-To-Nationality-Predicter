@@ -135,8 +135,9 @@ class ResultsPageWithRequests:
                 if field['label'] == 'Name':
                     name = field['text']
 
-                if field['label'] == 'Birth' and self.country in field['text'].lower():
-                    is_valid_name = True
+                if field['label'] == 'Birth':
+                    if self.country.lower() in field['text'].lower():
+                        is_valid_name = True
 
             if name is not None and is_valid_name:
                 names.append(name)
