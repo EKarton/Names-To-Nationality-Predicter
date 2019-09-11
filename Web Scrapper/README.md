@@ -28,7 +28,7 @@ The job queue is managed by Redis, and the database of choice is Postgres.
 Below is a diagram of the system architecture:
 <div width="100%">
     <p align="center">
-<img src="https://raw.githubusercontent.com/EKarton/Names-To-Nationality-Predicter/master/Web%20Scrapper/docs/System%20Architecture.png" width="600px"/>
+<img src="https://raw.githubusercontent.com/EKarton/Names-To-Nationality-Predictor/master/Web%20Scrapper/docs/System%20Architecture.png" width="600px"/>
     </p>
 </div>
 
