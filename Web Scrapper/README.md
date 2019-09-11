@@ -1,7 +1,42 @@
-## Installation:
+# Names To Nationality Predicter - Web Scrapper
+
+### Description
+This module is responsible for scrapping names and their nationalities from Ancestry.com. The names and their nationalities are to be used for the machine learning model.
+
+### Table of Contents
+- Overview
+- Installation
+- Running the App
+- Credits
+- License
+
+### Overview
+This module is comprised of various components:
+1. The master process
+2. The worker process(es)
+
+The master process is responsible for:
+- Creating the database schemas
+- Adding the countries to the database
+- Adding jobs (i.e, names to be scrapped who were born and have died at a particular country) to the Job Queue
+
+The worker process is responsible for:
+- Picking up any task in the Job Queue, scrape the data, and populate the data to the database
+
+The job queue is managed by Redis, and the database of choice is Postgres.
+
+Below is a diagram of the system architecture:
+<div width="100%">
+    <p align="center">
+<img src="https://raw.githubusercontent.com/EKarton/Names-To-Nationality-Predicter/master/Web%20Scrapper/docs/System%20Architecture.png" width="600px"/>
+    </p>
+</div>
+
+### Installation
+
 Note that for the installation process to go through smoothly, ensure that you have:
 1. Python 3
-2. Ubuntu machine
+2. Unix machine (Mac, Linux, etc)
 
 After ensuring the prerequisites are met above, follow the instructions below in order:
 1. Install and configure Postgresql (skip this if you already have Postgresql):
@@ -59,7 +94,7 @@ After ensuring the prerequisites are met above, follow the instructions below in
 	e. Finally, start the Redis server by running the command:
 		```sudo systemctl start redis```
 
-## Running the app:
+### Running the app:
 After completing the installation steps above, follow the steps below to get your app running:
 1. First, ensure that Redis and Postgresql servers are online
 2. Next, run the ```master.py``` script by running the command:
@@ -73,7 +108,7 @@ After completing the installation steps above, follow the steps below to get you
 * Note that in order for the execution of different machines to work, the Redis and Postgresql servers need to be in a remote location that could be accessible by the  machines.
 
 
-### Postgresql tips:
+#### Postgresql tips:
 - To install Postgresql Server on Ubuntu:
 	https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-18-04
 
@@ -94,7 +129,7 @@ After completing the installation steps above, follow the steps below to get you
 	```sudo apt-get install libpq-dev```
 	```pip3 install psycopg2```
 
-### Redis job queue tips:
+#### Redis job queue tips:
 - To install Redis on Ubuntu:
 	https://www.digitalocean.com/community/tutorials/how-to-install-and-secure-redis-on-ubuntu-18-04
 
@@ -139,7 +174,7 @@ After completing the installation steps above, follow the steps below to get you
 
 	On your browser, go to ```localhost:8081```
 
-### To see current jobs in Redis:
+#### To see current jobs in Redis:
 You can see the current jobs in Redis visually by using ```redis-commander```:
 1. Note that ```redis-commander``` is a NPM package, so to get it, run the command:
 	```npm install -g redis-commander```
@@ -147,5 +182,11 @@ You can see the current jobs in Redis visually by using ```redis-commander```:
 2. To run the NPM package, run the command:
 	```./redis-commander```
 
-3. Finally, to see all jobs go to the browser and navigate to ```localhost:8081```.
+3. Finally, to see all current jobs, go to the browser and navigate to ```localhost:8081```.
 
+### Credits
+Emilio Kartono, the sole creator of ths app
+
+### License
+Please note that this project is used for educational purposes and is not to be used commercially. We are not liable for any damages or changes done by this project.
+Please refer to LICENCE.txt in the root project directory for further details.
