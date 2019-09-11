@@ -103,6 +103,9 @@ After completing the installation steps above, follow the steps below to get you
 3. Once the script above is complete, run the ```worker.py``` script by running the command:
 	```python3 worker.py```
 
+* Note that in case a worker fails a job, you can re-add the job back to the queue using the command
+	```python3 add-job.py --country-ids <COUNTRY_ID_1> <COUNTRY_ID_2> --num-records 5000```
+
 * Note that multple workers can be run at the same time to make web scraping much faster. Just run more ```worker.py``` processes concurrently on the same machine or on different machines(*).
 
 * Note that in order for the execution of different machines to work, the Redis and Postgresql servers need to be in a remote location that could be accessible by the  machines.
