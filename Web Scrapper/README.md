@@ -1,7 +1,7 @@
 # Names To Nationality Predicter - Web Scrapper
 
 ### Description
-This module is responsible for scrapping names and their nationalities from Ancestry.com. The names and their nationalities are to be used for the machine learning model.
+This module is responsible for scrapping names and their nationalities from Ancestry.com. The names and their nationalities are to be used for training the machine learning model.
 
 ### Table of Contents
 - Overview
