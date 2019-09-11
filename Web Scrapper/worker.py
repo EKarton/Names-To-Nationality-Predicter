@@ -19,6 +19,8 @@ from database import CountriesDB
 from urllib.parse import urlparse, urlencode, parse_qs
 
 import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 
 class SearchPage:
     def __init__(self, driver):
@@ -92,6 +94,11 @@ class ResultsPageWithRequests:
         self.__birth_x__ = query_params['birth_x']
         self.__count__ = 50
 
+        # Create a request session
+        self.session = requests.Session()
+        retries = Retry(total=5, backoff_factor=1, status_forcelist=[502, 503, 504])
+        self.session.mount('http://', HTTPAdapter(max_retries=retries))
+
     def set_num_results_per_page(self, value):
         self.__count__ = int(value)
 
@@ -104,8 +111,7 @@ class ResultsPageWithRequests:
     def get_max_page_number(self):
 
         # Make the first request to get the max number of records
-        result = requests.get(self.__create_api_url__())
-        print(result)
+        result = self.session.get(self.__create_api_url__())
         json_result = result.json()
 
         # Get the number of records available
