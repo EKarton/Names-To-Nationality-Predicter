@@ -131,17 +131,12 @@ class ResultsPageWithRequests:
 
             is_valid_name = False
             name = None
-            cur_field_index = 0
-            while name is None and cur_field_index < len(fields):
-                cur_field = fields[cur_field_index]
+            for field in fields:
+                if field['label'] == 'Name':
+                    name = field['text']
 
-                if cur_field['label'] == 'Name':
-                    name = cur_field['text']
-
-                if cur_field['label'] == 'Birth' and self.country in cur_field['text'].lower():
+                if field['label'] == 'Birth' and self.country in field['text'].lower():
                     is_valid_name = True
-
-                cur_field_index += 1
 
             if name is not None and is_valid_name:
                 names.append(name)
