@@ -143,7 +143,7 @@ class RecordsDB(Database):
                  WHERE country_of_birth_id = %s"""
 
         cursor = self.connection.cursor()
-        cursor.execute(sql, (str(country_of_birth_id))
+        cursor.execute(sql, (str(country_of_birth_id), ))
         
         row = cursor.fetchone()
         cursor.close()

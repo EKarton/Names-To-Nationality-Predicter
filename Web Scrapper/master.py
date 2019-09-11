@@ -42,19 +42,19 @@ def populate_job_queue():
 
 		countries = countries_db.get_countries()
 		for country in countries:
-			job = {'country_id': country[0], 'num_records': 500}
+			job = {'country_id': country[0], 'num_records': 5000}
 			job_in_json = json.dumps(job)
 			queue.enqueue(job_in_json)
 
 # initialize_records_db()
 # save_countries_to_db()
-# populate_job_queue()
+populate_job_queue()
 
-queue = RedisQueue('jobs')
-job = {'country_id': 5978, 'num_records': 500}
-job_in_json = json.dumps(job)
-queue.enqueue(job_in_json)
+# queue = RedisQueue('jobs')
+# job = {'country_id': 5978, 'num_records': 500}
+# job_in_json = json.dumps(job)
+# queue.enqueue(job_in_json)
 
-job = {'country_id': 5998, 'num_records': 500}
-job_in_json = json.dumps(job)
-queue.enqueue(job_in_json)
+# job = {'country_id': 5998, 'num_records': 500}
+# job_in_json = json.dumps(job)
+# queue.enqueue(job_in_json)
