@@ -86,8 +86,6 @@ class ResultsPageWithRequests:
         query_params_string = parsed_url.query
         query_params = dict(parse_qs(query_params_string))
 
-        print(cur_url, query_params)
-
         # Store what is needed for a request
         self.__pg__ = 1
         self.__birth__ = query_params['birth']
