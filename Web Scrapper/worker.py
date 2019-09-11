@@ -152,7 +152,6 @@ class ResultsPageWithRequests:
         # Create the URL with the URL params
         base_url = 'https://www.ancestry.com/api/search-results?'
         new_url = base_url + urlencode(url_params)
-        print(new_url)
         return new_url
 
 class RecordsParser:
