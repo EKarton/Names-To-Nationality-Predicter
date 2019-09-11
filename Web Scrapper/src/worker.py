@@ -129,7 +129,7 @@ class ResultsPageWithRequests:
         for search_result in search_results:
             fields = search_result['fields']
 
-            is_valid_name = False
+            is_birth_location_verified = False
             name = None
             for field in fields:
                 if field['label'] == 'Name':
@@ -137,9 +137,9 @@ class ResultsPageWithRequests:
 
                 if field['label'] == 'Birth':
                     if self.country.lower() in field['text'].lower():
-                        is_valid_name = True
+                        is_birth_location_verified = True
 
-            if name is not None and is_valid_name:
+            if name is not None and is_birth_location_verified:
                 names.append(name)
 
         return names
