@@ -15,7 +15,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Add job(s) to the queue')
 
     parser.add_argument('-c', '--country_id', nargs='+', metavar='Country ID', help='List of country IDs to add to the queue')
-    parser.add_argument('-n', '--num-records', nargs=1, metavar='Num Records', type=int help="Expected number of records to finish with")
+    parser.add_argument('-n', '--num-records', nargs=1, metavar='Num Records', type=int, help="Expected number of records to finish with")
 
     args = parser.parse_args()
 
