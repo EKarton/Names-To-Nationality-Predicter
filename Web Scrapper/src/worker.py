@@ -75,8 +75,9 @@ class ResultsPage:
         return names
 
 class ResultsPageWithRequests:
-    def __init__(self, driver):
+    def __init__(self, driver, country):
         self.driver = driver
+        self.country = country
 
         # Wait for the browser to go to the new URL
         element = self.driver.find_element_by_xpath('//*[@id="searchPageSize"]')
@@ -182,7 +183,7 @@ class RecordsParser:
             search_page.select_exact_to_country()
             search_page.submit()
 
-            results_page = ResultsPageWithRequests(browser)
+            results_page = ResultsPageWithRequests(browser, country)
             results_page.set_num_results_per_page('50')
 
             max_page_number = results_page.get_max_page_number()
