@@ -16,6 +16,11 @@ import json
 from database import RecordsDB
 from database import CountriesDB
 
+from urllib.parse import urlparse, urlencode
+from urllib import parse_qs
+
+import requests
+
 class SearchPage:
 	def __init__(self, driver):
 		self.driver = driver
@@ -68,6 +73,80 @@ class ResultsPage:
 
 		return names
 
+class ResultsPageWithRequests:
+	def __init__(self, driver):
+		self.driver = driver
+
+		# Parse the current URL
+		cur_url = self.driver.current_url
+		parsed_url = urlparse(cur_url)
+		query_params_string = parsed_url.query
+		query_params = dict(parse_qs(query_params_string))
+
+		# Store what is needed for a request
+		self.__pg__ = 1
+		self.__birth__ = query_params['birth']
+		self.__birth_x__ = query_params['birth_x']
+		self.__count__ = 50
+
+	def set_num_results_per_page(self, value):
+		self.__count__ = int(value)
+
+	def goto_next_page(self):
+		self.__pg__ += 1
+
+	def get_current_page_number(self):
+		return self.__pg__
+
+	def get_max_page_number(self):
+
+		# Make the first request to get the max number of records
+		result = requests.get(self.__create_api_url__())
+		json_result = result.json()
+
+		# Get the number of records available
+		max_records = json_result['results']['hitCount']
+
+		return max_records // self.__count__
+
+	def get_names(self):
+		names = []
+
+		request_results = request.get(self.__create_api_url__()).json()
+		search_results = request_results['results']['items']
+
+		for search_result in search_results:
+			fields = search_result['fields']
+
+			name = None
+			cur_field_index = 0
+			while name is None and cur_field_index < len(fields):
+				cur_field = fields[cur_field_index]
+
+				if cur_field['label'] == 'Name':
+					name = cur_field['text']
+
+				cur_field_index += 1
+
+			if name is not None:
+				names.append(name)
+
+		return names
+
+	def __create_api_url__(self):
+		# Put all the URL parameters into a hashmap
+		url_params = {}
+		url_params['birth'] = self.__birth__
+		url_params['birth_x'] = self.__birth_x__
+		url_params['count'] = self.__count__
+		url_params['pg'] = self.__pg__
+		url_params['searchState'] = 'Pagination'
+		url_params['useClusterView'] = 'useClusterView'
+        
+        # Create the URL with the URL params
+		base_url = 'https://www.ancestry.com/api/search-results'
+        return = base_url + urlencode(url_params)
+
 class RecordsParser:
 	def __init__(self, records_database):
 		self.records_database = records_database
@@ -88,7 +167,7 @@ class RecordsParser:
 			search_page.select_exact_to_country()
 			search_page.submit()
 
-			results_page = ResultsPage(browser)
+			results_page = ResultsPageWithRequests(browser)
 			results_page.set_num_results_per_page('50')
 
 			max_page_number = results_page.get_max_page_number()
