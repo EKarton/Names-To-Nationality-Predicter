@@ -136,6 +136,7 @@ class ResultsPageWithRequests:
                     name = field['text']
 
                 if field['label'] == 'Birth':
+                    print(self.country.lower(), 'vs', field['text'].lower(), self.country.lower() in field['text'].lower())
                     if self.country.lower() in field['text'].lower():
                         is_birth_location_verified = True
 
