@@ -52,6 +52,9 @@ class ResultsPage:
         element =  self.driver.find_element_by_xpath('//*[@id="searchPageSize"]')
         Select(element).select_by_visible_text(value)
 
+    def set_page_num(self, page_num):
+        raise Exception('Set page num is not available!')
+
     def goto_next_page(self):
         next_button = self.driver.find_element_by_id('pagingInfo').find_elements_by_tag_name('a')[1]
         next_button.click()
@@ -102,6 +105,9 @@ class ResultsPageWithRequests:
 
     def set_num_results_per_page(self, value):
         self.__count__ = int(value)
+
+    def set_page_num(self, page_num):
+        self.__pg__ = page_num
 
     def goto_next_page(self):
         self.__pg__ += 1
@@ -187,6 +193,8 @@ class RecordsParser:
             num_records_obtained = 0
             cur_num_records_in_db = self.records_database.get_num_records(country_id)
             max_records = min(max_page_number * 50, max_records - cur_num_records_in_db)
+
+            results_page.set_page_num(cur_num_records_in_db // 50)
 
             print("Already have", cur_num_records_in_db, "records born on", country, " in the database")
             print("Getting", max_records, "records born on", country)
