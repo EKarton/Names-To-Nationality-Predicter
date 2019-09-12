@@ -29,7 +29,7 @@ CH,Switzerland,35,Swiss
 CL,Chile,71,Chilean
 CM,Cambodia,5,Cambodian
 CM,Cameroon,70,Cameroonian
-CO,Columbia,46,Columbian
+CO,Colombia,46,Columbian
 CR,Czech Republic,50,Czech
 CR,Costa Rica,73,Costa Rican
 CU,Cuba,75,Cuban
