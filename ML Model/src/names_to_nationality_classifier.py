@@ -5,8 +5,8 @@ from sklearn.utils import shuffle
 from ml_utils import ActivationFunctions, LossFunctions
 
 class NamesToNationalityClassifier:
-    
-    def __init__(self, examples, labels, possible_labels):
+
+    def __init__(self, possible_labels):
         self.alpha = 0.0001
         self.input_dimensions = 27
         self.hidden_dimensions = 700
@@ -32,6 +32,13 @@ class NamesToNationalityClassifier:
             self.label_to_index[label] = i
             self.index_to_label[i] = label
 
+        self.serialized_training_examples = []
+        self.serialized_training_labels = []
+        self.serialized_testing_examples = []
+        self.serialized_testing_labels = []
+
+    
+    def add_training_examples(self, examples, labels):
         serialized_examples, serialized_labels = self.__serialize_examples_and_labels__(examples, labels)
         num_training_data = int(len(serialized_examples) * self.training_to_validation_ratio)
 

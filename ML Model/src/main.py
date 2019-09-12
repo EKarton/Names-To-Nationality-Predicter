@@ -104,7 +104,8 @@ def get_dataset():
 def main():
     countries, examples, labels = get_dataset()
 
-    classifier = NamesToNationalityClassifier(examples, labels, countries)
+    classifier = NamesToNationalityClassifier(countries)
+    classifier.add_training_examples(examples, labels)
 
     # Train the model
     try:
