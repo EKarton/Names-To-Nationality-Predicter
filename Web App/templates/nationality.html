@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Nationality from Name</title>
+</head>
+<body>
+    <h1>{{name}} is most likely from {{most_probable_country}}</h1>
+
+    <table>
+        {% for probability, country in predictions %}
+            <tr>
+                <th>{{country}}</th>
+                <td>{{probability}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

@@ -5,8 +5,8 @@ from names_to_nationality_classifier import NamesToNationalityClassifier
     Obtains a map from country ID to country name.
     For example,
     {
-        5998: "United Kingdom",
-        5978: "China",
+        5998: ("United Kingdom", "British"),
+        5978: ("China", "Chinese"),
         ...
     }
 '''
@@ -105,18 +105,18 @@ def main():
     countries, examples, labels = get_dataset()
 
     classifier = NamesToNationalityClassifier(countries)
-    classifier.add_training_examples(examples, labels)
 
-    # Train the model
-    try:
-        print('Training data')
-        classifier.train()
-    finally:
-        print('Saved model to data.npz')
-        classifier.save_model('data/data')
+    # # Train the model
+    # try:
+    #     print('Training data')
+    #     classifier.add_training_examples(examples, labels)
+    #     classifier.train()
+    # finally:
+    #     print('Saved model to data.npz')
+    #     classifier.save_model('data/data')
 
     # Make predictions
-    # classifier.load_model_from_file('data/data.npz')
-    # print(classifier.predict('Raymond Zhang'))
+    classifier.load_model_from_file('data/data.npz')
+    print(classifier.predict('Emilio Kartono'))
 
 main()

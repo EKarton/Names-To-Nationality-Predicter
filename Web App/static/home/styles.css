@@ -1,0 +1,57 @@
+body{
+    min-height: 100vh;
+    height: 100vh;
+    margin: 0px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+form{
+    margin-bottom: 30%;
+}
+
+#search-for-name-container{
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+#name-textbox{
+    width: calc(100% - 20px);
+    border: 1px solid #b3b3b3;
+    font-size: 150%;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+#submit-button{
+    background: rgb(40, 40, 42);
+    border: none;
+    border-radius: 2px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    outline: medium none;
+    overflow: hidden;
+    padding: 10px;
+    text-transform: uppercase;
+    transition: all 0.15s ease-in-out 0s;
+    width: 100%;
+    box-shadow: 0 1px 2px 0px rgba(0,0,0,0.16), 0 1px 2px 0px rgba(0,0,0,0.23);
+    /* margin-left: 20%; */
+    /* margin-right: 20%; */
+    margin-top: 50px;
+    margin-bottom: 10px;
+}

@@ -297,7 +297,7 @@ class NamesToNationalityClassifier:
             for k in range(self.output_dimensions):
                 formatted_hypothesis.append((hypothesis[k], self.index_to_label[k]))
 
-            formatted_hypothesis.sort()
+            formatted_hypothesis.sort(reverse=True)
 
             return formatted_hypothesis
         else:
