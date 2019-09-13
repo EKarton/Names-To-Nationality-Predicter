@@ -17,5 +17,12 @@
             </tr>
         {% endfor %}
     </table>
+
+    <h1>Wrong prediction? Enter the correct country below</h1>
+    <form action="/nationality" method="POST">
+        <input id="country-textbox" name="country" type="text"><br>
+        <input name="name" type="hidden" value="{{name}}"><br>
+        <input id="submit-button" type="submit" value="Predict Nationality">
+    </form>
 </body>
 </html>

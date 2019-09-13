@@ -39,11 +39,12 @@ def index():
 @app.route('/nationality', methods=['GET', 'POST'])
 def get_nationality():
     if request.method == 'POST':
-        name = request.args.get('name')
-        country = request.args.get('country')
+        name = request.form.get('name')
+        country = request.form.get('country')
+        print('Fixing prediction for name', name, 'with country', country)
         classifier.train_example(name, country)
 
-        return render_template('fix-nationality.html')
+        return render_template('fix-nationality/index.html')
 
     else:
         name = request.args.get('name')
@@ -55,14 +56,14 @@ def get_nationality():
         name.strip()
 
         if len(name) == 0:
-            return render_template('nationality-failure.html', error_message='your name cannot be blank.'), 400
+            return render_template('prediction-error/index.html', error_message='your name cannot be blank.'), 400
 
         if len(name.split(' ')) <= 1:
-            return render_template('nationality-failure.html', error_message='your name needs to have a last name.'), 400
+            return render_template('prediction-error/index.html', error_message='your name needs to have a last name.'), 400
 
         prediction = classifier.predict(name)
         most_probable_country = prediction[0][1]
-        return render_template('nationality.html', name=name, most_probable_country=most_probable_country, predictions=prediction)            
+        return render_template('nationality/index.html', name=name, most_probable_country=most_probable_country, predictions=prediction)            
 
 @app.errorhandler(400)
 def not_found_error(error):
