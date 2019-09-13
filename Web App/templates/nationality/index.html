@@ -1,13 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <title>Nationality from Name</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Nationality from Name</title>
+    
+    <link rel="stylesheet" type="text/css" href="/static/nationality/styles.css">
 </head>
 <body>
-    <h1>{{name}} is most likely from {{most_probable_country}}</h1>
+    <div id="prediction-header">
+        <h1>{{name}} is most likely from {{most_probable_country}}</h1>
+        <a href="">Wrong prediction? Click here to enter the correct country</a>
+    </div>
+    <div id="incorrect-prediction-panel">
+        <h1>Wrong prediction? Enter the correct country below</h1>
+        <form action="/nationality" method="POST">
+            <input id="country-textbox" name="country" type="text"><br>
+            <input name="name" type="hidden" value="{{name}}"><br>
+            <input id="submit-button" type="submit" value="Predict Nationality">
+        </form>
+    </div>
 
     <table>
         {% for probability, country in predictions %}
@@ -18,11 +31,7 @@
         {% endfor %}
     </table>
 
-    <h1>Wrong prediction? Enter the correct country below</h1>
-    <form action="/nationality" method="POST">
-        <input id="country-textbox" name="country" type="text"><br>
-        <input name="name" type="hidden" value="{{name}}"><br>
-        <input id="submit-button" type="submit" value="Predict Nationality">
-    </form>
+    <!-- Import all JS files here (for faster load times) -->
+	<script src="/static/nationality/script.js"></script>
 </body>
 </html>
