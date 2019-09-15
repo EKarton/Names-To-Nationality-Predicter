@@ -1,56 +1,80 @@
 body{
-    min-height: 100vh;
-    height: 100vh;
-    margin: 0px;
-    align-items: center;
-    justify-content: center;
-    display: flex;
-}
-
-form{
-    margin-bottom: 30%;
-}
-
-#search-for-name-container{
-    width: 60%;
     margin: 0;
+    padding: 0;
+    font-family: 'PT Sans', sans-serif;
+}
+
+.background{
+	margin: 0;
+	width: 100%;
+    height: 100vh;
+    
+    color: #fff;
+    
+	background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+	background-size: 400% 400%;
+	animation: gradientBG 15s ease infinite;
+}
+
+@keyframes gradientBG{
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+.intro-content{
+
+    padding-left: 10%;
+    padding-right: 10%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
+
+    width: 80%;
+    text-align: center;
+    
     position: absolute;
-    top: 50%;
+    top: 40%;
     -ms-transform: translateY(-50%);
     transform: translateY(-50%);
-    text-align: center;
 }
 
-#name-textbox{
-    width: calc(100% - 20px);
-    border: 1px solid #b3b3b3;
-    font-size: 150%;
-    padding-left: 10px;
-    padding-right: 10px;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
+.textbox{
+    margin: 0;
+    padding: 6px 11px;
+
+    width: 100%;
+    max-width: 500px;
+    color: rgba(0,0,0,0.65);
+    font-size: 14px;
+
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    -webkit-transition: all .3s;
+    transition: all .3s;
+}
+
+.button{
+    padding: 10px 15px;
+
+    color: #fff;
+    background-color: #1890ff;
+    border-color: #1890ff;
+    border-radius: 4px;
+    text-shadow: 0 -1px 0 rgba(0,0,0,0.12);
+    -webkit-box-shadow: 0 2px 0 rgba(0,0,0,0.045);
+    box-shadow: 0 2px 0 rgba(0,0,0,0.045);
 }
 
 #submit-button{
-    background: rgb(40, 40, 42);
-    border: none;
-    border-radius: 2px;
-    color: #fff;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    letter-spacing: 3px;
-    outline: medium none;
-    overflow: hidden;
-    padding: 10px;
-    text-transform: uppercase;
-    transition: all 0.15s ease-in-out 0s;
-    width: 100%;
-    box-shadow: 0 1px 2px 0px rgba(0,0,0,0.16), 0 1px 2px 0px rgba(0,0,0,0.23);
-    /* margin-left: 20%; */
-    /* margin-right: 20%; */
     margin-top: 50px;
-    margin-bottom: 10px;
 }

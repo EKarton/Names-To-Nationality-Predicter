@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <head>
+        <title>Document</title>
 
-    <link rel="stylesheet" type="text/css" href="/static/home/styles.css">
-    
-    <title>Predict Nationality of a Name</title>
-</head>
-<body>
-    <div id="search-for-name-container">
-        <h1>Predict the nationality of a name!</h1>
-        <form action="/nationality">
-            <input id="name-textbox" type="text" name="name" placeholder="Enter a full name here"><br>
-            <input id="submit-button" type="submit" value="Predict Nationality">
-        </form>
-    </div>
-</body>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+        <link href="https://fonts.googleapis.com/css?family=PT+Sans&display=swap" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/static/home/styles.css">
+    </head>
+    <body>
+        <div class="background">
+            <div class="intro-content">
+                <h1>Predict the Nationality of a Name</h1>
+                <form method="GET" action="/nationality?">
+                    <input id="name-textbox" class="textbox" type="text" name="name" placeholder="Enter a full name here" 
+                           pattern="([A-Za-z]{2,}\s)+[A-Za-z]{2,}">
+                    <br>
+                    <input id="submit-button" class="button" type="submit" value="Predict Nationality">
+                </form>
+            </div>
+        </div>
+        
+        <!-- Import all JS files here (for faster load times) -->
+        <script src="/static/home/script.js"></script>
+    </body>
 </html>
