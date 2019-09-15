@@ -4,6 +4,7 @@ sys.path.append('../ML Model/src')
 from flask import Flask, render_template, request, abort
 from names_to_nationality_classifier import NamesToNationalityClassifier
 from functools import reduce
+from os import environ
 
 def get_countries():
     country_id_to_country_name = {}
@@ -93,4 +94,4 @@ def not_found_error(error):
     return render_template('400.html'), 400
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=environ.get("PORT", 5000))
