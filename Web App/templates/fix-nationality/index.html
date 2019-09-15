@@ -13,9 +13,9 @@
     <body>
         <div class="background">
             <div class="intro-content">
-                <h1>Where was Bob Smith from?</h1>
+                <h1>Where was {{name}} from?</h1>
                 <form method="POST" action="/nationality">
-                    <input type="hidden" name="name" value="Bob Smith">
+                    <input type="hidden" name="name" value="{{name}}">
 
                     <select id="select-country" class="select" name="country" size="1">
                         {% for country in countries %}

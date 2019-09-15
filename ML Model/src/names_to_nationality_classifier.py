@@ -9,7 +9,7 @@ class NamesToNationalityClassifier:
     def __init__(self, possible_labels):
         self.alpha = 0.0001
         self.input_dimensions = 27
-        self.hidden_dimensions = 700
+        self.hidden_dimensions = 500
         self.output_dimensions = len(possible_labels)
         self.epsilon_init = 0.12
         self.training_to_validation_ratio = 0.8 # This means 70% of the dataset will be used for training, and 30% is for validation
