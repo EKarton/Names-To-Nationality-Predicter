@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <title>Nationality from Name</title>
@@ -31,7 +31,53 @@
         {% endfor %}
     </table>
 
-    <!-- Import all JS files here (for faster load times) -->
 	<script src="/static/nationality/script.js"></script>
 </body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Results</title>
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+        <link href="https://fonts.googleapis.com/css?family=PT+Sans&display=swap" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/static/nationality/styles.css">
+    </head>
+    <body>
+        <div class="background">
+            <div id="final-answer">
+                <span id="final-answer-header">{{name}} is most likely from
+                </span>
+                <h1 id="final-answer-country">{{most_probable_country}}</h1>
+            </div>
+            <div id="results-container">
+                <table id="results">
+                    <thead>
+                        <tr>
+                            <td class="results-country-name-header">Country</td>
+                            <td class="results-probability-header">Probability</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            {% for probability, country in predictions %}
+                                <tr>
+                                    <td class="results-country-name">{{country}}</td>
+                                    <td class="results-probability">{{probability}}</td>
+                                </tr>
+                            {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div id="incorrect-prediction-container">
+                <form method="GET" action="/fix-nationality">
+                    <input type="hidden" name="name" value="Bob Smith">
+                    <input class="button" type="submit" value="Incorrect prediction? Click here to add the correct nationality">
+                </form>
+            </div>
+        </div>
+    </body>
 </html>

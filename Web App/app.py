@@ -3,6 +3,7 @@ sys.path.append('../ML Model/src')
 
 from flask import Flask, render_template, request, abort
 from names_to_nationality_classifier import NamesToNationalityClassifier
+from functools import reduce
 
 def get_countries():
     country_id_to_country_name = {}
@@ -44,7 +45,7 @@ def get_nationality():
         print('Fixing prediction for name', name, 'with country', country)
         classifier.train_example(name, country)
 
-        return render_template('fix-nationality/index.html')
+        return render_template('fix-nationality-feedback/index.html')
 
     else:
         name = request.args.get('name')
@@ -61,9 +62,27 @@ def get_nationality():
         if len(name.split(' ')) <= 1:
             return render_template('prediction-error/index.html', error_message='your name needs to have a last name.'), 400
 
-        prediction = classifier.predict(name)
-        most_probable_country = prediction[0][1]
-        return render_template('nationality/index.html', name=name, most_probable_country=most_probable_country, predictions=prediction)            
+        predictions = classifier.predict(name)
+        most_probable_country = predictions[0][1]
+
+        # Format the predictions so that it is in %
+        formatted_predictions = [ 
+            (str(round(probability * 100, 2)) + '%', country_name) 
+            for probability, country_name in predictions
+        ]
+
+        # Capitalize the first and last name
+        formatted_name = reduce(lambda x, y: x + ' ' + y, [ token.capitalize() for token in name.split() ])
+
+        return render_template('nationality/index.html', 
+            name=formatted_name, 
+            most_probable_country=most_probable_country, 
+            predictions=formatted_predictions)  
+
+@app.route('/fix-nationality', methods=['GET'])
+def fix_nationality():
+    name = request.form.get('name')
+    return render_template('fix-nationality/index.html', name=name)         
 
 @app.errorhandler(400)
 def not_found_error(error):
