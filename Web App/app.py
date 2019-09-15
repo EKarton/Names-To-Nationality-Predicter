@@ -81,8 +81,8 @@ def get_nationality():
 
 @app.route('/fix-nationality', methods=['GET'])
 def fix_nationality():
-    name = request.form.get('name')
-    incorrect_country = request.form.get('incorrect_country')
+    name = request.args.get('name')
+    incorrect_country = request.args.get('incorrect_country')
     return render_template('fix-nationality/index.html', 
         name=name, 
         countries=countries, 
