@@ -82,7 +82,11 @@ def get_nationality():
 @app.route('/fix-nationality', methods=['GET'])
 def fix_nationality():
     name = request.form.get('name')
-    return render_template('fix-nationality/index.html', name=name)         
+    incorrect_country = request.form.get('incorrect_country')
+    return render_template('fix-nationality/index.html', 
+        name=name, 
+        countries=countries, 
+        incorrect_country=incorrect_country)         
 
 @app.errorhandler(400)
 def not_found_error(error):

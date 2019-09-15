@@ -75,6 +75,7 @@
             <div id="incorrect-prediction-container">
                 <form method="GET" action="/fix-nationality">
                     <input type="hidden" name="name" value="Bob Smith">
+                    <input type="hidden" name="incorrect_country" value="{{most_probable_country}}">
                     <input class="button" type="submit" value="Incorrect prediction? Click here to add the correct nationality">
                 </form>
             </div>

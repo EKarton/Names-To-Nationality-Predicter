@@ -1,12 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Fix nationality</title>
-</head>
-<body>
-    <h1>Thanks for your submission! Your feedback has been added to the model.</h1>
-</body>
+    <head>
+        <title>Document</title>
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+        <link href="https://fonts.googleapis.com/css?family=PT+Sans&display=swap" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/static/fix-nationality/styles.css">
+    </head>
+    <body>
+        <div class="background">
+            <div class="intro-content">
+                <h1>Where was Bob Smith from?</h1>
+                <form method="POST" action="/nationality">
+                    <input type="hidden" name="name" value="Bob Smith">
+
+                    <select id="select-country" class="select" name="country" size="1">
+                        {% for country in countries %}
+                            {% if country == incorrect_country %}
+                                <option value="{{country}}" selected="selected">{{country}}</option>
+                            {% else %}
+                                <option value="{{country}}">{{country}}</option>
+                            {% endif %}
+
+                            
+                        {% endfor %}
+                    </select>
+
+                    <br>
+                    <input id="back-button" class="button" type="submit" value="Back" onclick="history.back()">
+                    <input id="submit-button" class="button" type="submit" value="Submit">
+                </form>
+            </div>
+        </div>
+        <!-- Import all JS files here (for faster load times) -->
+        <script src="script.js"></script>
+    </body>
 </html>
