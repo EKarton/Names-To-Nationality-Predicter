@@ -13,21 +13,24 @@ class NamesToNationalityClassifier:
         self.output_dimensions = len(possible_labels)
         self.epsilon_init = 0.12
         self.training_to_validation_ratio = 0.7 # This means 70% of the dataset will be used for training, and 30% is for validation
-        self.lamb = 0.02 # The lambda for L2 regularization
 
+        # Weights
         self.layer_1_weights = np.random.random((self.hidden_dimensions, self.input_dimensions + 1)) * (2 * self.epsilon_init) - self.epsilon_init
         self.layer_2_weights = np.random.random((self.output_dimensions, self.hidden_dimensions + 1)) * (2 * self.epsilon_init) - self.epsilon_init
         self.hidden_state_weights = np.random.random((self.hidden_dimensions, self.hidden_dimensions)) * (2 * self.epsilon_init) - self.epsilon_init
 
-        # Momentum
+        # Momentum and regularization
+        self.lamb = 0.02 # The lambda for L2 regularization
         self.momentum = 0.9
         self.layer_1_weights_velocity = np.zeros((self.hidden_dimensions, self.input_dimensions + 1))
         self.layer_2_weights_velocity = np.zeros((self.output_dimensions, self.hidden_dimensions + 1))
         self.hidden_state_weights_velocity = np.zeros((self.hidden_dimensions, self.hidden_dimensions))
 
+        # Bias values
         self.layer_1_bias = 1
         self.layer_2_bias = 1
 
+        # Num epoche
         self.num_epoche = 20
 
         # We now want to map label to index, and index to label
