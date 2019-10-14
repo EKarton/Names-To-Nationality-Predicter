@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt 
 
-file_name = "results/Test-21-to-23-logs.csv"
+file_name = "results/Test-Chinese-vs-UK-logs.csv"
 
 def main():
     epoches = []
@@ -31,24 +31,23 @@ def main():
             line = file_reader.readline()
 
     # Plot the test_avg_error vs epoche
-    plt.subplot(2, 2, 1)
-    plt.scatter(epoches, test_avg_errors)
-    plt.title('Test Avg. Error vs Epoche')
+    '''
+        cross_entropies_plt.title.set_text('Cross entropies vs Epoche')
+            cross_entropies_plt.plot(iterations, cross_entropies_train, label="Cross Entropies Train")
+            cross_entropies_plt.plot(iterations, cross_entropies_valid, label="Cross Entropies Valid")
+            cross_entropies_plt.legend()
+    '''
+    fig, (errors_plt, accuracy_plt) = plt.subplots(2)
 
-    # Plot the test_accuracy vs epoche
-    plt.subplot(2, 2, 2)
-    plt.scatter(epoches, test_accuracies)
-    plt.title('Test Accuracy vs Epoche')
+    errors_plt.title.set_text('Errors vs Epoche')
+    errors_plt.plot(epoches, train_avg_errors, label='Test Avg. Error')
+    errors_plt.plot(epoches, test_avg_errors, label='Test Avg. Error')
+    errors_plt.legend()
 
-    # Plot the train_avg_error vs epoche
-    plt.subplot(2, 2, 3)
-    plt.scatter(epoches, train_avg_errors)
-    plt.title('Train Avg. Error vs Epoche')
-
-    # Plot the train_accuracy vs epoche
-    plt.subplot(2, 2, 4)
-    plt.scatter(epoches, train_accuracies)
-    plt.title('Train Accuracy vs Epoche')
+    accuracy_plt.title.set_text('Accuracy vs Epoche')
+    accuracy_plt.plot(epoches, train_accuracies, label='Train Accuracy')
+    accuracy_plt.plot(epoches, test_accuracies, label='Test Accuracy')
+    accuracy_plt.legend()
 
     plt.show()
 

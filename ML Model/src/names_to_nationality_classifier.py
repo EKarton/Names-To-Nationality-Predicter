@@ -12,16 +12,23 @@ class NamesToNationalityClassifier:
         self.hidden_dimensions = 500
         self.output_dimensions = len(possible_labels)
         self.epsilon_init = 0.12
-        self.training_to_validation_ratio = 0.8 # This means 70% of the dataset will be used for training, and 30% is for validation
+        self.training_to_validation_ratio = 0.7 # This means 70% of the dataset will be used for training, and 30% is for validation
+        self.lamb = 0.02 # The lambda for L2 regularization
 
         self.layer_1_weights = np.random.random((self.hidden_dimensions, self.input_dimensions + 1)) * (2 * self.epsilon_init) - self.epsilon_init
         self.layer_2_weights = np.random.random((self.output_dimensions, self.hidden_dimensions + 1)) * (2 * self.epsilon_init) - self.epsilon_init
         self.hidden_state_weights = np.random.random((self.hidden_dimensions, self.hidden_dimensions)) * (2 * self.epsilon_init) - self.epsilon_init
 
+        # Momentum
+        self.momentum = 0.9
+        self.layer_1_weights_velocity = np.zeros((self.hidden_dimensions, self.input_dimensions + 1))
+        self.layer_2_weights_velocity = np.zeros((self.output_dimensions, self.hidden_dimensions + 1))
+        self.hidden_state_weights_velocity = np.zeros((self.hidden_dimensions, self.hidden_dimensions))
+
         self.layer_1_bias = 1
         self.layer_2_bias = 1
 
-        self.num_epoche = 10
+        self.num_epoche = 20
 
         # We now want to map label to index, and index to label
         self.label_to_index = {}
@@ -278,9 +285,20 @@ class NamesToNationalityClassifier:
             layer_1_weights_gradient += np.dot(np.array([delta_2]).T, np.array([X_with_bias]))
             hidden_weights_gradient += np.dot(np.array([delta_2]).T, np.array([hidden_state]))
 
-        self.layer_2_weights -= self.alpha * layer_2_weights_gradient
-        self.layer_1_weights -= self.alpha * layer_1_weights_gradient
-        self.hidden_state_weights -= self.alpha * hidden_weights_gradient
+        # Regularize the gradients
+        layer_2_weights_gradient += self.lamb * self.layer_2_weights
+        layer_1_weights_gradient += self.lamb * self.layer_1_weights
+        hidden_weights_gradient += self.lamb * self.hidden_state_weights
+
+        # Add the velocity
+        self.layer_2_weights_velocity = self.momentum * self.layer_2_weights_velocity + (1 - self.momentum) * layer_2_weights_gradient
+        self.layer_1_weights_velocity = self.momentum * self.layer_1_weights_velocity + (1 - self.momentum) * layer_1_weights_gradient
+        self.hidden_state_weights_velocity = self.momentum * self.hidden_state_weights_velocity + (1 - self.momentum) * hidden_weights_gradient
+
+        # Update weights
+        self.layer_2_weights -= self.alpha * self.layer_2_weights_velocity
+        self.layer_1_weights -= self.alpha * self.layer_1_weights_velocity
+        self.hidden_state_weights -= self.alpha * self.hidden_state_weights_velocity
 
     def predict(self, name):
         # Serialize the name to a num_char x 27 matrix
