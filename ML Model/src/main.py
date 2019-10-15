@@ -1,5 +1,6 @@
 import numpy as np
 from names_to_nationality_classifier import NamesToNationalityClassifier
+from collections import OrderedDict
 
 '''
     Obtains a map from country ID to country name.
@@ -86,6 +87,7 @@ def get_records():
 def get_dataset():
     country_id_to_country = get_countries()
     countries = [ country_id_to_country[id][0] for id in country_id_to_country ]
+    countries.sort()
 	
     records = [( record[0], country_id_to_country[record[1]][0] ) for record in get_records()]
     # records = list(filter(lambda x: x[1] == 'China' or x[1] == 'United Kingdom', records))
