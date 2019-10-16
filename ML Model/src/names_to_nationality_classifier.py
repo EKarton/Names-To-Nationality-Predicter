@@ -345,6 +345,7 @@ class NamesToNationalityClassifier:
         for i in range(len(examples)):
             example = examples[i]
             label = labels[i]
+            print("For example " + example + " = " + label + ":")
             serialized_example = self.__serialize__example__(example)
             serialized_label = self.__serialize_label__(label)
 

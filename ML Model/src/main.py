@@ -17,10 +17,10 @@ import matplotlib.pyplot as plt
         ...
     }
 '''
-def get_countries():
+def get_countries(filepath='data/countries.csv'):
 	country_id_to_country_name = {}
 
-	with open('data/countries.csv') as countries_file_reader:
+	with open(filepath) as countries_file_reader:
 
 		line = countries_file_reader.readline()
 		while line:
@@ -91,15 +91,20 @@ def get_records():
     It returns in the order listed above
 '''
 def get_dataset():
-    country_id_to_country = get_countries()
+    country_id_to_country = get_countries(filepath='data/european-countries.csv')
     countries = [ country_id_to_country[id][0] for id in country_id_to_country ]
     countries.sort()
-	
-    records = [( record[0], country_id_to_country[record[1]][0] ) for record in get_records()]
-    records = list(filter(lambda x: x[1] == 'China' or x[1] == 'United Kingdom', records))
-    countries = ["China", "United Kingdom"]
+
+    records = get_records()
+    records = list(filter(lambda x: x[1] in country_id_to_country, records))
+    records = [( record[0], country_id_to_country[record[1]][0] ) for record in records]
+    # records = list(filter(lambda x: x[1] == 'China' or x[1] == 'United Kingdom', records))
+    # countries = ["China", "United Kingdom"]
     
     np.random.shuffle(records)
+    records = records[0:1000]
+
+    print(records[0])
 	
     # Splits the records into two lists
     examples = [ record[0] for record in records ]
