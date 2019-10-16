@@ -6,10 +6,10 @@ from ml_utils import ActivationFunctions, LossFunctions
 
 class NamesToNationalityClassifier:
 
-    def __init__(self, possible_labels):
-        self.alpha = 0.0001
+    def __init__(self, possible_labels, alpha=0.0001, hidden_dimensions=500, l2_lambda = 0.02, momentum=0.9, num_epoche=30):
+        self.alpha = alpha
         self.input_dimensions = 27
-        self.hidden_dimensions = 500
+        self.hidden_dimensions = hidden_dimensions
         self.output_dimensions = len(possible_labels)
         self.epsilon_init = 0.12
         self.training_to_validation_ratio = 0.7 # This means 70% of the dataset will be used for training, and 30% is for validation
@@ -23,8 +23,8 @@ class NamesToNationalityClassifier:
         self.W2 = np.random.random((self.output_dimensions, self.hidden_dimensions + 1)) * (2 * self.epsilon_init) - self.epsilon_init
 
         # Momentum and regularization
-        self.lamb = 0.02 # The lambda for L2 regularization
-        self.momentum = 0.9
+        self.l2_lambda = l2_lambda # The lambda for L2 regularization
+        self.momentum = momentum
         self.W0_velocity = np.zeros((self.hidden_dimensions, self.hidden_dimensions))
         self.W1_velocity = np.zeros((self.hidden_dimensions, self.input_dimensions + 1))
         self.W2_velocity = np.zeros((self.output_dimensions, self.hidden_dimensions + 1))
@@ -34,7 +34,7 @@ class NamesToNationalityClassifier:
         self.layer_2_bias = 1
 
         # Num epoche
-        self.num_epoche = 30
+        self.num_epoche = num_epoche
 
         # We now want to map label to index, and index to label
         self.label_to_index = {}
@@ -62,9 +62,20 @@ class NamesToNationalityClassifier:
 
     '''
         Trains the model based on the training data provided.
-        It will output a graph.
+        It will output a dictionary with the following keys:
+        {
+            'epoche_to_train_avg_error': the train avg error per epoche,
+            'epoche_to_test_avg_error': the test avg error per epoche,
+            'epoche_to_train_accuracy': the train accuracy per epoche,
+            'epoche_to_test_accuracy': the test accuracy per epoche
+        }
     '''
     def train(self):
+
+        epoche_to_train_avg_error = np.array((self.num_epoche, ))
+        epoche_to_test_avg_error = np.array((self.num_epoche, ))
+        epoche_to_train_accuracy = np.array((self.num_epoche, ))
+        epoche_to_test_accuracy = np.array((self.num_epoche, ))
 
         for epoche in range(self.num_epoche):
             train_avg_error = 0
@@ -94,34 +105,19 @@ class NamesToNationalityClassifier:
                 # Perform back propagation
                 self.__perform_back_propagation__(example, label, forward_propagation_results)
 
-            train_avg_error /= len(self.serialized_training_examples)
-            train_accuracy /= len(self.serialized_training_examples)
+            epoche_to_train_avg_error[epoche] = train_avg_error / len(self.serialized_training_examples)
+            epoche_to_train_accuracy[epoche] = train_accuracy / len(self.serialized_training_examples)
+
             test_avg_error, test_accuracy = self.__validate__()
+            epoche_to_test_accuracy[epoche] = test_accuracy
+            epoche_to_test_avg_error[epoche] = test_avg_error
 
-            # Plot the test_avg_error vs epoche
-            # plt.subplot(2, 2, 1)
-            # plt.scatter(epoche, test_avg_error)
-            # plt.title('Test Avg. Error vs Epoche')
-
-            # # Plot the test_accuracy vs epoche
-            # plt.subplot(2, 2, 2)
-            # plt.scatter(epoche, test_accuracy)
-            # plt.title('Test Accuracy vs Epoche')
-
-            # # Plot the train_avg_error vs epoche
-            # plt.subplot(2, 2, 3)
-            # plt.scatter(epoche, train_avg_error)
-            # plt.title('Train Avg. Error vs Epoche')
-
-            # # Plot the train_accuracy vs epoche
-            # plt.subplot(2, 2, 4)
-            # plt.scatter(epoche, train_accuracy)
-            # plt.title('Train Accuracy vs Epoche')
-
-            # # We need to pause so that it will show the graph in realtime
-            # plt.pause(0.05)
-
-            print(epoche, test_avg_error, test_accuracy, train_avg_error, train_accuracy, sep=',')
+        return {
+            'epoche_to_train_avg_error': epoche_to_train_avg_error,
+            'epoche_to_test_avg_error': epoche_to_test_avg_error,
+            'epoche_to_train_accuracy': epoche_to_train_accuracy,
+            'epoche_to_test_accuracy': epoche_to_test_accuracy
+        }
 
     '''
         Trains an example with a label.
@@ -173,13 +169,15 @@ class NamesToNationalityClassifier:
         return avg_cost, accuracy
 
     def __is_hypothesis_correct__(self, hypothesis, label):
-        label_with_one_index = np.where(label == 1)[0]
-        hypothesis_with_max_val_indexes = np.where(hypothesis == np.amax(hypothesis))[0]
+        # label_with_one_index = np.where(label == 1)[0]
+        # hypothesis_with_max_val_indexes = np.where(hypothesis == np.amax(hypothesis))[0]
 
-        for index in hypothesis_with_max_val_indexes:
-            if index in label_with_one_index:
-                return True
-        return False
+        # for index in hypothesis_with_max_val_indexes:
+        #     if index in label_with_one_index:
+        #         return True
+        # return False
+
+        return np.argmax(hypothesis, axis=0) == np.argmax(label, axis=0)
 
     '''
         This function will perform a forward propagation with the serialized version of the example
@@ -252,7 +250,7 @@ class NamesToNationalityClassifier:
         letter_pos_to_y2 = forward_propagation_results['letter_pos_to_hypothesis']
         letter_pos_to_loss = forward_propagation_results['letter_pos_to_loss']
 
-        # The gradients
+        # The loss gradients w.r.t W0, W1, W2
         dL_dW0 = np.zeros((self.hidden_dimensions, self.hidden_dimensions))
         dL_dW1 = np.zeros((self.hidden_dimensions, self.input_dimensions + 1))
         dL_dW2 = np.zeros((self.output_dimensions, self.hidden_dimensions + 1))
@@ -289,9 +287,9 @@ class NamesToNationalityClassifier:
 
             # We are not updating the weights of the bias value, so we are setting the changes for the bias weights to 0
             # We are going to update the weights of the bias value later
-            dL_dW0 += np.dot(np.array([dL_dY1]).T, np.array([h0])) + self.lamb * self.W0
-            dL_dW1 += np.dot(np.array([dL_dY1]).T, np.array([X_with_bias])) + self.lamb * self.W1
-            dL_dW2 += np.dot(np.array([dL_dY2]).T, np.array([h1_with_bias])) + self.lamb * self.W2
+            dL_dW0 += np.dot(np.array([dL_dY1]).T, np.array([h0])) + self.l2_lambda * self.W0
+            dL_dW1 += np.dot(np.array([dL_dY1]).T, np.array([X_with_bias])) + self.l2_lambda * self.W1
+            dL_dW2 += np.dot(np.array([dL_dY2]).T, np.array([h1_with_bias])) + self.l2_lambda * self.W2
 
         # Add the velocity
         self.W0_velocity = self.momentum * self.W0_velocity + (1 - self.momentum) * dL_dW0
@@ -310,10 +308,10 @@ class NamesToNationalityClassifier:
         label = np.zeros((self.output_dimensions, ))
 
         forward_propagation_results = self.__perform_forward_propagation__(example, label)
-        letter_pos_to_hypothesis = forward_propagation_results['letter_pos_to_hypothesis']
+        letter_pos_to_y2 = forward_propagation_results['letter_pos_to_hypothesis']
 
-        if len(letter_pos_to_hypothesis) > 0:
-            hypothesis = ActivationFunctions.softmax(letter_pos_to_hypothesis[-1])
+        if len(letter_pos_to_y2) > 0:
+            hypothesis = ActivationFunctions.softmax(letter_pos_to_y2[-1])
             formatted_hypothesis = []
             for k in range(self.output_dimensions):
                 formatted_hypothesis.append((hypothesis[k], self.index_to_label[k]))

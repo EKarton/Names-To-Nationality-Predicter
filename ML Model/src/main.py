@@ -111,6 +111,9 @@ def main():
 
     classifier = NamesToNationalityClassifier(countries)
 
+    # Test out different hyperparameters
+    
+
     # # Train the model
     try:
         print('Training data')

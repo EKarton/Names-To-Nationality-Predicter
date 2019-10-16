@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt 
 
-file_name = "results/Test-Chinese-vs-UK-logs.csv"
+file_name = "results/Testing.csv"
 
 def main():
     epoches = []
