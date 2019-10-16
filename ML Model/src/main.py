@@ -1,6 +1,11 @@
 import numpy as np
 from names_to_nationality_classifier import NamesToNationalityClassifier
 from collections import OrderedDict
+
+# Make matplotlib not interactive
+import matplotlib as mpl
+mpl.use('Agg')
+
 import matplotlib.pyplot as plt 
 
 '''
@@ -96,7 +101,7 @@ def get_dataset():
     
     np.random.shuffle(records)
 
-    records = records[0:300]
+    records = records[0:30]
 	
     # Splits the records into two lists
     examples = [ record[0] for record in records ]
@@ -109,6 +114,7 @@ def get_dataset():
 '''
 def main():
     countries, examples, labels = get_dataset()
+    plt.ioff()
 
     # Test out different hyperparameters
     plt_title_format = "Perf. for Learning Rate: {:.5f}, Hidden Dim: {:.5f}, \nL2_lambda: {:.5f}, Momentum: {:.5f}, Num Epoche: {:.5f}"
