@@ -279,9 +279,14 @@ class NamesToNationalityClassifier:
 
             # We are not updating the weights of the bias value, so we are setting the changes for the bias weights to 0
             # We are going to update the weights of the bias value later
-            dL_dW0 += np.dot(np.array([dL_dY1]).T, np.array([h0])) + self.l2_lambda * self.W0
-            dL_dW1 += np.dot(np.array([dL_dY1]).T, np.array([X_with_bias])) + self.l2_lambda * self.W1
-            dL_dW2 += np.dot(np.array([dL_dY2]).T, np.array([h1_with_bias])) + self.l2_lambda * self.W2
+            dL_dW0 += np.dot(np.array([dL_dY1]).T, np.array([h0]))
+            dL_dW1 += np.dot(np.array([dL_dY1]).T, np.array([X_with_bias]))
+            dL_dW2 += np.dot(np.array([dL_dY2]).T, np.array([h1_with_bias]))
+
+        # Add regularization
+        dL_dW0 += self.l2_lambda * self.W0
+        dL_dW1 += self.l2_lambda * self.W1
+        dL_dW2 += self.l2_lambda * self.W2
 
         # Add the velocity
         self.W0_velocity = self.momentum * self.W0_velocity + (1 - self.momentum) * dL_dW0

@@ -100,8 +100,6 @@ def get_dataset():
     countries = ["China", "United Kingdom"]
     
     np.random.shuffle(records)
-
-    records = records[0:30]
 	
     # Splits the records into two lists
     examples = [ record[0] for record in records ]
