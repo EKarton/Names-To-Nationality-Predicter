@@ -72,10 +72,10 @@ class NamesToNationalityClassifier:
     '''
     def train(self):
 
-        epoche_to_train_avg_error = np.array((self.num_epoche, ))
-        epoche_to_test_avg_error = np.array((self.num_epoche, ))
-        epoche_to_train_accuracy = np.array((self.num_epoche, ))
-        epoche_to_test_accuracy = np.array((self.num_epoche, ))
+        epoche_to_train_avg_error = np.zeros((self.num_epoche, ))
+        epoche_to_test_avg_error = np.zeros((self.num_epoche, ))
+        epoche_to_train_accuracy = np.zeros((self.num_epoche, ))
+        epoche_to_test_accuracy = np.zeros((self.num_epoche, ))
 
         for epoche in range(self.num_epoche):
             train_avg_error = 0
@@ -169,14 +169,6 @@ class NamesToNationalityClassifier:
         return avg_cost, accuracy
 
     def __is_hypothesis_correct__(self, hypothesis, label):
-        # label_with_one_index = np.where(label == 1)[0]
-        # hypothesis_with_max_val_indexes = np.where(hypothesis == np.amax(hypothesis))[0]
-
-        # for index in hypothesis_with_max_val_indexes:
-        #     if index in label_with_one_index:
-        #         return True
-        # return False
-
         return np.argmax(hypothesis, axis=0) == np.argmax(label, axis=0)
 
     '''

@@ -1,6 +1,7 @@
 import numpy as np
 from names_to_nationality_classifier import NamesToNationalityClassifier
 from collections import OrderedDict
+import matplotlib.pyplot as plt 
 
 '''
     Obtains a map from country ID to country name.
@@ -95,7 +96,7 @@ def get_dataset():
     
     np.random.shuffle(records)
 
-    records = records[0:4000]
+    records = records[0:300]
 	
     # Splits the records into two lists
     examples = [ record[0] for record in records ]
@@ -109,19 +110,48 @@ def get_dataset():
 def main():
     countries, examples, labels = get_dataset()
 
-    classifier = NamesToNationalityClassifier(countries)
-
     # Test out different hyperparameters
-    
+    plt_title_format = "Perf. for Learning Rate: {:.5f}, Hidden Dim: {:.5f}, \nL2_lambda: {:.5f}, Momentum: {:.5f}, Num Epoche: {:.5f}"
+    various_hidden_layers_count = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
+
+    for hidden_layers_count in various_hidden_layers_count:
+        classifier = NamesToNationalityClassifier(countries, hidden_dimensions=hidden_layers_count, momentum=0)
+        classifier.add_training_examples(examples, labels)
+        performance = classifier.train()
+
+        epoches = [i for i in range(classifier.num_epoche)]
+
+        # Plot the performance
+        fig, (errors_plt, accuracy_plt) = plt.subplots(2)
+        fig_title = plt_title_format.format(classifier.alpha, 
+                                            classifier.hidden_dimensions, 
+                                            classifier.l2_lambda, 
+                                            classifier.momentum, 
+                                            classifier.num_epoche)
+        fig.suptitle(fig_title, fontsize=10)
+
+        errors_plt.title.set_text('Errors vs Epoche')
+        errors_plt.plot(epoches, performance['epoche_to_train_avg_error'], label='Train Avg. Error')
+        errors_plt.plot(epoches, performance['epoche_to_test_avg_error'], label='Test Avg. Error')
+        errors_plt.legend()
+
+        accuracy_plt.title.set_text('Accuracy vs Epoche')
+        accuracy_plt.plot(epoches, performance['epoche_to_train_accuracy'], label='Train Accuracy')
+        accuracy_plt.plot(epoches, performance['epoche_to_test_accuracy'], label='Test Accuracy')
+        accuracy_plt.legend()
+
+        # Save the plot
+        plt.savefig('L1-' + str(hidden_layers_count) + '-plots.png')
 
     # # Train the model
-    try:
-        print('Training data')
-        classifier.add_training_examples(examples, labels)
-        classifier.train()
-    finally:
-        print('Saved model to data.npz')
-        classifier.save_model('data/data')
+    # classifier = NamesToNationalityClassifier(countries)
+    # try:
+    #     print('Training data')
+    #     classifier.add_training_examples(examples, labels)
+    #     classifier.train()
+    # finally:
+    #     print('Saved model to data.npz')
+    #     classifier.save_model('data/data')
 
     # Make predictions
     # classifier.load_model_from_file('data/data.npz')
