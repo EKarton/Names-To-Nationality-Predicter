@@ -90,12 +90,12 @@ def get_dataset():
     countries.sort()
 	
     records = [( record[0], country_id_to_country[record[1]][0] ) for record in get_records()]
-    # records = list(filter(lambda x: x[1] == 'China' or x[1] == 'United Kingdom', records))
-    # countries = ["China", "United Kingdom"]
+    records = list(filter(lambda x: x[1] == 'China' or x[1] == 'United Kingdom', records))
+    countries = ["China", "United Kingdom"]
     
     np.random.shuffle(records)
 
-    # records = records[0:8000]
+    records = records[0:4000]
 	
     # Splits the records into two lists
     examples = [ record[0] for record in records ]

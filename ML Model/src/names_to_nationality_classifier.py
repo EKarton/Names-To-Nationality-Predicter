@@ -15,23 +15,26 @@ class NamesToNationalityClassifier:
         self.training_to_validation_ratio = 0.7 # This means 70% of the dataset will be used for training, and 30% is for validation
 
         # Weights
-        self.layer_1_weights = np.random.random((self.hidden_dimensions, self.input_dimensions + 1)) * (2 * self.epsilon_init) - self.epsilon_init
-        self.layer_2_weights = np.random.random((self.output_dimensions, self.hidden_dimensions + 1)) * (2 * self.epsilon_init) - self.epsilon_init
-        self.hidden_state_weights = np.random.random((self.hidden_dimensions, self.hidden_dimensions)) * (2 * self.epsilon_init) - self.epsilon_init
+        # W0 are the weights from hidden state to hidden layer
+        # W1 are the weights from input char to hidden layer
+        # W2 are the weights from the hidden layer to output layer
+        self.W0 = np.random.random((self.hidden_dimensions, self.hidden_dimensions)) * (2 * self.epsilon_init) - self.epsilon_init
+        self.W1 = np.random.random((self.hidden_dimensions, self.input_dimensions + 1)) * (2 * self.epsilon_init) - self.epsilon_init
+        self.W2 = np.random.random((self.output_dimensions, self.hidden_dimensions + 1)) * (2 * self.epsilon_init) - self.epsilon_init
 
         # Momentum and regularization
         self.lamb = 0.02 # The lambda for L2 regularization
         self.momentum = 0.9
-        self.layer_1_weights_velocity = np.zeros((self.hidden_dimensions, self.input_dimensions + 1))
-        self.layer_2_weights_velocity = np.zeros((self.output_dimensions, self.hidden_dimensions + 1))
-        self.hidden_state_weights_velocity = np.zeros((self.hidden_dimensions, self.hidden_dimensions))
+        self.W0_velocity = np.zeros((self.hidden_dimensions, self.hidden_dimensions))
+        self.W1_velocity = np.zeros((self.hidden_dimensions, self.input_dimensions + 1))
+        self.W2_velocity = np.zeros((self.output_dimensions, self.hidden_dimensions + 1))
 
         # Bias values
         self.layer_1_bias = 1
         self.layer_2_bias = 1
 
         # Num epoche
-        self.num_epoche = 20
+        self.num_epoche = 30
 
         # We now want to map label to index, and index to label
         self.label_to_index = {}
@@ -196,16 +199,16 @@ class NamesToNationalityClassifier:
         num_chars = len(serialized_example)
 
         # Stores the hidden state for each letter position.
-        letter_pos_to_hidden_state = np.zeros((num_chars + 1, self.hidden_dimensions))
+        letter_pos_to_h0 = np.zeros((num_chars + 1, self.hidden_dimensions))
 
         # Stores the layer 2 values for each letter position
-        letter_pos_to_layer_2_values = np.zeros((num_chars, self.hidden_dimensions))
+        letter_pos_to_h1 = np.zeros((num_chars, self.hidden_dimensions))
 
         # Stores the hypothesis for each letter position
-        letter_pos_to_hypothesis = np.zeros((num_chars, self.output_dimensions))
+        letter_pos_to_y2 = np.zeros((num_chars, self.output_dimensions))
 
         # The hidden state for the first letter position is all 0s.
-        letter_pos_to_hidden_state[0] = np.zeros(self.hidden_dimensions)
+        letter_pos_to_h0[0] = np.zeros(self.hidden_dimensions)
 
         # The loss for each letter position
         letter_pos_to_loss = np.zeros((num_chars, ))
@@ -214,27 +217,28 @@ class NamesToNationalityClassifier:
             # The inputs
             X = serialized_example[j]
             X_with_bias = np.r_[[self.layer_1_bias], X] # <- We add a bias to the input. It is now a 28 element array
-            hidden_state = letter_pos_to_hidden_state[j - 1]
+            h0 = letter_pos_to_h0[j - 1]
 
-            layer_2_values = ActivationFunctions.tanh(np.dot(self.layer_1_weights, X_with_bias) + np.dot(self.hidden_state_weights, hidden_state))
+            y1 = np.dot(self.W1, X_with_bias) + np.dot(self.W0, h0)
+            h1 = ActivationFunctions.tanh(y1)
 
             # Adding the bias
-            layer_2_values_with_bias = np.r_[[self.layer_2_bias], layer_2_values] 
+            h1_with_bias = np.r_[[self.layer_2_bias], h1] 
 
-            hypothesis = ActivationFunctions.softmax(np.dot(self.layer_2_weights, layer_2_values_with_bias))
+            y2 = np.dot(self.W2, h1_with_bias)
 
             # Update the dictionaries
-            letter_pos_to_layer_2_values[j] = layer_2_values
-            letter_pos_to_hypothesis[j] = hypothesis
-            letter_pos_to_hidden_state[j] = layer_2_values
+            letter_pos_to_h1[j] = h1
+            letter_pos_to_y2[j] = y2
+            letter_pos_to_h0[j] = h1
 
-            letter_pos_to_loss[j] = LossFunctions.cross_entropy(hypothesis, serialized_label)
+            letter_pos_to_loss[j] = LossFunctions.cross_entropy(ActivationFunctions.softmax(y2), serialized_label)
         
         return {
             'letter_pos_to_loss': letter_pos_to_loss,
-            'letter_pos_to_hidden_state': letter_pos_to_hidden_state,
-            'letter_pos_to_layer_2_values': letter_pos_to_layer_2_values,
-            'letter_pos_to_hypothesis': letter_pos_to_hypothesis
+            'letter_pos_to_hidden_state': letter_pos_to_h0,
+            'letter_pos_to_layer_2_values': letter_pos_to_h1,
+            'letter_pos_to_hypothesis': letter_pos_to_y2
         }
 
     '''
@@ -243,15 +247,15 @@ class NamesToNationalityClassifier:
         Note that the example needs to be a serialized example, and the label needs to be a serialized label
     '''
     def __perform_back_propagation__(self, serialized_example, serialized_label, forward_propagation_results):
-        letter_pos_to_hidden_state = forward_propagation_results['letter_pos_to_hidden_state']
-        letter_pos_to_layer_2_values = forward_propagation_results['letter_pos_to_layer_2_values']
-        letter_pos_to_hypothesis = forward_propagation_results['letter_pos_to_hypothesis']
+        letter_pos_to_h0 = forward_propagation_results['letter_pos_to_hidden_state']
+        letter_pos_to_h1 = forward_propagation_results['letter_pos_to_layer_2_values']
+        letter_pos_to_y2 = forward_propagation_results['letter_pos_to_hypothesis']
         letter_pos_to_loss = forward_propagation_results['letter_pos_to_loss']
 
         # The gradients
-        layer_1_weights_gradient = np.zeros((self.hidden_dimensions, self.input_dimensions + 1))
-        layer_2_weights_gradient = np.zeros((self.output_dimensions, self.hidden_dimensions + 1))
-        hidden_weights_gradient = np.zeros((self.hidden_dimensions, self.hidden_dimensions))
+        dL_dW0 = np.zeros((self.hidden_dimensions, self.hidden_dimensions))
+        dL_dW1 = np.zeros((self.hidden_dimensions, self.input_dimensions + 1))
+        dL_dW2 = np.zeros((self.output_dimensions, self.hidden_dimensions + 1))
 
         num_chars = len(serialized_example)
 
@@ -260,48 +264,44 @@ class NamesToNationalityClassifier:
             X_with_bias = np.r_[[self.layer_1_bias], X]
             
             # This is a 1D array with "self.hidden_dimensions" elements
-            hidden_state = letter_pos_to_hidden_state[j]                    
+            h0 = letter_pos_to_h0[j]                    
 
             # This is a 1D array with "self.hidden_dimensions" elements
-            layer_2_values = letter_pos_to_layer_2_values[j]
+            h1 = letter_pos_to_h1[j]
 
             # Adding the bias
             # This is a 1D array with "self.hidden_dimensions + 1" elements
-            layer_2_values_with_bias = np.r_[[self.layer_2_bias], layer_2_values]
+            h1_with_bias = np.r_[[self.layer_2_bias], h1]
 
             # This is a 1D array with "self.output_dimensions" elements                    
-            hypothesis = letter_pos_to_hypothesis[j]
+            y2 = letter_pos_to_y2[j]
 
             # This is a 1D array with "self.output_dimentions" elements
-            delta_3 = hypothesis - serialized_label
+            dL_dY2 = y2 - serialized_label
 
             # This is a 1D array with "self.hidden_dimensions + 1" elements
-            delta_2 = np.multiply(np.dot(self.layer_2_weights.T, delta_3), ActivationFunctions.tanh_derivative_given_tanh_val(layer_2_values_with_bias))
+            dL_dH1 = np.dot(self.W2.T, dL_dY2)
+            dL_dY1 = np.multiply(dL_dH1, ActivationFunctions.tanh_derivative_given_tanh_val(h1_with_bias))
 
             # We are removing the bias value
             # So now it is a "self.hidden_dimensions" elements
-            delta_2 = delta_2[1:]
+            dL_dY1 = dL_dY1[1:]
 
             # We are not updating the weights of the bias value, so we are setting the changes for the bias weights to 0
             # We are going to update the weights of the bias value later
-            layer_2_weights_gradient += np.dot(np.array([delta_3]).T, np.array([layer_2_values_with_bias]))
-            layer_1_weights_gradient += np.dot(np.array([delta_2]).T, np.array([X_with_bias]))
-            hidden_weights_gradient += np.dot(np.array([delta_2]).T, np.array([hidden_state]))
-
-        # Regularize the gradients
-        layer_2_weights_gradient += self.lamb * self.layer_2_weights
-        layer_1_weights_gradient += self.lamb * self.layer_1_weights
-        hidden_weights_gradient += self.lamb * self.hidden_state_weights
+            dL_dW0 += np.dot(np.array([dL_dY1]).T, np.array([h0])) + self.lamb * self.W0
+            dL_dW1 += np.dot(np.array([dL_dY1]).T, np.array([X_with_bias])) + self.lamb * self.W1
+            dL_dW2 += np.dot(np.array([dL_dY2]).T, np.array([h1_with_bias])) + self.lamb * self.W2
 
         # Add the velocity
-        self.layer_2_weights_velocity = self.momentum * self.layer_2_weights_velocity + (1 - self.momentum) * layer_2_weights_gradient
-        self.layer_1_weights_velocity = self.momentum * self.layer_1_weights_velocity + (1 - self.momentum) * layer_1_weights_gradient
-        self.hidden_state_weights_velocity = self.momentum * self.hidden_state_weights_velocity + (1 - self.momentum) * hidden_weights_gradient
+        self.W0_velocity = self.momentum * self.W0_velocity + (1 - self.momentum) * dL_dW0
+        self.W1_velocity = self.momentum * self.W1_velocity + (1 - self.momentum) * dL_dW1
+        self.W2_velocity = self.momentum * self.W2_velocity + (1 - self.momentum) * dL_dW2
 
         # Update weights
-        self.layer_2_weights -= self.alpha * self.layer_2_weights_velocity
-        self.layer_1_weights -= self.alpha * self.layer_1_weights_velocity
-        self.hidden_state_weights -= self.alpha * self.hidden_state_weights_velocity
+        self.W0 -= self.alpha * self.W0_velocity
+        self.W1 -= self.alpha * self.W1_velocity
+        self.W2 -= self.alpha * self.W2_velocity
 
     def predict(self, name):
         # Serialize the name to a num_char x 27 matrix
@@ -313,7 +313,7 @@ class NamesToNationalityClassifier:
         letter_pos_to_hypothesis = forward_propagation_results['letter_pos_to_hypothesis']
 
         if len(letter_pos_to_hypothesis) > 0:
-            hypothesis = letter_pos_to_hypothesis[-1]
+            hypothesis = ActivationFunctions.softmax(letter_pos_to_hypothesis[-1])
             formatted_hypothesis = []
             for k in range(self.output_dimensions):
                 formatted_hypothesis.append((hypothesis[k], self.index_to_label[k]))
@@ -326,15 +326,15 @@ class NamesToNationalityClassifier:
 
     def save_model(self, filename):
         np.savez_compressed(filename, 
-            layer_1_weights=self.layer_1_weights, 
-            layer_2_weights=self.layer_2_weights, 
-            hidden_state_weights=self.hidden_state_weights)
+            layer_1_weights=self.W1, 
+            layer_2_weights=self.W2, 
+            hidden_state_weights=self.W0)
 
     def load_model_from_file(self, filename):
         data = np.load(filename)
-        self.layer_1_weights = data['layer_1_weights']
-        self.layer_2_weights = data['layer_2_weights']
-        self.hidden_state_weights = data['hidden_state_weights']
+        self.W1 = data['layer_1_weights']
+        self.W2 = data['layer_2_weights']
+        self.W0 = data['hidden_state_weights']
 
     '''
         Puts the examples into an array of chars, with each char being a 28 bit array, 

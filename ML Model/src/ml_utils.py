@@ -26,6 +26,12 @@ class ActivationFunctions:
         e_x = np.exp(x - np.max(x))
         return e_x / np.sum(e_x, axis=0)
 
+    @staticmethod
+    def softmax_derivative(val):
+        softmax_val = ActivationFunctions.softmax(val)
+        reshaped_softmax_val = softmax_val.reshape(-1,1)
+        return np.diagflat(reshaped_softmax_val) - np.dot(reshaped_softmax_val, reshaped_softmax_val.T)
+
 '''
     This contains useful loss functions
 '''
