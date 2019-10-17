@@ -72,7 +72,6 @@ class NamesToNationalityClassifier:
         }
     '''
     def train(self):
-
         epoche_to_train_avg_error = np.zeros((self.num_epoche, ))
         epoche_to_test_avg_error = np.zeros((self.num_epoche, ))
         epoche_to_train_accuracy = np.zeros((self.num_epoche, ))
