@@ -91,7 +91,7 @@ def get_records():
     It returns in the order listed above
 '''
 def get_dataset():
-    country_id_to_country = get_countries(filepath='data/european-countries.csv')
+    country_id_to_country = get_countries(filepath='data/china-korea-japan-countries.csv')
     countries = [ country_id_to_country[id][0] for id in country_id_to_country ]
     countries.sort()
 
@@ -102,7 +102,7 @@ def get_dataset():
     # countries = ["China", "United Kingdom"]
     
     np.random.shuffle(records)
-    records = records[0:1000]
+    # records = records[0:1000]
 
     print(records[0])
 	
@@ -124,7 +124,7 @@ def main():
     various_hidden_layers_count = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
 
     for hidden_layers_count in various_hidden_layers_count:
-        classifier = NamesToNationalityClassifier(countries, hidden_dimensions=hidden_layers_count, momentum=0)
+        classifier = NamesToNationalityClassifier(countries, hidden_dimensions=hidden_layers_count, momentum=0, num_epoche=10)
         classifier.add_training_examples(examples, labels)
         performance = classifier.train()
 

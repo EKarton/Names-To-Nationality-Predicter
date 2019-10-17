@@ -3,10 +3,11 @@ import numpy as np
 import random 
 from sklearn.utils import shuffle
 from ml_utils import ActivationFunctions, LossFunctions
+import time
 
 class NamesToNationalityClassifier:
 
-    def __init__(self, possible_labels, alpha=0.0001, hidden_dimensions=500, l2_lambda = 0.02, momentum=0.9, num_epoche=30):
+    def __init__(self, possible_labels, alpha=0.0001, hidden_dimensions=500, l2_lambda = 0.0002, momentum=0.9, num_epoche=30):
         self.alpha = alpha
         self.input_dimensions = 27
         self.hidden_dimensions = hidden_dimensions
@@ -111,6 +112,8 @@ class NamesToNationalityClassifier:
             test_avg_error, test_accuracy = self.__validate__()
             epoche_to_test_accuracy[epoche] = test_accuracy
             epoche_to_test_avg_error[epoche] = test_avg_error
+
+            print(epoche, epoche_to_train_avg_error[epoche], epoche_to_test_avg_error[epoche], epoche_to_train_accuracy[epoche], epoche_to_test_accuracy[epoche], time.time())
 
         return {
             'epoche_to_train_avg_error': epoche_to_train_avg_error,
@@ -435,7 +438,7 @@ class NamesToNationalityClassifier:
         if len(tokenized_example) <= 1:
             return None
 
-        example = tokenized_example[-1]
+        # example = tokenized_example[-1]
 
         print('Example:', unfiltered_example, '->', example)
 
