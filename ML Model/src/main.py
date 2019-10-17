@@ -91,7 +91,8 @@ def get_records():
     It returns in the order listed above
 '''
 def get_dataset():
-    country_id_to_country = get_countries(filepath='data/china-korea-japan-countries.csv')
+    # country_id_to_country = get_countries(filepath='data/china-korea-japan-countries.csv')
+    country_id_to_country = get_countries(filepath='data/european-countries.csv')
     countries = [ country_id_to_country[id][0] for id in country_id_to_country ]
     countries.sort()
 
@@ -100,7 +101,7 @@ def get_dataset():
     records = [( record[0], country_id_to_country[record[1]][0] ) for record in records]
     
     np.random.shuffle(records)
-    # records = records[0:6000]
+    # records = records[0:6]
 	
     # Splits the records into two lists
     examples = [ record[0] for record in records ]
@@ -118,13 +119,11 @@ def main():
     # Test out different hyperparameters
     various_hidden_layers_count = [200]
 
-    # Performing k-Fold Cross Validation
-
     for hidden_layers_count in various_hidden_layers_count:
         classifier = NamesToNationalityClassifier(countries, 
                                                   hidden_dimensions=hidden_layers_count, 
                                                   momentum=0.1, 
-                                                  num_epoche=100, 
+                                                  num_epoche=40, 
                                                   l2_lambda=0.02)
 
         classifier.add_training_examples(examples, labels)
@@ -160,6 +159,16 @@ def main():
                                                     str(classifier.momentum).replace('.', '_'), 
                                                     str(classifier.num_epoche).replace('.', '_'))
         plt.savefig(plt_file_name)
+
+        # Save the data
+        data_file_name_format = 'L{}-H-{}-R-{}-M-{}-E-{}-data'
+        data_file_name = data_file_name_format.format(classifier.weight_init_type,
+                                                      str(classifier.hidden_dimensions).replace('.', '_'), 
+                                                      str(classifier.alpha).replace('.', '_'), 
+                                                      str(classifier.momentum).replace('.', '_'), 
+                                                      str(classifier.num_epoche).replace('.', '_'))
+        print('Saved model to', data_file_name + '.npz')
+        classifier.save_model('data/' + data_file_name)
 
     # # Train the model
     # classifier = NamesToNationalityClassifier(countries)
