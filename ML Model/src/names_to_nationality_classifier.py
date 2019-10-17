@@ -197,7 +197,7 @@ class NamesToNationalityClassifier:
         letter_pos_to_h1 = np.zeros((num_chars, self.hidden_dimensions))
 
         # Stores the hypothesis for each letter position
-        letter_pos_to_y2 = np.zeros((num_chars, self.output_dimensions))
+        letter_pos_to_h2 = np.zeros((num_chars, self.output_dimensions))
 
         # The hidden state for the first letter position is all 0s.
         letter_pos_to_h0[0] = np.zeros(self.hidden_dimensions)
@@ -215,22 +215,23 @@ class NamesToNationalityClassifier:
             h1 = ActivationFunctions.tanh(y1)
 
             # Adding the bias
-            h1_with_bias = np.r_[[self.layer_2_bias], h1] 
+            h1_with_bias = np.r_[[self.layer_2_bias], h1]
 
             y2 = np.dot(self.W2, h1_with_bias)
+            h2 = ActivationFunctions.softmax(y2)
 
             # Update the dictionaries
             letter_pos_to_h1[j] = h1
-            letter_pos_to_y2[j] = y2
+            letter_pos_to_h2[j] = h2
             letter_pos_to_h0[j] = h1
 
-            letter_pos_to_loss[j] = LossFunctions.cross_entropy(ActivationFunctions.softmax(y2), serialized_label)
+            letter_pos_to_loss[j] = LossFunctions.cross_entropy(h2, serialized_label)
         
         return {
             'letter_pos_to_loss': letter_pos_to_loss,
             'letter_pos_to_hidden_state': letter_pos_to_h0,
             'letter_pos_to_layer_2_values': letter_pos_to_h1,
-            'letter_pos_to_hypothesis': letter_pos_to_y2
+            'letter_pos_to_hypothesis': letter_pos_to_h2
         }
 
     '''
@@ -241,7 +242,7 @@ class NamesToNationalityClassifier:
     def __perform_back_propagation__(self, serialized_example, serialized_label, forward_propagation_results):
         letter_pos_to_h0 = forward_propagation_results['letter_pos_to_hidden_state']
         letter_pos_to_h1 = forward_propagation_results['letter_pos_to_layer_2_values']
-        letter_pos_to_y2 = forward_propagation_results['letter_pos_to_hypothesis']
+        letter_pos_to_h2 = forward_propagation_results['letter_pos_to_hypothesis']
         letter_pos_to_loss = forward_propagation_results['letter_pos_to_loss']
 
         # The loss gradients w.r.t W0, W1, W2
@@ -266,10 +267,11 @@ class NamesToNationalityClassifier:
             h1_with_bias = np.r_[[self.layer_2_bias], h1]
 
             # This is a 1D array with "self.output_dimensions" elements                    
-            y2 = letter_pos_to_y2[j]
+            h2 = letter_pos_to_h2[j]
 
             # This is a 1D array with "self.output_dimentions" elements
-            dL_dY2 = y2 - serialized_label
+            # This is the derivative of y with respect to the cross entropy score
+            dL_dY2 = h2 - serialized_label
 
             # This is a 1D array with "self.hidden_dimensions + 1" elements
             dL_dH1 = np.dot(self.W2.T, dL_dY2)
