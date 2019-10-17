@@ -7,7 +7,7 @@ import time
 
 class NamesToNationalityClassifier:
 
-    def __init__(self, possible_labels, alpha=0.0001, hidden_dimensions=500, l2_lambda = 0.0002, momentum=0.9, num_epoche=30):
+    def __init__(self, possible_labels, alpha=0.0001, hidden_dimensions=500, l2_lambda = 0.02, momentum=0.9, num_epoche=30):
         self.alpha = alpha
         self.input_dimensions = 27
         self.hidden_dimensions = hidden_dimensions
