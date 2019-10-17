@@ -121,7 +121,7 @@ def main():
 
     # Test out different hyperparameters
     plt_title_format = "Perf. for Learning Rate: {:.5f}, Hidden Dim: {:.5f}, \nL2_lambda: {:.5f}, Momentum: {:.5f}, Num Epoche: {:.5f}"
-    various_hidden_layers_count = [500]
+    various_hidden_layers_count = [200, 500, 700]
 
     for hidden_layers_count in various_hidden_layers_count:
         classifier = NamesToNationalityClassifier(countries, hidden_dimensions=hidden_layers_count, momentum=0, num_epoche=20)
