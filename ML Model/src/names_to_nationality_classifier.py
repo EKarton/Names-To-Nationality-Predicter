@@ -15,17 +15,28 @@ class NamesToNationalityClassifier:
         self.epsilon_init = 0.12
         self.training_to_validation_ratio = 0.7 # This means 70% of the dataset will be used for training, and 30% is for validation
 
-        # Weights
-        # We are using the Xavier initialization
+        # Weight Initialization
+        
         # W0 are the weights from hidden state to hidden layer
         # W1 are the weights from input char to hidden layer
         # W2 are the weights from the hidden layer to output layer
-        self.W0 = np.random.random((self.hidden_dimensions, self.hidden_dimensions)) * (2 * self.epsilon_init) - self.epsilon_init
+
+        # This is the weight initialization from Coursera
+        # self.W0 = np.random.random((self.hidden_dimensions, self.hidden_dimensions)) * (2 * self.epsilon_init) - self.epsilon_init
+        # self.W1 = np.random.random((self.hidden_dimensions, self.input_dimensions + 1)) * (2 * self.epsilon_init) - self.epsilon_init
+        # self.W2 = np.random.random((self.output_dimensions, self.hidden_dimensions + 1)) * (2 * self.epsilon_init) - self.epsilon_init
+
+        # We are using the He Initialization (meant for RELU activation functions)
+        # Reference: https://medium.com/usf-msds/deep-learning-best-practices-1-weight-initialization-14e5c0295b94
         # self.W0 = np.random.randn(self.hidden_dimensions, self.hidden_dimensions) * np.sqrt(2 / (self.hidden_dimensions + self.hidden_dimensions))
-        self.W1 = np.random.random((self.hidden_dimensions, self.input_dimensions + 1)) * (2 * self.epsilon_init) - self.epsilon_init
         # self.W1 = np.random.randn(self.hidden_dimensions, self.input_dimensions + 1) * np.sqrt(2 / (self.hidden_dimensions + self.input_dimensions + 1))
-        self.W2 = np.random.random((self.output_dimensions, self.hidden_dimensions + 1)) * (2 * self.epsilon_init) - self.epsilon_init
         # self.W2 = np.random.randn(self.output_dimensions, self.hidden_dimensions + 1) * np.sqrt(2 / (self.output_dimensions + self.hidden_dimensions + 1))
+
+        # We are using the Xavier initialization
+        # Reference: https://medium.com/usf-msds/deep-learning-best-practices-1-weight-initialization-14e5c0295b94
+        self.W0 = np.random.randn(self.hidden_dimensions, self.hidden_dimensions) * np.sqrt(1 / self.hidden_dimensions)
+        self.W1 = np.random.randn(self.hidden_dimensions, self.input_dimensions + 1) * np.sqrt(1 / (self.input_dimensions + 1))
+        self.W2 = np.random.randn(self.output_dimensions, self.hidden_dimensions + 1) * np.sqrt(1 / (self.hidden_dimensions + 1))
 
         # Momentum and regularization
         self.l2_lambda = l2_lambda # The lambda for L2 regularization

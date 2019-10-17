@@ -102,7 +102,7 @@ def get_dataset():
     # countries = ["China", "United Kingdom"]
     
     np.random.shuffle(records)
-    records = records[0:1000]
+    records = records[0:2000]
 
     print(records[0])
 	
@@ -124,7 +124,7 @@ def main():
     various_hidden_layers_count = [300]
 
     for hidden_layers_count in various_hidden_layers_count:
-        classifier = NamesToNationalityClassifier(countries, hidden_dimensions=hidden_layers_count, momentum=0, num_epoche=200)
+        classifier = NamesToNationalityClassifier(countries, hidden_dimensions=hidden_layers_count, momentum=0.1, num_epoche=100)
         classifier.add_training_examples(examples, labels)
         performance = classifier.train()
 
@@ -150,7 +150,7 @@ def main():
         accuracy_plt.legend()
 
         # Save the plot
-        plt.savefig('L3-' + str(hidden_layers_count).replace('.', '_') + '-R-' + str(classifier.alpha).replace('.', '_') + '-M-' + str(classifier.momentum).replace('.', '_') + '-E-' + str(classifier.num_epoche) + '-plots.png')
+        plt.savefig('L1-H' + str(hidden_layers_count).replace('.', '_') + '-R-' + str(classifier.alpha).replace('.', '_') + '-M-' + str(classifier.momentum).replace('.', '_') + '-E-' + str(classifier.num_epoche) + '-plots.png')
 
     # # Train the model
     # classifier = NamesToNationalityClassifier(countries)
