@@ -98,13 +98,9 @@ def get_dataset():
     records = get_records()
     records = list(filter(lambda x: x[1] in country_id_to_country, records))
     records = [( record[0], country_id_to_country[record[1]][0] ) for record in records]
-    # records = list(filter(lambda x: x[1] == 'China' or x[1] == 'United Kingdom', records))
-    # countries = ["China", "United Kingdom"]
     
     np.random.shuffle(records)
     records = records[0:4000]
-
-    print(records[0])
 	
     # Splits the records into two lists
     examples = [ record[0] for record in records ]
@@ -120,7 +116,7 @@ def main():
     plt.ioff()
 
     # Test out different hyperparameters
-    various_hidden_layers_count = [300]
+    various_hidden_layers_count = [200, 300, 400, 500]
 
     for hidden_layers_count in various_hidden_layers_count:
         classifier = NamesToNationalityClassifier(countries, hidden_dimensions=hidden_layers_count, momentum=0, num_epoche=50)

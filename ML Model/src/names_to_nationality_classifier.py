@@ -36,16 +36,16 @@ class NamesToNationalityClassifier:
 
         # We are using the Xavier initialization
         # Reference: https://medium.com/usf-msds/deep-learning-best-practices-1-weight-initialization-14e5c0295b94
-        # self.weight_init_type = 'X1'
-        # self.W0 = np.random.randn(self.hidden_dimensions, self.hidden_dimensions) * np.sqrt(1 / self.hidden_dimensions)
-        # self.W1 = np.random.randn(self.hidden_dimensions, self.input_dimensions + 1) * np.sqrt(1 / (self.input_dimensions + 1))
-        # self.W2 = np.random.randn(self.output_dimensions, self.hidden_dimensions + 1) * np.sqrt(1 / (self.hidden_dimensions + 1))
+        self.weight_init_type = 'X1'
+        self.W0 = np.random.randn(self.hidden_dimensions, self.hidden_dimensions) * np.sqrt(1 / self.hidden_dimensions)
+        self.W1 = np.random.randn(self.hidden_dimensions, self.input_dimensions + 1) * np.sqrt(1 / (self.input_dimensions + 1))
+        self.W2 = np.random.randn(self.output_dimensions, self.hidden_dimensions + 1) * np.sqrt(1 / (self.hidden_dimensions + 1))
 
         # We are using Stanford's weight initialization
-        self.weight_init_type = "H6"
-        self.W0 = np.random.randn(self.hidden_dimensions, self.hidden_dimensions) * np.sqrt(6 / (self.hidden_dimensions + self.hidden_dimensions))
-        self.W1 = np.random.randn(self.hidden_dimensions, self.input_dimensions + 1) * np.sqrt(6 / (self.hidden_dimensions + self.input_dimensions + 1))
-        self.W2 = np.random.randn(self.output_dimensions, self.hidden_dimensions + 1) * np.sqrt(6 / (self.output_dimensions + self.hidden_dimensions + 1))
+        # self.weight_init_type = "H6"
+        # self.W0 = np.random.random(self.hidden_dimensions, self.hidden_dimensions) * np.sqrt(6 / (self.hidden_dimensions + self.hidden_dimensions))
+        # self.W1 = np.random.random(self.hidden_dimensions, self.input_dimensions + 1) * np.sqrt(6 / (self.hidden_dimensions + self.input_dimensions + 1))
+        # self.W2 = np.random.random(self.output_dimensions, self.hidden_dimensions + 1) * np.sqrt(6 / (self.output_dimensions + self.hidden_dimensions + 1))
 
 
         # Momentum and regularization
