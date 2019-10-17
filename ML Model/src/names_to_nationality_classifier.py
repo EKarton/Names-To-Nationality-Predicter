@@ -409,6 +409,25 @@ class NamesToNationalityClassifier:
         ]
     '''
     def __serialize__example__(self, example):
+        filtered_char = self.__filter_chars__(example)
+        if filtered_char is None:
+            return None
+
+        name_array = []
+        for letter in example:
+            ascii_code = ord(letter)
+            letter_array = np.zeros(self.input_dimensions, )
+
+            if 97 <= ascii_code <= 122:
+                letter_array[ascii_code - 97] = 1
+            else:
+                letter_array[26] = 1
+
+            name_array.append(letter_array)
+
+        return np.array(name_array)
+
+    def __filter_chars__(self, example):
         unfiltered_example = example
 
         # Make letters all lowercase
@@ -450,33 +469,25 @@ class NamesToNationalityClassifier:
                 new_example += c + ' '
         example = new_example[0:-1]
 
+        print('Example:', unfiltered_example, '->', example)
+
         # Take only the surname
         # Ex: john smith -> smith
         if len(example) == 0:
             return None
 
         tokenized_example = example.split()
-        # if len(tokenized_example) <= 1:
-        #     return None
 
         # Needs to contain only first and last name
         if len(tokenized_example) != 2:
             return None
 
+
+        # Obtain the last name
         # example = tokenized_example[-1]
+        # if len(tokenized_example) <= 1:
+        #     return None
 
-        # print('Example:', unfiltered_example, '->', example)
+        print('OK')
 
-        name_array = []
-        for letter in example:
-            ascii_code = ord(letter)
-            letter_array = np.zeros(self.input_dimensions, )
-
-            if 97 <= ascii_code <= 122:
-                letter_array[ascii_code - 97] = 1
-            else:
-                letter_array[26] = 1
-
-            name_array.append(letter_array)
-
-        return np.array(name_array)
+        return example

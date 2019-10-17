@@ -102,7 +102,7 @@ def get_dataset():
     # countries = ["China", "United Kingdom"]
     
     np.random.shuffle(records)
-    records = records[0:2000]
+    records = records[0:4000]
 
     print(records[0])
 	
