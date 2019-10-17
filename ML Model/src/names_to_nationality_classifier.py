@@ -369,7 +369,7 @@ class NamesToNationalityClassifier:
         for i in range(len(examples)):
             example = examples[i]
             label = labels[i]
-            print("For example " + example + " = " + label + ":")
+            # print("For example " + example + " = " + label + ":")
             serialized_example = self.__serialize__example__(example)
             serialized_label = self.__serialize_label__(label)
 
@@ -456,12 +456,16 @@ class NamesToNationalityClassifier:
             return None
 
         tokenized_example = example.split()
-        if len(tokenized_example) <= 1:
+        # if len(tokenized_example) <= 1:
+        #     return None
+
+        # Needs to contain only first and last name
+        if len(tokenized_example) != 2:
             return None
 
-        example = tokenized_example[-1]
+        # example = tokenized_example[-1]
 
-        print('Example:', unfiltered_example, '->', example)
+        # print('Example:', unfiltered_example, '->', example)
 
         name_array = []
         for letter in example:
