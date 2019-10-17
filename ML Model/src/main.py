@@ -123,7 +123,7 @@ def main():
     various_hidden_layers_count = [300]
 
     for hidden_layers_count in various_hidden_layers_count:
-        classifier = NamesToNationalityClassifier(countries, hidden_dimensions=hidden_layers_count, momentum=0.1, num_epoche=50)
+        classifier = NamesToNationalityClassifier(countries, hidden_dimensions=hidden_layers_count, momentum=0, num_epoche=50)
         classifier.add_training_examples(examples, labels)
         performance = classifier.train()
 
@@ -150,12 +150,12 @@ def main():
         accuracy_plt.legend()
 
         # Save the plot
-        plt_file_name_format = 'L{}-H-{:.5f}-R-{:.5f}-M-{:.5f}-E-{:.5f}-plots.png'
+        plt_file_name_format = 'L{}-H-{}-R-{}-M-{}-E-{}-plots.png'
         plt_file_name = plt_file_name_format.format(classifier.weight_init_type,
-                                                    classifier.hidden_dimensions, 
-                                                    classifier.alpha, 
-                                                    classifier.momentum, 
-                                                    classifier.num_epoche)
+                                                    str(classifier.hidden_dimensions).replace('.', '_'), 
+                                                    str(classifier.alpha).replace('.', '_'), 
+                                                    str(classifier.momentum).replace('.', '_'), 
+                                                    str(classifier.num_epoche).replace('.', '_'))
         plt.savefig(plt_file_name)
 
     # # Train the model
