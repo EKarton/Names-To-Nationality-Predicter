@@ -132,3 +132,6 @@ dmypy.json
 
 # VS Code
 .vscode
+
+Run-On-CDF-Machines.sh
+Check-ML-Status.sh
