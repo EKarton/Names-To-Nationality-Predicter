@@ -120,11 +120,10 @@ def main():
     plt.ioff()
 
     # Test out different hyperparameters
-    plt_title_format = "Perf. for Learning Rate: {:.5f}, Hidden Dim: {:.5f}, \nL2_lambda: {:.5f}, Momentum: {:.5f}, Num Epoche: {:.5f}"
     various_hidden_layers_count = [300]
 
     for hidden_layers_count in various_hidden_layers_count:
-        classifier = NamesToNationalityClassifier(countries, hidden_dimensions=hidden_layers_count, momentum=0.1, num_epoche=100)
+        classifier = NamesToNationalityClassifier(countries, hidden_dimensions=hidden_layers_count, momentum=0.1, num_epoche=50)
         classifier.add_training_examples(examples, labels)
         performance = classifier.train()
 
@@ -132,6 +131,7 @@ def main():
 
         # Plot the performance
         fig, (errors_plt, accuracy_plt) = plt.subplots(2)
+        plt_title_format = "Perf. for Learning Rate: {:.5f}, Hidden Dim: {:.5f}, \nL2_lambda: {:.5f}, Momentum: {:.5f}, Num Epoche: {:.5f}"
         fig_title = plt_title_format.format(classifier.alpha, 
                                             classifier.hidden_dimensions, 
                                             classifier.l2_lambda, 
@@ -150,7 +150,13 @@ def main():
         accuracy_plt.legend()
 
         # Save the plot
-        plt.savefig('L1-H' + str(hidden_layers_count).replace('.', '_') + '-R-' + str(classifier.alpha).replace('.', '_') + '-M-' + str(classifier.momentum).replace('.', '_') + '-E-' + str(classifier.num_epoche) + '-plots.png')
+        plt_file_name_format = 'L{}-H-{:.5f}-R-{:.5f}-M-{:.5f}-E-{:.5f}-plots.png'
+        plt_file_name = plt_file_name_format.format(classifier.weight_init_type,
+                                                    classifier.hidden_dimensions, 
+                                                    classifier.alpha, 
+                                                    classifier.momentum, 
+                                                    classifier.num_epoche)
+        plt.savefig(plt_file_name)
 
     # # Train the model
     # classifier = NamesToNationalityClassifier(countries)

@@ -22,18 +22,21 @@ class NamesToNationalityClassifier:
         # W2 are the weights from the hidden layer to output layer
 
         # This is the weight initialization from Coursera
+        # self.weight_init_type = 'C'
         # self.W0 = np.random.random((self.hidden_dimensions, self.hidden_dimensions)) * (2 * self.epsilon_init) - self.epsilon_init
         # self.W1 = np.random.random((self.hidden_dimensions, self.input_dimensions + 1)) * (2 * self.epsilon_init) - self.epsilon_init
         # self.W2 = np.random.random((self.output_dimensions, self.hidden_dimensions + 1)) * (2 * self.epsilon_init) - self.epsilon_init
 
         # We are using the He Initialization (meant for RELU activation functions)
         # Reference: https://medium.com/usf-msds/deep-learning-best-practices-1-weight-initialization-14e5c0295b94
+        # self.weight_init_type = 'H2'
         # self.W0 = np.random.randn(self.hidden_dimensions, self.hidden_dimensions) * np.sqrt(2 / (self.hidden_dimensions + self.hidden_dimensions))
         # self.W1 = np.random.randn(self.hidden_dimensions, self.input_dimensions + 1) * np.sqrt(2 / (self.hidden_dimensions + self.input_dimensions + 1))
         # self.W2 = np.random.randn(self.output_dimensions, self.hidden_dimensions + 1) * np.sqrt(2 / (self.output_dimensions + self.hidden_dimensions + 1))
 
         # We are using the Xavier initialization
         # Reference: https://medium.com/usf-msds/deep-learning-best-practices-1-weight-initialization-14e5c0295b94
+        self.weight_init_type = 'X1'
         self.W0 = np.random.randn(self.hidden_dimensions, self.hidden_dimensions) * np.sqrt(1 / self.hidden_dimensions)
         self.W1 = np.random.randn(self.hidden_dimensions, self.input_dimensions + 1) * np.sqrt(1 / (self.input_dimensions + 1))
         self.W2 = np.random.randn(self.output_dimensions, self.hidden_dimensions + 1) * np.sqrt(1 / (self.hidden_dimensions + 1))
@@ -138,6 +141,7 @@ class NamesToNationalityClassifier:
 
     '''
         Trains an example with a label.
+        The example is a name (like "Bob Smith") and its label is a country name (ex: "Canada")
     '''
     def train_example(self, example, label):
         serialized_example = self.__serialize__example__(example)
@@ -151,6 +155,7 @@ class NamesToNationalityClassifier:
 
     '''
         It computes how well the model runs based on the validation data
+        It returns the avg. error and accuracy rate
     '''
     def __validate__(self):
         total_cost = 0
@@ -454,7 +459,7 @@ class NamesToNationalityClassifier:
         if len(tokenized_example) <= 1:
             return None
 
-        # example = tokenized_example[-1]
+        example = tokenized_example[-1]
 
         print('Example:', unfiltered_example, '->', example)
 
