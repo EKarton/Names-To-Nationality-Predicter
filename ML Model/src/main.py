@@ -120,8 +120,8 @@ def main():
     # Test out different hyperparameters
     classifier = NamesToNationalityClassifier(countries, 
                                               alpha=0.0001,
-                                              hidden_dimensions=500, 
-                                              momentum=0.9,
+                                              hidden_dimensions=300, 
+                                              momentum=0.1,
                                               num_epoche=10, 
                                               l2_lambda=0.02)
 

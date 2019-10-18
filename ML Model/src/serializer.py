@@ -148,21 +148,26 @@ class Serializer:
             new_example += c + ' '
         example = new_example[0:-1]
 
-        # Remove names with single letters
-        # Ex: john n smith -> john smith
-        example = example.split()
-        new_example = ''
-        for c in example:
-            if len(c) > 1:
-                new_example += c + ' '
-        example = new_example[0:-1]
-
         # Remove personal titles
         # Ex: mr john smith -> john smith
         example = example.split()
         new_example = ''
         for c in example:
             if c not in self.personal_titles:
+                new_example += c + ' '
+        example = new_example[0:-1]
+
+        # Reject those whose first or last name is only one letter
+        tokenized_example = example.split()
+        if len(tokenized_example[0]) <= 1 or len(tokenized_example[-1]) <= 1:
+            return None
+
+        # Remove names with single letters
+        # Ex: john n smith -> john smith
+        example = example.split()
+        new_example = ''
+        for c in example:
+            if len(c) > 1:
                 new_example += c + ' '
         example = new_example[0:-1]
 
