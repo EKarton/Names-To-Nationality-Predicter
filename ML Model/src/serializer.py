@@ -12,8 +12,15 @@ class Serializer:
             'x', 'y', 'z', 'á', 
             'ã', 'ä', 'ç', 'è', 
             'é', 'ë', 'ï', 'ô', 
-            'ö', 'ü'
+            'ö', 'ü', '$', '+'
         ]
+
+        self.personal_titles = set([
+            'dr', 'esq', 'hon', 'jr', 
+            'mr', 'mrs', 'ms', 'messrs', 
+            'mmes', 'msgr', 'prof', 'rev', 
+            'rt', 'sr', 'st'
+        ])
 
         # Map allowed chars to the index above
         self.allowed_chars_to_index = {}
@@ -138,11 +145,10 @@ class Serializer:
 
         # Remove personal titles
         # Ex: mr john smith -> john smith
-        personal_titles = set(['dr', 'esq', 'hon', 'jr', 'mr', 'mrs', 'ms', 'messrs', 'mmes', 'msgr', 'prof', 'rev', 'rt', 'sr', 'st'])
         example = example.split()
         new_example = ''
         for c in example:
-            if c not in personal_titles:
+            if c not in self.personal_titles:
                 new_example += c + ' '
         example = new_example[0:-1]
 
@@ -167,4 +173,4 @@ class Serializer:
 
         print('OK')
 
-        return example
+        return '$' + tokenized_example[0] + '$ +' + tokenized_example[1] + '+'

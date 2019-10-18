@@ -11,6 +11,8 @@ class SerializerTest(unittest.TestCase):
 
         indexes_with_ones = [2, 15, 2, 0, 19, 13, 9, 20, 8]
 
+        self.assertEqual(len(indexes_with_ones), len(serialized_example))
+
         for i in range(len(serialized_example)):
             serialized_char = serialized_example[i]
 
@@ -23,6 +25,8 @@ class SerializerTest(unittest.TestCase):
         serialized_example = serializer.serialize_example(name)
 
         indexes_with_ones = [2, 15, 2, 0, 19, 13, 9, 20, 8]
+
+        self.assertEqual(len(indexes_with_ones), len(serialized_example))
 
         for i in range(len(serialized_example)):
             serialized_char = serialized_example[i]
@@ -37,6 +41,8 @@ class SerializerTest(unittest.TestCase):
 
         indexes_with_ones = [2, 15, 2, 0, 19, 13, 27, 9, 20, 8]
 
+        self.assertEqual(len(indexes_with_ones), len(serialized_example))
+
         for i in range(len(serialized_example)):
             serialized_char = serialized_example[i]
 
@@ -44,11 +50,28 @@ class SerializerTest(unittest.TestCase):
             self.assertEquals(serialized_char[indexes_with_ones[i]], 1)
 
     def test_serialize_example_given_name_with_random_chars_should_return_correct_val_4(self):
-        name = "$$B)ob  Sm#áith "
+        name = "$$B)ob  Sm#áith *"
         serializer = Serializer(['Germany', 'France'])
         serialized_example = serializer.serialize_example(name)
 
         indexes_with_ones = [2, 15, 2, 0, 19, 13, 27, 9, 20, 8]
+
+        self.assertEqual(len(indexes_with_ones), len(serialized_example))
+
+        for i in range(len(serialized_example)):
+            serialized_char = serialized_example[i]
+
+            self.assertEquals(sum(serialized_char), 1.0)
+            self.assertEquals(serialized_char[indexes_with_ones[i]], 1)
+
+    def test_serialize_example_given_name_with_pronoun_should_return_correct_val_4(self):
+        name = "Dr. Bob Smith"
+        serializer = Serializer(['Germany', 'France'])
+        serialized_example = serializer.serialize_example(name)
+
+        indexes_with_ones = [2, 15, 2, 0, 19, 13, 9, 20, 8]
+
+        self.assertEqual(len(indexes_with_ones), len(serialized_example))
 
         for i in range(len(serialized_example)):
             serialized_char = serialized_example[i]
