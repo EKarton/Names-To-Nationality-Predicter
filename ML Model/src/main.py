@@ -101,7 +101,7 @@ def get_dataset():
     records = [( record[0], country_id_to_country[record[1]][0] ) for record in records]
     
     np.random.shuffle(records)
-    records = records[0:4000]
+    records = records[0:10]
 	
     # Splits the records into two lists
     examples = [ record[0] for record in records ]
@@ -124,7 +124,7 @@ def main():
                                                   alpha=0.0001,
                                                   hidden_dimensions=hidden_layers_count, 
                                                   momentum=0.9, # Before was 0.1 
-                                                  num_epoche=100, 
+                                                  num_epoche=50, 
                                                   l2_lambda=0.02)
 
         classifier.add_training_examples(examples, labels)
