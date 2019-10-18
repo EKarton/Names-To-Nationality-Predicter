@@ -2,7 +2,7 @@ import numpy as np
 
 class Serializer:
     def __init__(self, possible_labels):
-        self.allowed_chars = [
+        self.allowed_chars_in_filtered_name = [
             ' ', 'a', 'b', 'c', 
             'd', 'e', 'f', 'g', 
             'h', 'i', 'j', 'k', 
@@ -12,8 +12,22 @@ class Serializer:
             'x', 'y', 'z', 'á', 
             'ã', 'ä', 'ç', 'è', 
             'é', 'ë', 'ï', 'ô', 
-            'ö', 'ü', '$', '+'
+            'ö', 'ü', '$', '+',
+            '-'
         ]
+
+        self.allowed_chars_in_name = set([
+            ' ', 'a', 'b', 'c', 
+            'd', 'e', 'f', 'g', 
+            'h', 'i', 'j', 'k', 
+            'l', 'm', 'n', 'o', 
+            'p', 'q', 'r', 's', 
+            't', 'u', 'v', 'w', 
+            'x', 'y', 'z', 'á', 
+            'ã', 'ä', 'ç', 'è', 
+            'é', 'ë', 'ï', 'ô', 
+            'ö', 'ü', '-'
+        ])
 
         self.personal_titles = set([
             'dr', 'esq', 'hon', 'jr', 
@@ -23,9 +37,9 @@ class Serializer:
         ])
 
         # Map allowed chars to the index above
-        self.allowed_chars_to_index = {}
-        for i in range(len(self.allowed_chars)):
-            self.allowed_chars_to_index[self.allowed_chars[i]] = i
+        self.allowed_chars_in_filtered_names_to_index = {}
+        for i in range(len(self.allowed_chars_in_filtered_name)):
+            self.allowed_chars_in_filtered_names_to_index[self.allowed_chars_in_filtered_name[i]] = i
 
         # We now want to map label to index, and index to label
         self.label_to_index = {}
@@ -36,7 +50,7 @@ class Serializer:
             self.label_to_index[label] = i
             self.index_to_label[i] = label
 
-        self.input_dimensions = len(self.allowed_chars)
+        self.input_dimensions = len(self.allowed_chars_in_filtered_name)
         self.target_dimensions = len(possible_labels)
 
     '''
@@ -102,8 +116,8 @@ class Serializer:
             ascii_code = ord(letter)
             letter_array = np.zeros(self.input_dimensions, )
 
-            if letter in self.allowed_chars_to_index:
-                letter_array[self.allowed_chars_to_index[letter]] = 1
+            if letter in self.allowed_chars_in_filtered_names_to_index:
+                letter_array[self.allowed_chars_in_filtered_names_to_index[letter]] = 1
             else:
                 raise Exception("Illegal character in name:", letter)
 
@@ -122,7 +136,7 @@ class Serializer:
         # Ex: mrs. john smith -> mrs john smith
         filtered_example = ''
         for c in example:
-            if c in self.allowed_chars_to_index:
+            if c in self.allowed_chars_in_name:
                 filtered_example += c
         example = filtered_example
 
@@ -152,8 +166,6 @@ class Serializer:
                 new_example += c + ' '
         example = new_example[0:-1]
 
-        print('Example:', unfiltered_example, '->', example)
-
         # Take only the surname
         # Ex: john smith -> smith
         if len(example) == 0:
@@ -162,8 +174,8 @@ class Serializer:
         tokenized_example = example.split()
 
         # Needs to contain only first and last name
-        if len(tokenized_example) != 2:
-            return None
+        # if len(tokenized_example) != 2:
+        #     return None
 
 
         # Obtain the last name
@@ -171,6 +183,18 @@ class Serializer:
         # if len(tokenized_example) <= 1:
         #     return None
 
+        # Needs to contain at least the first and last name
+        if len(tokenized_example) < 2:
+            return None
+
         print('OK')
 
-        return '$' + tokenized_example[0] + '$ +' + tokenized_example[1] + '+'
+        final_example = ''
+        for i in range(len(tokenized_example) - 1):
+            final_example += '$' + tokenized_example[i] + '$ '
+        final_example += '+' + tokenized_example[-1] + '+'
+
+        print('Example:', unfiltered_example, '->', final_example, len(final_example))
+
+
+        return final_example

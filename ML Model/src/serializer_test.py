@@ -9,7 +9,7 @@ class SerializerTest(unittest.TestCase):
         serializer = Serializer(['Germany', 'France'])
         serialized_example = serializer.serialize_example(name)
 
-        indexes_with_ones = [2, 15, 2, 0, 19, 13, 9, 20, 8]
+        indexes_with_ones = [38, 2, 15, 2, 38, 0, 39, 19, 13, 9, 20, 8, 39]
 
         self.assertEqual(len(indexes_with_ones), len(serialized_example))
 
@@ -24,7 +24,7 @@ class SerializerTest(unittest.TestCase):
         serializer = Serializer(['Germany', 'France'])
         serialized_example = serializer.serialize_example(name)
 
-        indexes_with_ones = [2, 15, 2, 0, 19, 13, 9, 20, 8]
+        indexes_with_ones = [38, 2, 15, 2, 38, 0, 39, 19, 13, 9, 20, 8, 39]
 
         self.assertEqual(len(indexes_with_ones), len(serialized_example))
 
@@ -39,7 +39,7 @@ class SerializerTest(unittest.TestCase):
         serializer = Serializer(['Germany', 'France'])
         serialized_example = serializer.serialize_example(name)
 
-        indexes_with_ones = [2, 15, 2, 0, 19, 13, 27, 9, 20, 8]
+        indexes_with_ones = [38, 2, 15, 2, 38, 0, 39, 19, 13, 27, 9, 20, 8, 39]
 
         self.assertEqual(len(indexes_with_ones), len(serialized_example))
 
@@ -54,7 +54,7 @@ class SerializerTest(unittest.TestCase):
         serializer = Serializer(['Germany', 'France'])
         serialized_example = serializer.serialize_example(name)
 
-        indexes_with_ones = [2, 15, 2, 0, 19, 13, 27, 9, 20, 8]
+        indexes_with_ones = [38, 2, 15, 2, 38, 0, 39, 19, 13, 27, 9, 20, 8, 39]
 
         self.assertEqual(len(indexes_with_ones), len(serialized_example))
 
@@ -69,7 +69,7 @@ class SerializerTest(unittest.TestCase):
         serializer = Serializer(['Germany', 'France'])
         serialized_example = serializer.serialize_example(name)
 
-        indexes_with_ones = [2, 15, 2, 0, 19, 13, 9, 20, 8]
+        indexes_with_ones = [38, 2, 15, 2, 38, 0, 39, 19, 13, 9, 20, 8, 39]
 
         self.assertEqual(len(indexes_with_ones), len(serialized_example))
 
