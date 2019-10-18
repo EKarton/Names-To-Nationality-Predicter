@@ -91,8 +91,8 @@ def get_records():
     It returns in the order listed above
 '''
 def get_dataset():
-    # country_id_to_country = get_countries(filepath='data/china-korea-japan-countries.csv')
-    country_id_to_country = get_countries(filepath='data/european-countries.csv')
+    country_id_to_country = get_countries(filepath='data/china-korea-japan-countries.csv')
+    # country_id_to_country = get_countries(filepath='data/european-countries.csv')
     countries = [ country_id_to_country[id][0] for id in country_id_to_country ]
     countries.sort()
 
