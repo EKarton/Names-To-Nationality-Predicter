@@ -187,14 +187,14 @@ class Serializer:
         if len(tokenized_example) < 2:
             return None
 
-        print('OK')
+        # print('OK')
 
         final_example = ''
         for i in range(len(tokenized_example) - 1):
             final_example += '$' + tokenized_example[i] + '$ '
         final_example += '+' + tokenized_example[-1] + '+'
 
-        print('Example:', unfiltered_example, '->', final_example, len(final_example))
+        # print('Example:', unfiltered_example, '->', final_example, len(final_example))
 
 
         return final_example

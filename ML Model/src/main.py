@@ -102,7 +102,7 @@ def get_dataset():
     records = [( record[0], country_id_to_country[record[1]][0] ) for record in records]
     
     np.random.shuffle(records)
-    # records = records[0:5000]
+    records = records[0:128000]
 	
     # Splits the records into two lists
     examples = [ record[0] for record in records ]
@@ -118,59 +118,56 @@ def main():
     plt.ioff()
 
     # Test out different hyperparameters
-    various_hidden_layers_count = [500]
+    classifier = NamesToNationalityClassifier(countries, 
+                                              alpha=0.0001,
+                                              hidden_dimensions=500, 
+                                              momentum=0.9,
+                                              num_epoche=10, 
+                                              l2_lambda=0.02)
 
-    for hidden_layers_count in various_hidden_layers_count:
-        classifier = NamesToNationalityClassifier(countries, 
-                                                  alpha=0.0001,
-                                                  hidden_dimensions=hidden_layers_count, 
-                                                  momentum=0.9, # Before was 0.1 
-                                                  num_epoche=10, 
-                                                  l2_lambda=0.02)
+    classifier.add_training_examples(examples, labels)
+    performance = classifier.train()
 
-        classifier.add_training_examples(examples, labels)
-        performance = classifier.train()
+    epoches = [i for i in range(classifier.num_epoche)]
 
-        epoches = [i for i in range(classifier.num_epoche)]
+    # Plot the performance
+    fig, (errors_plt, accuracy_plt) = plt.subplots(2)
+    plt_title_format = "Perf. for Learning Rate: {:.5f}, Hidden Dim: {:.5f}, \nL2_lambda: {:.5f}, Momentum: {:.5f}, Num Epoche: {:.5f}"
+    fig_title = plt_title_format.format(classifier.alpha, 
+                                        classifier.hidden_dimensions, 
+                                        classifier.l2_lambda, 
+                                        classifier.momentum, 
+                                        classifier.num_epoche)
+    fig.suptitle(fig_title, fontsize=10)
 
-        # Plot the performance
-        fig, (errors_plt, accuracy_plt) = plt.subplots(2)
-        plt_title_format = "Perf. for Learning Rate: {:.5f}, Hidden Dim: {:.5f}, \nL2_lambda: {:.5f}, Momentum: {:.5f}, Num Epoche: {:.5f}"
-        fig_title = plt_title_format.format(classifier.alpha, 
-                                            classifier.hidden_dimensions, 
-                                            classifier.l2_lambda, 
-                                            classifier.momentum, 
-                                            classifier.num_epoche)
-        fig.suptitle(fig_title, fontsize=10)
+    errors_plt.title.set_text('Errors vs Epoche')
+    errors_plt.plot(epoches, performance['epoche_to_train_avg_error'], label='Train Avg. Error')
+    errors_plt.plot(epoches, performance['epoche_to_test_avg_error'], label='Test Avg. Error')
+    errors_plt.legend()
 
-        errors_plt.title.set_text('Errors vs Epoche')
-        errors_plt.plot(epoches, performance['epoche_to_train_avg_error'], label='Train Avg. Error')
-        errors_plt.plot(epoches, performance['epoche_to_test_avg_error'], label='Test Avg. Error')
-        errors_plt.legend()
+    accuracy_plt.title.set_text('Accuracy vs Epoche')
+    accuracy_plt.plot(epoches, performance['epoche_to_train_accuracy'], label='Train Accuracy')
+    accuracy_plt.plot(epoches, performance['epoche_to_test_accuracy'], label='Test Accuracy')
+    accuracy_plt.legend()
 
-        accuracy_plt.title.set_text('Accuracy vs Epoche')
-        accuracy_plt.plot(epoches, performance['epoche_to_train_accuracy'], label='Train Accuracy')
-        accuracy_plt.plot(epoches, performance['epoche_to_test_accuracy'], label='Test Accuracy')
-        accuracy_plt.legend()
+    # Save the plot
+    plt_file_name_format = 'L{}-H-{}-R-{}-M-{}-E-{}-plots.png'
+    plt_file_name = plt_file_name_format.format(classifier.weight_init_type,
+                                                str(classifier.hidden_dimensions).replace('.', '_'), 
+                                                str(classifier.alpha).replace('.', '_'), 
+                                                str(classifier.momentum).replace('.', '_'), 
+                                                str(classifier.num_epoche).replace('.', '_'))
+    plt.savefig(plt_file_name)
 
-        # Save the plot
-        plt_file_name_format = 'L{}-H-{}-R-{}-M-{}-E-{}-plots.png'
-        plt_file_name = plt_file_name_format.format(classifier.weight_init_type,
+    # Save the data
+    data_file_name_format = 'L{}-H-{}-R-{}-M-{}-E-{}-data'
+    data_file_name = data_file_name_format.format(classifier.weight_init_type,
                                                     str(classifier.hidden_dimensions).replace('.', '_'), 
                                                     str(classifier.alpha).replace('.', '_'), 
                                                     str(classifier.momentum).replace('.', '_'), 
                                                     str(classifier.num_epoche).replace('.', '_'))
-        plt.savefig(plt_file_name)
-
-        # Save the data
-        data_file_name_format = 'L{}-H-{}-R-{}-M-{}-E-{}-data'
-        data_file_name = data_file_name_format.format(classifier.weight_init_type,
-                                                      str(classifier.hidden_dimensions).replace('.', '_'), 
-                                                      str(classifier.alpha).replace('.', '_'), 
-                                                      str(classifier.momentum).replace('.', '_'), 
-                                                      str(classifier.num_epoche).replace('.', '_'))
-        print('Saved model to', data_file_name + '.npz')
-        classifier.save_model('data/' + data_file_name)
+    print('Saved model to', data_file_name + '.npz')
+    classifier.save_model('data/' + data_file_name)
 
     # # Train the model
     # classifier = NamesToNationalityClassifier(countries)
