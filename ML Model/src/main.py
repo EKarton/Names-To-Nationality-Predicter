@@ -123,7 +123,7 @@ def main():
         classifier = NamesToNationalityClassifier(countries, 
                                                   hidden_dimensions=hidden_layers_count, 
                                                   momentum=0.1, 
-                                                  num_epoche=40, 
+                                                  num_epoche=100, 
                                                   l2_lambda=0.02)
 
         classifier.add_training_examples(examples, labels)
