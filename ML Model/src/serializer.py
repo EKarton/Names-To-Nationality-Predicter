@@ -157,9 +157,13 @@ class Serializer:
                 new_example += c + ' '
         example = new_example[0:-1]
 
+        # Reject those with no characters
+        if len(example) == 0 or len(example.split()) == 0:
+            return None
+
         # Reject those whose first or last name is only one letter
         tokenized_example = example.split()
-        if len(tokenized_example[0]) <= 1 or len(tokenized_example[-1]) <= 1:
+        if len(tokenized_example) == 0 or len(tokenized_example[0]) <= 1 or len(tokenized_example[-1]) <= 1:
             return None
 
         # Remove names with single letters
@@ -170,11 +174,6 @@ class Serializer:
             if len(c) > 1:
                 new_example += c + ' '
         example = new_example[0:-1]
-
-        # Take only the surname
-        # Ex: john smith -> smith
-        if len(example) == 0:
-            return None
 
         tokenized_example = example.split()
 
