@@ -101,7 +101,7 @@ def get_dataset():
     records = [( record[0], country_id_to_country[record[1]][0] ) for record in records]
     
     np.random.shuffle(records)
-    records = records[0:4000]
+    records = records[0:8000]
 	
     # Splits the records into two lists
     examples = [ record[0] for record in records ]
@@ -121,8 +121,9 @@ def main():
 
     for hidden_layers_count in various_hidden_layers_count:
         classifier = NamesToNationalityClassifier(countries, 
+                                                  alpha=0.001,
                                                   hidden_dimensions=hidden_layers_count, 
-                                                  momentum=0.5, # Before was 0.1 
+                                                  momentum=0.9, # Before was 0.1 
                                                   num_epoche=100, 
                                                   l2_lambda=0.02)
 
