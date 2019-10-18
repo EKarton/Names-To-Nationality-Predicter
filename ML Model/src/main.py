@@ -121,7 +121,7 @@ def main():
 
     for hidden_layers_count in various_hidden_layers_count:
         classifier = NamesToNationalityClassifier(countries, 
-                                                  alpha=0.001,
+                                                  alpha=0.0001,
                                                   hidden_dimensions=hidden_layers_count, 
                                                   momentum=0.9, # Before was 0.1 
                                                   num_epoche=100, 
