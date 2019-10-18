@@ -101,7 +101,7 @@ def get_dataset():
     records = [( record[0], country_id_to_country[record[1]][0] ) for record in records]
     
     np.random.shuffle(records)
-    # records = records[0:6]
+    records = records[0:2000]
 	
     # Splits the records into two lists
     examples = [ record[0] for record in records ]

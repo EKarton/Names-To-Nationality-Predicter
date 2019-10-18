@@ -4,14 +4,17 @@ import random
 from sklearn.utils import shuffle
 from ml_utils import ActivationFunctions, LossFunctions
 import time
+from serializer import Serializer
 
 class NamesToNationalityClassifier:
 
     def __init__(self, possible_labels, alpha=0.0001, hidden_dimensions=500, l2_lambda = 0.02, momentum=0.9, num_epoche=30):
+        self.serializer = Serializer(possible_labels)
+
         self.alpha = alpha
-        self.input_dimensions = 27
+        self.input_dimensions = self.serializer.input_dimensions
         self.hidden_dimensions = hidden_dimensions
-        self.output_dimensions = len(possible_labels)
+        self.output_dimensions = self.serializer.target_dimensions
         self.training_to_validation_ratio = 0.7 # This means 70% of the dataset will be used for training, and 30% is for validation
 
         # Weight Initialization
@@ -36,15 +39,6 @@ class NamesToNationalityClassifier:
         # Num epoche
         self.num_epoche = num_epoche
 
-        # We now want to map label to index, and index to label
-        self.label_to_index = {}
-        self.index_to_label = {}
-        
-        for i in range(len(possible_labels)):
-            label = possible_labels[i]
-            self.label_to_index[label] = i
-            self.index_to_label[i] = label
-
         self.serialized_training_examples = []
         self.serialized_training_labels = []
         self.serialized_testing_examples = []
@@ -52,7 +46,7 @@ class NamesToNationalityClassifier:
 
     
     def add_training_examples(self, examples, labels):
-        serialized_examples, serialized_labels = self.__serialize_examples_and_labels__(examples, labels)
+        serialized_examples, serialized_labels = self.serializer.serialize_examples_and_labels(examples, labels) #self.__serialize_examples_and_labels__(examples, labels)
         num_training_data = int(len(serialized_examples) * self.training_to_validation_ratio)
 
         self.serialized_training_examples = serialized_examples[:num_training_data]
@@ -125,8 +119,8 @@ class NamesToNationalityClassifier:
         The example is a name (like "Bob Smith") and its label is a country name (ex: "Canada")
     '''
     def train_example(self, example, label):
-        serialized_example = self.__serialize__example__(example)
-        serialized_label = self.__serialize_label__(label)
+        serialized_example = self.serializer.serialize_example(example)
+        serialized_label = self.serializer.serialize_label(label)
 
         # Perform forward propagation
         forward_propagation_results = self.__perform_forward_propagation__(serialized_example, serialized_label)
@@ -305,7 +299,7 @@ class NamesToNationalityClassifier:
 
     def predict(self, name):
         # Serialize the name to a num_char x 27 matrix
-        example = self.__serialize__example__(name)
+        example = self.serializer.serialize_example(name)
         # num_chars = len(example)
         label = np.zeros((self.output_dimensions, ))
 
@@ -335,140 +329,3 @@ class NamesToNationalityClassifier:
         self.W1 = data['layer_1_weights']
         self.W2 = data['layer_2_weights']
         self.W0 = data['hidden_state_weights']
-
-    '''
-        Puts the examples into an array of chars, with each char being a 28 bit array, 
-        and labels into a bit array
-    '''
-    def __serialize_examples_and_labels__(self, examples, labels):
-        if len(examples) != len(labels):
-            raise Exception('Number of examples does not match number of labels!')
-
-        serialized_examples = []
-        serialized_labels = []
-
-        for i in range(len(examples)):
-            example = examples[i]
-            label = labels[i]
-            # print("For example " + example + " = " + label + ":")
-            serialized_example = self.__serialize__example__(example)
-            serialized_label = self.__serialize_label__(label)
-
-            if serialized_example is not None and serialized_label is not None:
-                serialized_examples.append(serialized_example)
-                serialized_labels.append(serialized_label)
-
-        print('serialized', len(serialized_examples), 'examples')
-        print('serialized', len(serialized_labels), 'labels')
-
-        return np.array(serialized_examples), np.array(serialized_labels)
-                
-    '''
-        It converts a label into a binary form
-        For example, if we have self.label_to_index as:
-        {'US': 0, 'Canada': 1, 'Mexico': 2, 'Europe': 3}
-
-        and the label to be 'Mexico', it will return:
-        [0, 0, 1, 0].
-
-        Note that the length of the binary array will depend on the number of
-        keys in self.label_to_index
-    '''
-    def __serialize_label__(self, label):
-        index = self.label_to_index[label]
-        expected_val = np.zeros(self.output_dimensions)
-        expected_val[index] = 1
-        
-        return expected_val
-
-    '''
-        Given an example with string 'abc', it will return:
-        [
-            [1, 0, 0, 0, ..., 0],
-            [0, 1, 0, 0, ..., 0],
-            [0, 0, 1, 0, ..., 0]
-        ]
-    '''
-    def __serialize__example__(self, example):
-        filtered_char = self.__filter_chars__(example)
-        if filtered_char is None:
-            return None
-
-        name_array = []
-        for letter in example:
-            ascii_code = ord(letter)
-            letter_array = np.zeros(self.input_dimensions, )
-
-            if 97 <= ascii_code <= 122:
-                letter_array[ascii_code - 97] = 1
-            else:
-                letter_array[26] = 1
-
-            name_array.append(letter_array)
-
-        return np.array(name_array)
-
-    def __filter_chars__(self, example):
-        unfiltered_example = example
-
-        # Make letters all lowercase
-        # Ex: Mrs. John Smith -> mrs. john smith
-        example = example.lower()
-
-        # Remove non-space and non-letter characters
-        # Ex: mrs. john smith -> mrs john smith
-        filtered_example = ''
-        for c in example:
-            if 'a' <= c <= 'z' or c == ' ':
-                filtered_example += c
-        example = filtered_example
-
-        # Remove duplicated spaces
-        # Ex: john  smith -> john smith
-        example = example.split()
-        new_example = ''
-        for c in example:
-            new_example += c + ' '
-        example = new_example[0:-1]
-
-        # Remove names with single letters
-        # Ex: john n smith -> john smith
-        example = example.split()
-        new_example = ''
-        for c in example:
-            if len(c) > 1:
-                new_example += c + ' '
-        example = new_example[0:-1]
-
-        # Remove personal titles
-        # Ex: mr john smith -> john smith
-        personal_titles = set(['dr', 'esq', 'hon', 'jr', 'mr', 'mrs', 'ms', 'messrs', 'mmes', 'msgr', 'prof', 'rev', 'rt', 'sr', 'st'])
-        example = example.split()
-        new_example = ''
-        for c in example:
-            if c not in personal_titles:
-                new_example += c + ' '
-        example = new_example[0:-1]
-
-        # print('Example:', unfiltered_example, '->', example)
-
-        # Take only the surname
-        # Ex: john smith -> smith
-        if len(example) == 0:
-            return None
-
-        tokenized_example = example.split()
-
-        # Needs to contain only first and last name
-        if len(tokenized_example) != 2:
-            return None
-
-
-        # Obtain the last name
-        # example = tokenized_example[-1]
-        # if len(tokenized_example) <= 1:
-        #     return None
-
-        # print('OK')
-
-        return example
