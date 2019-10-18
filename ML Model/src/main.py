@@ -117,7 +117,7 @@ def main():
     plt.ioff()
 
     # Test out different hyperparameters
-    various_hidden_layers_count = [200]
+    various_hidden_layers_count = [500]
 
     for hidden_layers_count in various_hidden_layers_count:
         classifier = NamesToNationalityClassifier(countries, 
