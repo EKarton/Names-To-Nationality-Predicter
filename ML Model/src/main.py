@@ -91,7 +91,8 @@ def get_records():
     It returns in the order listed above
 '''
 def get_dataset():
-    country_id_to_country = get_countries(filepath='data/china-korea-japan-vietnam-countries.csv')
+    country_id_to_country = get_countries(filepath='data/countries.csv')
+    # country_id_to_country = get_countries(filepath='data/china-korea-japan-vietnam-countries.csv')
     # country_id_to_country = get_countries(filepath='data/european-countries.csv')
     countries = [ country_id_to_country[id][0] for id in country_id_to_country ]
     countries.sort()
@@ -124,7 +125,7 @@ def main():
                                                   alpha=0.0001,
                                                   hidden_dimensions=hidden_layers_count, 
                                                   momentum=0.9, # Before was 0.1 
-                                                  num_epoche=50, 
+                                                  num_epoche=30, 
                                                   l2_lambda=0.02)
 
         classifier.add_training_examples(examples, labels)
