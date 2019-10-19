@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ps aux | grep kartonoe
-kill -9 $(ps aux | grep kartonoe | grep python | cut -d ' ' -f 2)
+kill -9 $(ps -aux | grep kartonoe | grep python | cut -d ' ' -f 2)
 ps aux | grep kartonoe
 
 rm -rf logs.txt
