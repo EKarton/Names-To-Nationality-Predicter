@@ -329,3 +329,11 @@ class NamesToNationalityClassifier:
         self.W1 = data['layer_1_weights']
         self.W2 = data['layer_2_weights']
         self.W0 = data['hidden_state_weights']
+
+    def __str__(self):
+        description = "RNN with learning rate: {}, momentum: {}, L2 reg. rate: {}, Weight Init. Type: {}, Num. Epoche: {}" 
+        return description.format(self.alpha, 
+                                  self.momentum, 
+                                  self.l2_lambda, 
+                                  self.weight_init_type, 
+                                  self.num_epoche)

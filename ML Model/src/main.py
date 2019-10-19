@@ -142,6 +142,7 @@ def main():
                                               l2_lambda=0.02)
 
     classifier.add_training_examples(examples, labels)
+    print(classifier)
     performance = classifier.train()
 
     epoches = [i for i in range(classifier.num_epoche)]
