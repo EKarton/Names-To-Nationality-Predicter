@@ -138,7 +138,7 @@ def main():
                                               alpha=0.0001,
                                               hidden_dimensions=500, 
                                               momentum=0.01,
-                                              num_epoche=10, 
+                                              num_epoche=20, 
                                               l2_lambda=0.02)
 
     classifier.add_training_examples(examples, labels)
