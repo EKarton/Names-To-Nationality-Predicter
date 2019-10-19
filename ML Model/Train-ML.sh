@@ -4,7 +4,7 @@ ps aux | grep kartonoe
 
 sleep 10
 
-kill -9 $("ps aux | grep kartonoe | grep python | cut -d ' ' -f 2")
+kill -9 $(ps aux | grep kartonoe | grep python | cut -d ' ' -f 2)
 
 sleep 10
 
