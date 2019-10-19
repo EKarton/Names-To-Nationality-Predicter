@@ -119,6 +119,9 @@ def get_dataset():
     records = get_records(max_records_per_country=1000)
     records = list(filter(lambda x: x[1] in country_id_to_country, records))
     records = [( record[0], country_id_to_country[record[1]][0] ) for record in records]
+
+    # Shuffle the records
+    np.random.shuffle(records)
         
     # Splits the records into two lists
     examples = [ record[0] for record in records ]
