@@ -67,7 +67,6 @@ class Serializer:
         for i in range(len(examples)):
             example = examples[i]
             label = labels[i]
-            print(example + " -> " + label)
             serialized_example = self.serialize_example(example)
             serialized_label = self.serialize_label(label)
 

@@ -18,23 +18,23 @@ import matplotlib.pyplot as plt
     }
 '''
 def get_countries(filepath='data/countries.csv'):
-	country_id_to_country_name = {}
+    country_id_to_country_name = {}
 
-	with open(filepath) as countries_file_reader:
+    with open(filepath) as countries_file_reader:
 
-		line = countries_file_reader.readline()
-		while line:
-			tokenized_line = line.split(',')
-			if len(tokenized_line) == 3:
-				country_id = int(tokenized_line[0])
-				country_name = tokenized_line[1]
-				nationality = tokenized_line[2]
+        line = countries_file_reader.readline()
+        while line:
+            tokenized_line = line.split(',')
+            if len(tokenized_line) == 3:
+                country_id = int(tokenized_line[0])
+                country_name = tokenized_line[1]
+                nationality = tokenized_line[2]
 
-				country_id_to_country_name[country_id] = (country_name, nationality)
+                country_id_to_country_name[country_id] = (country_name, nationality)
 
-			line = countries_file_reader.readline()
+            line = countries_file_reader.readline()
 
-	return country_id_to_country_name
+    return country_id_to_country_name
 
 '''
     Obtains the records from the CSV file into a list.
@@ -45,22 +45,41 @@ def get_countries(filepath='data/countries.csv'):
         ...
     ]
 '''
-def get_records():
-	records = []
-	with open('data/records.csv') as reader:
+def get_records(max_records_per_country=float("inf")):
 
-		line = reader.readline()
-		while line:
-			tokenized_line = line.split(',')
+    # We first put all the records from the file
+    raw_records = []
+    with open('data/records.csv') as reader:
 
-			if len(tokenized_line) == 3:
-				name = tokenized_line[1]
-				country_of_birth_id = int(tokenized_line[2])
-				records.append((name, country_of_birth_id))
+        line = reader.readline()
+        while line:
+            tokenized_line = line.split(',')
 
-			line = reader.readline()
+            if len(tokenized_line) == 3:
+                name = tokenized_line[1]
+                country_of_birth_id = int(tokenized_line[2])
+                raw_records.append((name, country_of_birth_id))
 
-	return records
+            line = reader.readline()
+
+    # Shuffle the raw records to remove the potential ordering in the file
+    np.random.shuffle(raw_records)
+
+    # We then add the records to our dataset ensuring that it meets the count
+    records = []
+    country_id_to_num_records = {}
+    for record in raw_records:
+        country_of_birth_id = record[1]
+
+        if country_of_birth_id not in country_id_to_num_records:
+            records.append(record)
+            country_id_to_num_records[country_of_birth_id] = 1
+
+        elif country_id_to_num_records[country_of_birth_id] < max_records_per_country:
+            records.append(record)
+            country_id_to_num_records[country_of_birth_id] += 1
+
+    return records
 
 '''
     It will return three values:
@@ -97,13 +116,10 @@ def get_dataset():
     countries = [ country_id_to_country[id][0] for id in country_id_to_country ]
     countries.sort()
 
-    records = get_records()
+    records = get_records(max_records_per_country=1000)
     records = list(filter(lambda x: x[1] in country_id_to_country, records))
     records = [( record[0], country_id_to_country[record[1]][0] ) for record in records]
-    
-    np.random.shuffle(records)
-    records = records[0:128000]
-	
+        
     # Splits the records into two lists
     examples = [ record[0] for record in records ]
     labels = [ record[1] for record in records ]
@@ -120,7 +136,7 @@ def main():
     # Test out different hyperparameters
     classifier = NamesToNationalityClassifier(countries, 
                                               alpha=0.0001,
-                                              hidden_dimensions=300, 
+                                              hidden_dimensions=500, 
                                               momentum=0.1,
                                               num_epoche=10, 
                                               l2_lambda=0.02)
