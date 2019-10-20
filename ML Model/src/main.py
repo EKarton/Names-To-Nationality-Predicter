@@ -140,9 +140,9 @@ def main():
     classifier = NamesToNationalityClassifier(countries, 
                                               alpha=0.0001,
                                               hidden_dimensions=500, 
-                                              momentum=0.9,
+                                              momentum=0,
                                               num_epoche=20, 
-                                              l2_lambda=0.001)
+                                              l2_lambda=0)
 
     classifier.add_training_examples(examples, labels)
     print(classifier)
