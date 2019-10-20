@@ -288,14 +288,22 @@ class NamesToNationalityClassifier:
         dL_dW2 += self.l2_lambda * self.W2
 
         # Add the velocity
-        self.W0_velocity = self.momentum * self.W0_velocity + (1 - self.momentum) * dL_dW0
-        self.W1_velocity = self.momentum * self.W1_velocity + (1 - self.momentum) * dL_dW1
-        self.W2_velocity = self.momentum * self.W2_velocity + (1 - self.momentum) * dL_dW2
+        # self.W0_velocity = self.momentum * self.W0_velocity + (1 - self.momentum) * dL_dW0
+        # self.W1_velocity = self.momentum * self.W1_velocity + (1 - self.momentum) * dL_dW1
+        # self.W2_velocity = self.momentum * self.W2_velocity + (1 - self.momentum) * dL_dW2
+
+        self.W0_velocity = (self.momentum * self.W0_velocity) + (self.alpha * dL_dW0)
+        self.W1_velocity = (self.momentum * self.W1_velocity) + (self.alpha * dL_dW1)
+        self.W2_velocity = (self.momentum * self.W2_velocity) + (self.alpha * dL_dW2)
 
         # Update weights
-        self.W0 -= self.alpha * self.W0_velocity
-        self.W1 -= self.alpha * self.W1_velocity
-        self.W2 -= self.alpha * self.W2_velocity
+        # self.W0 -= self.alpha * self.W0_velocity
+        # self.W1 -= self.alpha * self.W1_velocity
+        # self.W2 -= self.alpha * self.W2_velocity
+
+        self.W0 -= self.W0_velocity
+        self.W1 -= self.W1_velocity
+        self.W2 -= self.W2_velocity
 
     def predict(self, name):
         # Serialize the name to a num_char x 27 matrix
