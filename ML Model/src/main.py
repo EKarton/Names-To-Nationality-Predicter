@@ -116,7 +116,7 @@ def get_dataset():
     countries = [ country_id_to_country[id][0] for id in country_id_to_country ]
     countries.sort()
 
-    records = get_records(max_records_per_country=5000)
+    records = get_records(max_records_per_country=1000)
     records = list(filter(lambda x: x[1] in country_id_to_country, records))
     records = [( record[0], country_id_to_country[record[1]][0] ) for record in records]
 
@@ -140,9 +140,9 @@ def main():
     classifier = NamesToNationalityClassifier(countries, 
                                               alpha=0.0001,
                                               hidden_dimensions=500, 
-                                              momentum=0.1,
+                                              momentum=0.9,
                                               num_epoche=20, 
-                                              l2_lambda=0.02)
+                                              l2_lambda=0.001)
 
     classifier.add_training_examples(examples, labels)
     print(classifier)
