@@ -104,11 +104,11 @@ class NamesToNationalityClassifier:
             epoche_to_train_avg_error[epoche] = train_avg_error / len(self.serialized_training_examples)
             epoche_to_train_accuracy[epoche] = train_accuracy / len(self.serialized_training_examples)
 
-            test_avg_error, test_accuracy = self.__validate__()
+            test_avg_error, test_accuracy, test_runnable_ratio = self.__validate__()
             epoche_to_test_accuracy[epoche] = test_accuracy
             epoche_to_test_avg_error[epoche] = test_avg_error
 
-            print(epoche, epoche_to_train_avg_error[epoche], epoche_to_test_avg_error[epoche], epoche_to_train_accuracy[epoche], epoche_to_test_accuracy[epoche], time.time())
+            print(epoche, epoche_to_train_avg_error[epoche], epoche_to_test_avg_error[epoche], epoche_to_train_accuracy[epoche], epoche_to_test_accuracy[epoche], test_runnable_ratio, time.time())
 
         return {
             'epoche_to_train_avg_error': epoche_to_train_avg_error,
@@ -165,8 +165,9 @@ class NamesToNationalityClassifier:
 
         avg_cost = total_cost / num_examples_ran
         accuracy = num_correct / num_examples_ran
+        runnable_examples_ratio = num_examples_ran / len(self.serialized_testing_examples)
 
-        return avg_cost, accuracy
+        return avg_cost, accuracy, runnable_examples_ratio
 
     def __is_hypothesis_correct__(self, hypothesis, label):
         return np.argmax(hypothesis, axis=0) == np.argmax(label, axis=0)
@@ -291,19 +292,11 @@ class NamesToNationalityClassifier:
         dL_dW2 += self.l2_lambda * self.W2
 
         # Add the velocity
-        # self.W0_velocity = self.momentum * self.W0_velocity + (1 - self.momentum) * dL_dW0
-        # self.W1_velocity = self.momentum * self.W1_velocity + (1 - self.momentum) * dL_dW1
-        # self.W2_velocity = self.momentum * self.W2_velocity + (1 - self.momentum) * dL_dW2
-
         self.W0_velocity = (self.momentum * self.W0_velocity) + (self.alpha * dL_dW0)
         self.W1_velocity = (self.momentum * self.W1_velocity) + (self.alpha * dL_dW1)
         self.W2_velocity = (self.momentum * self.W2_velocity) + (self.alpha * dL_dW2)
 
         # Update weights
-        # self.W0 -= self.alpha * self.W0_velocity
-        # self.W1 -= self.alpha * self.W1_velocity
-        # self.W2 -= self.alpha * self.W2_velocity
-
         self.W0 -= self.W0_velocity
         self.W1 -= self.W1_velocity
         self.W2 -= self.W2_velocity
