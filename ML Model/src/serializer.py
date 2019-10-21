@@ -91,11 +91,14 @@ class Serializer:
         keys in self.label_to_index
     '''
     def serialize_label(self, label):
-        index = self.label_to_index[label]
-        expected_val = np.zeros(self.target_dimensions)
-        expected_val[index] = 1
-        
-        return expected_val
+        if label in self.label_to_index:
+            index = self.label_to_index[label]
+            expected_val = np.zeros(self.target_dimensions)
+            expected_val[index] = 1
+            
+            return expected_val
+        else:
+            raise Exception('The label', label, 'does not exist in', self.label_to_index)
 
     '''
         Given an example with string 'abc', it will return:

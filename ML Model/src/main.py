@@ -137,56 +137,66 @@ def main():
     plt.ioff()
 
     # Test out different hyperparameters
-    classifier = NamesToNationalityClassifier(countries, 
-                                              alpha=0.01,
-                                              hidden_dimensions=500, 
-                                              momentum=0,
-                                              num_epoche=10,
-                                              l2_lambda=0)
+    alpha_values = [0.001, 0.0001]
 
-    classifier.add_training_examples(examples, labels)
-    performance = classifier.train()
+    for alpha_val in alpha_values:
+        classifier = NamesToNationalityClassifier(countries, 
+                                                alpha=alpha_val,
+                                                hidden_dimensions=500, 
+                                                momentum=0,
+                                                num_epoche=20,
+                                                l2_lambda=0)
 
-    epoches = [i for i in range(classifier.num_epoche)]
+        classifier.add_training_examples(examples, labels)
+        performance = classifier.train()
 
-    # Plot the performance
-    fig, (errors_plt, accuracy_plt) = plt.subplots(2)
-    plt_title_format = "Perf. for Learning Rate: {:.5f}, Hidden Dim: {:.5f}, \nL2_lambda: {:.5f}, Momentum: {:.5f}, Num Epoche: {:.5f}"
-    fig_title = plt_title_format.format(classifier.alpha, 
-                                        classifier.hidden_dimensions, 
-                                        classifier.l2_lambda, 
-                                        classifier.momentum, 
-                                        classifier.num_epoche)
-    fig.suptitle(fig_title, fontsize=10)
+        epoches = [i for i in range(classifier.num_epoche)]
 
-    errors_plt.title.set_text('Errors vs Epoche')
-    errors_plt.plot(epoches, performance['epoche_to_train_avg_error'], label='Train Avg. Error')
-    errors_plt.plot(epoches, performance['epoche_to_test_avg_error'], label='Test Avg. Error')
-    errors_plt.legend()
+        # Plot the performance
+        fig, (errors_plt, accuracy_plt) = plt.subplots(2)
+        plt_title_format = "Performance. for Learning Rate: {:.5f}, Hidden Dim: {:.5f}, \nL2_lambda: {:.5f}, Momentum: {:.5f}, Num Epoche: {:.5f}"
+        fig_title = plt_title_format.format(classifier.alpha, 
+                                            classifier.hidden_dimensions, 
+                                            classifier.l2_lambda, 
+                                            classifier.momentum, 
+                                            classifier.num_epoche)
+        fig.suptitle(fig_title, fontsize=10)
 
-    accuracy_plt.title.set_text('Accuracy vs Epoche')
-    accuracy_plt.plot(epoches, performance['epoche_to_train_accuracy'], label='Train Accuracy')
-    accuracy_plt.plot(epoches, performance['epoche_to_test_accuracy'], label='Test Accuracy')
-    accuracy_plt.legend()
+        errors_plt.set_title('Errors vs Epoche', fontsize=10)
+        errors_plt.plot(epoches, performance['epoche_to_train_avg_error'], label='Train Avg. Error')
+        errors_plt.plot(epoches, performance['epoche_to_test_avg_error'], label='Test Avg. Error')
+        errors_plt.legend()
+        errors_plt.set_xlabel('Epoche')
+        errors_plt.set_ylabel('Error')
 
-    # Save the plot
-    plt_file_name_format = 'L{}-H-{}-R-{}-M-{}-E-{}-plots.png'
-    plt_file_name = plt_file_name_format.format(classifier.weight_init_type,
-                                                str(classifier.hidden_dimensions).replace('.', '_'), 
-                                                str(classifier.alpha).replace('.', '_'), 
-                                                str(classifier.momentum).replace('.', '_'), 
-                                                str(classifier.num_epoche).replace('.', '_'))
-    plt.savefig(plt_file_name)
+        accuracy_plt.set_title('Accuracy vs Epoche', fontsize=10)
+        accuracy_plt.plot(epoches, performance['epoche_to_train_accuracy'], label='Train Accuracy')
+        accuracy_plt.plot(epoches, performance['epoche_to_test_accuracy'], label='Test Accuracy')
+        accuracy_plt.legend()
+        accuracy_plt.set_xlabel('Epoche')
+        accuracy_plt.set_ylabel('Accuracy')
 
-    # Save the data
-    data_file_name_format = 'L{}-H-{}-R-{}-M-{}-E-{}-data'
-    data_file_name = data_file_name_format.format(classifier.weight_init_type,
+        plt.subplots_adjust(top=0.85)
+        plt.subplots_adjust(hspace=0.5)
+
+        # Save the plot
+        plt_file_name_format = 'L{}-H-{}-R-{}-M-{}-E-{}-plots.png'
+        plt_file_name = plt_file_name_format.format(classifier.weight_init_type,
                                                     str(classifier.hidden_dimensions).replace('.', '_'), 
                                                     str(classifier.alpha).replace('.', '_'), 
                                                     str(classifier.momentum).replace('.', '_'), 
                                                     str(classifier.num_epoche).replace('.', '_'))
-    print('Saved model to', data_file_name + '.npz')
-    classifier.save_model('data/' + data_file_name)
+        plt.savefig(plt_file_name)
+
+        # Save the data
+        data_file_name_format = 'L{}-H-{}-R-{}-M-{}-E-{}-data'
+        data_file_name = data_file_name_format.format(classifier.weight_init_type,
+                                                        str(classifier.hidden_dimensions).replace('.', '_'), 
+                                                        str(classifier.alpha).replace('.', '_'), 
+                                                        str(classifier.momentum).replace('.', '_'), 
+                                                        str(classifier.num_epoche).replace('.', '_'))
+        print('Saved model to', data_file_name + '.npz')
+        classifier.save_model('data/' + data_file_name)
 
     # # Train the model
     # classifier = NamesToNationalityClassifier(countries)
