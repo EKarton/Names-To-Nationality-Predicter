@@ -213,6 +213,6 @@ class Serializer:
         # Get only the first and last name
         final_example = tokenized_example[0] + ' ' + tokenized_example[-1]
 
-        print('Example:', unfiltered_example, '-> "' + final_example + '"')
+        # print('Example:', unfiltered_example, '-> "' + final_example + '"')
 
         return final_example
