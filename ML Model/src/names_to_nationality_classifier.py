@@ -65,6 +65,9 @@ class NamesToNationalityClassifier:
         }
     '''
     def train(self):
+        print("Training...")
+        print(self)
+
         epoche_to_train_avg_error = np.zeros((self.num_epoche, ))
         epoche_to_test_avg_error = np.zeros((self.num_epoche, ))
         epoche_to_train_accuracy = np.zeros((self.num_epoche, ))
@@ -204,7 +207,7 @@ class NamesToNationalityClassifier:
             # The inputs
             X = serialized_example[j]
             X_with_bias = np.r_[[self.layer_1_bias], X] # <- We add a bias to the input. It is now a 28 element array
-            h0 = letter_pos_to_h0[j - 1]
+            h0 = letter_pos_to_h0[j]
 
             y1 = np.dot(self.W1, X_with_bias) + np.dot(self.W0, h0)
             h1 = ActivationFunctions.tanh(y1)
@@ -218,7 +221,7 @@ class NamesToNationalityClassifier:
             # Update the dictionaries
             letter_pos_to_h1[j] = h1
             letter_pos_to_h2[j] = h2
-            letter_pos_to_h0[j] = h1
+            letter_pos_to_h0[j + 1] = h1
 
             letter_pos_to_loss[j] = LossFunctions.cross_entropy(h2, serialized_label)
         

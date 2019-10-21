@@ -138,14 +138,13 @@ def main():
 
     # Test out different hyperparameters
     classifier = NamesToNationalityClassifier(countries, 
-                                              alpha=0.00001,
+                                              alpha=0.0001,
                                               hidden_dimensions=500, 
                                               momentum=0.9,
-                                              num_epoche=10, 
+                                              num_epoche=20,
                                               l2_lambda=0)
 
     classifier.add_training_examples(examples, labels)
-    print(classifier)
     performance = classifier.train()
 
     epoches = [i for i in range(classifier.num_epoche)]

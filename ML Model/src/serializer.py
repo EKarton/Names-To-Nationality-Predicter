@@ -12,8 +12,8 @@ class Serializer:
             'x', 'y', 'z', 'á', 
             'ã', 'ä', 'ç', 'è', 
             'é', 'ë', 'ï', 'ô', 
-            'ö', 'ü', '$', '+',
-            '-'
+            'ö', 'ü', '-'#,         <- We remove '$' and '+' for this matter
+            #$', '+',
         ]
 
         self.allowed_chars_in_name = set([
@@ -201,10 +201,14 @@ class Serializer:
         #     final_example += '$' + tokenized_example[i] + '$ '
         # final_example += '+' + tokenized_example[-1] + '+'
 
-        final_example = ''
-        for i in range(len(tokenized_example) - 1):
-            final_example += tokenized_example[i] + ' '
-        final_example += tokenized_example[-1]
+        # Concat the final results
+        # final_example = ''
+        # for i in range(len(tokenized_example) - 1):
+        #     final_example += tokenized_example[i] + ' '
+        # final_example += tokenized_example[-1]
+
+        # Get only the first and last name
+        final_example = tokenized_example[0] + ' ' + tokenized_example[-1]
 
         print('Example:', unfiltered_example, '-> "' + final_example + '"')
 

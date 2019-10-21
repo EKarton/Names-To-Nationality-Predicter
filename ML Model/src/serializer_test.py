@@ -5,22 +5,22 @@ from serializer import Serializer
 
 class SerializerTest(unittest.TestCase):
     def test_serialize_example_given_name_should_return_correct_val_1(self):
-        self.check_serialized_name("Bob Smith", [38, 2, 15, 2, 38, 0, 39, 19, 13, 9, 20, 8, 39])
+        self.check_serialized_name("Bob Smith", [2, 15, 2, 0, 19, 13, 9, 20, 8])
 
     def test_serialize_example_given_name_with_random_spaces_should_return_correct_val_2(self):
-        self.check_serialized_name("Bob  Smith ", [38, 2, 15, 2, 38, 0, 39, 19, 13, 9, 20, 8, 39])
+        self.check_serialized_name("Bob  Smith ", [2, 15, 2, 0, 19, 13, 9, 20, 8])
 
     def test_serialize_example_given_name_with_unique_chars_should_return_correct_val_3(self):
-        self.check_serialized_name("Bob  Smáith ", [38, 2, 15, 2, 38, 0, 39, 19, 13, 27, 9, 20, 8, 39])
+        self.check_serialized_name("Bob  Smáith ", [2, 15, 2, 0, 19, 13, 27, 9, 20, 8])
 
     def test_serialize_example_given_name_with_random_chars_should_return_correct_val_4(self):
-        self.check_serialized_name("$$B)ob  Sm#áith *", [38, 2, 15, 2, 38, 0, 39, 19, 13, 27, 9, 20, 8, 39])
+        self.check_serialized_name("$$B)ob  Sm#áith *", [2, 15, 2, 0, 19, 13, 27, 9, 20, 8])
 
     def test_serialize_example_given_name_with_pronoun_should_return_correct_val_4(self):
-        self.check_serialized_name("Dr. Bob Smith", [38, 2, 15, 2, 38, 0, 39, 19, 13, 9, 20, 8, 39])
+        self.check_serialized_name("Dr. Bob Smith", [2, 15, 2, 0, 19, 13, 9, 20, 8])
 
     def test_serialize_example_given_single_letter_should_return_correct_val_4(self):
-        self.check_serialized_name("Bob C Smith", [38, 2, 15, 2, 38, 0, 39, 19, 13, 9, 20, 8, 39])
+        self.check_serialized_name("Bob C Smith", [2, 15, 2, 0, 19, 13, 9, 20, 8])
 
     def test_serialize_example_given_single_letter_as_first_name_should_return_none(self):
         self.check_serialized_name("C Bob Smith", None)
@@ -43,8 +43,8 @@ class SerializerTest(unittest.TestCase):
             for i in range(len(expected_indexes_with_ones)):
                 serialized_char = serialized_example[i]
 
-                self.assertEquals(sum(serialized_char), 1.0)
-                self.assertEquals(serialized_char[expected_indexes_with_ones[i]], 1)
+                self.assertEqual(sum(serialized_char), 1.0)
+                self.assertEqual(serialized_char[expected_indexes_with_ones[i]], 1)
 
 if __name__ == '__main__':
     unittest.main()
