@@ -137,7 +137,7 @@ def main():
     plt.ioff()
 
     # Test out different hyperparameters
-    alpha_values = [0.001]
+    alpha_values = [0.0001, 0.001]
 
     for alpha_val in alpha_values:
         classifier = NamesToNationalityClassifier(countries, 
