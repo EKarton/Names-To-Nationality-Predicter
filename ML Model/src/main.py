@@ -137,11 +137,11 @@ def main():
     plt.ioff()
 
     # Test out different hyperparameters
-    momentum_vals = [0.9, 0.98, 0.5]
+    momentum_vals = [0.9, 0.5, 0.98]
 
     for momentum_val in momentum_vals:
         classifier = NamesToNationalityClassifier(countries, 
-                                                alpha=0.0001,
+                                                alpha=0.001,
                                                 hidden_dimensions=500, 
                                                 momentum=momentum_val,
                                                 num_epoche=20,
