@@ -143,7 +143,7 @@ def main():
         classifier = NamesToNationalityClassifier(countries, 
                                                 alpha=0.0001,
                                                 hidden_dimensions=500, 
-                                                momentum=0.5,
+                                                momentum=0.9,
                                                 num_epoche=20,
                                                 l2_lambda=l2_lambda_val)
 
