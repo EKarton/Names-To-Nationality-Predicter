@@ -108,6 +108,13 @@ def get_records(max_records_per_country=float("inf")):
         ]
 
     It returns in the order listed above
+
+    Note: For data/china-korea-japan-vietnam-countries.csv, use the following hyper-params:
+    - Momentum = 0.9
+    - L2 = 0.0001
+    - Learning Rate = 0.0001
+    - Hidden Dimensions: 300
+    - Epoche: 50
 '''
 def get_dataset():
     # country_id_to_country = get_countries(filepath='data/countries.csv')
@@ -139,10 +146,10 @@ def main():
 
     classifier = NamesToNationalityClassifier(countries, 
                                             alpha=0.0001,
-                                            hidden_dimensions=500, 
+                                            hidden_dimensions=300, 
                                             momentum=0.9,
                                             num_epoche=50,
-                                            l2_lambda=0)
+                                            l2_lambda=0.0001)
 
     classifier.add_training_examples(examples, labels)
     performance = classifier.train()
