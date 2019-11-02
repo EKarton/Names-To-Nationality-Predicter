@@ -62,7 +62,10 @@ A report on how hyper-parameters were chosen are listed at [report.pdf](https://
 - On your browser navigate to ```http://localhost:5000```. The home page should appear on your browser
 
 ### Usage
+Please note that this project is used for educational purposes and is not intended to be used commercially. We are not liable for any damages/changes done by this project.
 
 ### Credits
+Emilio Kartono, who made the entire project.
 
 ### License
+This project is protected under the MIT licence. Please refer to ```LICENCE.txt``` for more information.
