@@ -113,8 +113,15 @@ def get_records(max_records_per_country=float("inf")):
     - Momentum = 0.9
     - L2 = 0.0001
     - Learning Rate = 0.0001
-    - Hidden Dimensions: 300
+    - Hidden Dimensions: 200
     - Epoche: 50
+
+    Note: For data/countries-without-usa-or-canada.csv, use the following hyper-params:
+    - Momentum = 0.9
+    - L2 = 0.001
+    - Learning Rate = 0.0001
+    - Hidden Dimensions: 500
+    - Epoche: 20
 '''
 def get_dataset():
     # country_id_to_country = get_countries(filepath='data/countries.csv')
@@ -124,7 +131,7 @@ def get_dataset():
     countries = [ country_id_to_country[id][0] for id in country_id_to_country ]
     countries.sort()
 
-    records = get_records(max_records_per_country=1000)
+    records = get_records(max_records_per_country=1500)
     records = list(filter(lambda x: x[1] in country_id_to_country, records))
     records = [( record[0], country_id_to_country[record[1]][0] ) for record in records]
 
@@ -146,10 +153,10 @@ def main():
 
     classifier = NamesToNationalityClassifier(countries, 
                                             alpha=0.0001,
-                                            hidden_dimensions=300, 
+                                            hidden_dimensions=200, 
                                             momentum=0.9,
                                             num_epoche=50,
-                                            l2_lambda=0.0001)
+                                            l2_lambda=0.001)
 
     classifier.add_training_examples(examples, labels)
     performance = classifier.train()
