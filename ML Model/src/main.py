@@ -156,7 +156,7 @@ def main():
                                             hidden_dimensions=200, 
                                             momentum=0.9,
                                             num_epoche=50,
-                                            l2_lambda=0.001)
+                                            l2_lambda=0)
 
     classifier.add_training_examples(examples, labels)
     performance = classifier.train()
