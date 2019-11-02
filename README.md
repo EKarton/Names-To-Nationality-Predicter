@@ -16,7 +16,7 @@ A web app was developed to present the project in a more visually, interactive w
 
 <div width="80%">
     <p align="center">
-    <img src="https://raw.githubusercontent.com/EKarton/Names-To-Nationality-Predictor/master/Web%20App/docs/HomePage.png"  width="600px"/>
+    <a href="https://names-to-nationality-predicter.herokuapp.com/"><img src="https://raw.githubusercontent.com/EKarton/Names-To-Nationality-Predictor/master/Web%20App/docs/HomePage.png" width="600px"/></a>
     </p>
 </div>
 
