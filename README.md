@@ -3,7 +3,7 @@
 ### Description
 Get the nationality from your name! This project attempts the predict the nationality of a person's name using recurrent machine learning model. A web app was built to make the machine learning model user friendly.
 
-NOTE: For certain reasons, this project was made using only Numpy and Python.
+NOTE: For certain reasons, this project was made using only Numpy and Python 3.
 
 ### Table of Contents
 - Walkthrough
