@@ -23,7 +23,7 @@ Various features were implemented to try to improve the model:
 - Utilizing tanh as an activation function to prevent gradient losses
 - Implementing momentum to speed up training
 
-A report on how hyper-parameters were chosen are listed at: 
+A report on how hyper-parameters were chosen are listed at [report.pdf](https://github.com/EKarton/Names-To-Nationality-Predictor/blob/master/ML%20Model/docs/Names%20to%20Nationality%20Hyperparameter%20Search.pdf)
 
 ### Installation
 
