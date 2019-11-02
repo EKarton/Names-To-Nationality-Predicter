@@ -23,11 +23,11 @@ A web app was developed to present the project in a more visually, interactive w
 </div>
 
 ### Results:
-Developing RNNs from scratch without any use of libraries posed plenty of challenges. First, utilizing only Numpy and Python to construct and train the model had performance issues. Second, it had minor bugs. Regardless, the accuracy of the model remained to be decent - 86% accuracy in classifying a name to either Japanese, Vietnamese, Chinese, or Korean. Unfortunately, as the number of nationalities increases, accuracy suffers where only a 10% accuracy rate was obtained to classify a name to either one of the 124 countries worldwide. This makes sense since the world is now globalized and we cannot accurately predict people's nationalities solely on their names.
+Developing RNNs from scratch without any use of libraries posed plenty of challenges. First, utilizing only Numpy and Python to construct and train the model had performance issues. Second, it had minor bugs. Regardless, the accuracy of the model remained to be decent - 89% accuracy in classifying a name to either Japanese, Vietnamese, Chinese, or Korean. Unfortunately, as the number of nationalities increases, accuracy suffers where only a 10% accuracy rate was obtained to classify a name to either one of the 124 countries worldwide. This makes sense since the world is now globalized and we cannot accurately predict people's nationalities solely on their names.
 
 Various features were implemented to try to improve the model:
 - Implementing L2 regularization to prevent overfitting
-- Implementing Xavier's weight initialization to retain gradients
+- Implementing Xavier's weight initialization to retain gradients better
 - Utilizing tanh as an activation function to prevent gradient losses
 - Implementing momentum to speed up training
 
