@@ -125,9 +125,9 @@ def get_records(max_records_per_country=float("inf")):
 '''
 def get_dataset():
     # country_id_to_country = get_countries(filepath='data/countries.csv')
-    # country_id_to_country = get_countries(filepath='data/countries-without-usa-or-canada.csv')
+    country_id_to_country = get_countries(filepath='data/countries-without-usa-or-canada.csv')
     # country_id_to_country = get_countries(filepath='data/china-korea-japan-vietnam-countries.csv')
-    country_id_to_country = get_countries(filepath='data/european-countries.csv')
+    # country_id_to_country = get_countries(filepath='data/european-countries.csv')
     countries = [ country_id_to_country[id][0] for id in country_id_to_country ]
     countries.sort()
 
