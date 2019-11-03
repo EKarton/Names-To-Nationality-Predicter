@@ -23,7 +23,7 @@ A web app was developed to present the project in a more visually, interactive w
 </div>
 
 ### Results:
-Developing RNNs from scratch without any use of libraries posed plenty of challenges. First, utilizing only Numpy and Python to construct and train the model had performance issues. Second, it had minor bugs. Regardless, the accuracy of the model remained to be decent - 74% accuracy in classifying a name to either Japanese, Vietnamese, Chinese, or Korean. Unfortunately, as the number of nationalities increases, accuracy suffers where only a 10% accuracy rate was obtained to classify a name to either one of the 124 countries worldwide. This makes sense since the world is very globalized and we cannot accurately predict people's nationalities solely on their names.
+Developing RNNs from scratch without any use of libraries posed plenty of challenges. First, utilizing only Numpy and Python to construct and train the model had performance issues. Second, it had minor bugs. Regardless, the accuracy of the model remained to be decent - 74% accuracy in classifying a name to either Japanese, Vietnamese, Chinese, or Korean. Unfortunately, as the number of nationalities increases, accuracy suffers where only a 15% accuracy rate was obtained to classify a name to either one of the 124 countries worldwide. This makes sense since the world is very globalized and we cannot accurately predict people's nationalities solely on their names.
 
 Various features were implemented to try to improve the model:
 - Implementing L2 regularization to prevent overfitting
@@ -34,16 +34,6 @@ Various features were implemented to try to improve the model:
 A report on how hyper-parameters were chosen are listed at [report.pdf](https://github.com/EKarton/Names-To-Nationality-Predictor/blob/master/ML%20Model/docs/Names%20to%20Nationality%20Hyperparameter%20Search.pdf)
 
 ### Installation
-
-#### Grabbing the Data
-- Data was obtained by scraping names off of Ancenstry.ca
-- Go through the README.md file in the ```Web Scrapper``` folder to see how to grab data from Ancestry.ca.
-
-#### Training the Model
-- Before training the model, you need to install the required dependencies
-- Run ```pip3 install -r requirements.txt``` in the ```ML Model``` directory to install all the required packages (note that it is better to install this on a virtual environment such as virtualenv).
-- Next, change the hyper-parameters to your needs in the ```src/main.py``` file
-- Lastly, run the command ```python3 src/main.py```
 
 #### Running the Web App with Docker
 - Using Docker is a great way to run the app without having to deal with any system configurations
@@ -58,10 +48,22 @@ A report on how hyper-parameters were chosen are listed at [report.pdf](https://
 	5. Open up your web browser and navigate to ```localhost:5000```
 
 #### Running the Web App without Docker
-- You can also run the web app without using Docker.
-- To begin, install all the required dependencies for the web app by running the command ```pip3 install -r requirements.txt``` in the ```Web App``` folder
-- Next, run ```python3 app.py```. It will launch the web app at port 5000.
-- On your browser navigate to ```http://localhost:5000```. The home page should appear on your browser
+- You can also run the web app without using Docker. It takes a bit more time
+
+1. ##### Grabbing the Data
+	- Data was obtained by scraping names off of Ancenstry.ca
+	- Go through the README.md file in the ```Web Scrapper``` folder to see how to grab data from Ancestry.ca.
+
+2. ##### Training the Model
+	- Before training the model, you need to install the required dependencies
+	- Run ```pip3 install -r requirements.txt``` in the ```ML Model``` directory to install all the required packages (note that it is better to install this on a virtual environment such as virtualenv).
+	- Next, change the hyper-parameters to your needs in the ```src/main.py``` file
+	- Lastly, run the command ```python3 src/main.py```
+
+3. ##### Running the Web App
+	- To begin, install all the required dependencies for the web app by running the command ```pip3 install -r requirements.txt``` in the ```Web App``` folder
+	- Next, run ```python3 app.py```. It will launch the web app at port 5000.
+	- On your browser navigate to ```http://localhost:5000```. The home page should appear on your browser
 
 ### Usage
 Please note that this project is used for educational purposes and is not intended to be used commercially. We are not liable for any damages/changes done by this project.
