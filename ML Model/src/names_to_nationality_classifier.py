@@ -314,7 +314,7 @@ class NamesToNationalityClassifier:
             hypothesis = ActivationFunctions.softmax(letter_pos_to_y2[-1])
             formatted_hypothesis = []
             for k in range(self.output_dimensions):
-                formatted_hypothesis.append((hypothesis[k], self.index_to_label[k]))
+                formatted_hypothesis.append((hypothesis[k], self.serializer.index_to_label[k]))
 
             formatted_hypothesis.sort(reverse=True)
 

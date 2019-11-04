@@ -19,6 +19,7 @@ import matplotlib.pyplot as plt
 '''
 def get_countries(filepath='data/countries.csv'):
     country_id_to_country_name = {}
+    print('Countries Filepath:', filepath)
 
     with open(filepath) as countries_file_reader:
 
@@ -223,4 +224,5 @@ def main():
     # classifier.load_model_from_file('data/data.npz')
     # print(classifier.predict('Emilio Kartono'))
 
-main()
+if __name__ == "__main__":
+    main()

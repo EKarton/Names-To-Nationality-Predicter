@@ -3,30 +3,13 @@ sys.path.append('../ML Model/src')
 
 from flask import Flask, render_template, request, abort
 from names_to_nationality_classifier import NamesToNationalityClassifier
+from main import get_countries
 from functools import reduce
 from os import environ
 
-def get_countries():
-    country_id_to_country_name = {}
-
-    with open('../ML Model/data/countries.csv') as countries_file_reader:
-
-        line = countries_file_reader.readline()
-        while line:
-            tokenized_line = line.split(',')
-            if len(tokenized_line) == 3:
-                country_id = int(tokenized_line[0])
-                country_name = tokenized_line[1]
-                nationality = tokenized_line[2]
-
-                country_id_to_country_name[country_id] = (country_name, nationality)
-
-            line = countries_file_reader.readline()
-
-    return country_id_to_country_name
-    
-country_id_to_country = get_countries()
+country_id_to_country = get_countries('../ML Model/data/countries-without-usa-or-canada.csv')
 countries = [ country_id_to_country[id][0] for id in country_id_to_country ]
+countries.sort()
 
 # Get the ML model
 classifier = NamesToNationalityClassifier(countries)
