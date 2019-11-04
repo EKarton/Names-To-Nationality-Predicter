@@ -44,7 +44,7 @@ def get_nationality():
             return render_template('prediction-error/index.html', error_message='your name cannot be blank.'), 400
 
         if len(name.split(' ')) <= 1:
-            return render_template('prediction-error/index.html', error_message='your name needs to have a last name.'), 400
+            return render_template('prediction-error/index.html', error_message='your name needs to have a first name.'), 400
 
         predictions = classifier.predict(name)
         most_probable_country = predictions[0][1]
