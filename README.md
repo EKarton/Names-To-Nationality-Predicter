@@ -1,4 +1,4 @@
-# Names-To-Nationality-Predictor
+# Names-To-Nationality-Predicter
 
 ### Description
 Get the nationality from your name! This project attempts the predict the nationality of a person's name using recurrent machine learning model. A web app was built to make the machine learning model user friendly.
